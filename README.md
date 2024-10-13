@@ -1,5 +1,27 @@
 # Taftan Mobile Application
 
+## Start a new application:
+1. install android studio
+2. download SDKs with android studio SDK manager.
+3. download Emulator `system-image` from here. Then copy to system-images folder (usually-> c://Users/{user}/AppData/Local/Android/SDKs)
+```
+https://dl.google.com/android/repository/sys-img/google_apis/x86-25_r08.zip
+```
+4. run this command to init an app:
+```
+npx react-native init {MyApp}
+```
+
+## Run application on Android Emulator/Device:
+1. if `platform-tools` folder is added to PATH, then you can use `adb` to see all plugged in devices.
+```
+adb devices
+```
+2. the running Emulator must be seen in the list. to run the application use the command bellow:
+```
+npx react-native run-android
+```
+
 
 
 ## problems:
