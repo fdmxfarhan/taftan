@@ -3,21 +3,37 @@
 ## Start a new application:
 1. install android studio
 2. download SDKs with android studio SDK manager.
-3. download Emulator `system-image` from here. Then copy to system-images folder (usually-> c://Users/{user}/AppData/Local/Android/SDKs)
-```
-https://dl.google.com/android/repository/sys-img/google_apis/x86-25_r08.zip
-```
+3. download Emulator using android studio. (API 25, Medium phone)
 4. run this command to init an app:
 ```
 npx react-native init {MyApp}
+npm install @react-navigation/native
+npm install react-native-screens react-native-safe-area-context
 ```
+5. add android sdk to path:
+    1. Open Start Menu and search for Environment Variables.
+    2. Click on Edit the system environment variables.
+    3. In the System Properties window, click the Environment Variables button.
+    4. Under User variables, click New and add:
+        - Variable name: ANDROID_HOME
+        - Variable value: Path to your Android SDK, usually something like C:\Users\YourUserName\AppData\Local\Android\Sdk
+    5. Find the Path variable under System variables, select it, and click Edit.
+    6. Add the following paths:
+        - %ANDROID_HOME%\platform-tools
+        - %ANDROID_HOME%\tools
+        - %ANDROID_HOME%\tools\bin
+    7. Click OK to save changes.
 
 ## Run application on Android Emulator/Device:
 1. if `platform-tools` folder is added to PATH, then you can use `adb` to see all plugged in devices.
 ```
 adb devices
 ```
-2. the running Emulator must be seen in the list. to run the application use the command bellow:
+2. add JDK path to `android/gradle.properties` (make sure to use "\\" insted of "\")
+```
+org.gradle.java.home=C:\\Program Files\\Java\\jdk1.8.0_291
+```
+3. the running Emulator must be seen in the list. to run the application use the command bellow:
 ```
 npx react-native run-android
 ```
@@ -39,7 +55,22 @@ npx react-native run-android
    Solution:
     cd android
     ./gradlew clean
-
+4. Android SDK is not properly configured in your React Native project:
+   Error:
+    Failed to install the app. Command failed with exit code 1: gradlew.bat app:installDebug -PreactNativeDevServerPort=8081
+   Solution1:
+    1. Open Start Menu and search for Environment Variables.
+    2. Click on Edit the system environment variables.
+    3. In the System Properties window, click the Environment Variables button.
+    4. Under User variables, click New and add:
+        - Variable name: ANDROID_HOME
+        - Variable value: Path to your Android SDK, usually something like C:\Users\YourUserName\AppData\Local\Android\Sdk
+    5. Find the Path variable under System variables, select it, and click Edit.
+    6. Add the following paths:
+        - %ANDROID_HOME%\platform-tools
+        - %ANDROID_HOME%\tools
+        - %ANDROID_HOME%\tools\bin
+    7. Click OK to save changes.
 2. Gradle problem
    Error:
     don't remember :)
