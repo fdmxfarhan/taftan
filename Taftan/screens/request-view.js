@@ -123,6 +123,7 @@ const RequestView = (props) => {
                 {reqinfoEN && (<View style={styles.content}>
                     <Text style={styles.label}>شماره کار: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'شماره کار'}
                         placeholderTextColor={colors.text}
@@ -137,6 +138,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>مشتری: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'مشتری'}
                         placeholderTextColor={colors.text}
@@ -151,6 +153,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>کاربر درخواست کننده: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'کاربر درخواست کننده'}
                         placeholderTextColor={colors.text}
@@ -165,6 +168,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>تاریخ شروع: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'تاریخ شروع'}
                         placeholderTextColor={colors.text}
@@ -179,6 +183,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>مهلت انجام کار: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'مهلت انجام کار'}
                         placeholderTextColor={colors.text}
@@ -193,6 +198,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>تکرار خرابی: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'تکرار خرابی'}
                         placeholderTextColor={colors.text}
@@ -207,6 +213,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>سرویس: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'سرویس'}
                         placeholderTextColor={colors.text}
@@ -221,6 +228,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>شعبه: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'شعبه'}
                         placeholderTextColor={colors.text}
@@ -235,6 +243,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>تاریخ ثبت: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'تاریخ ثبت'}
                         placeholderTextColor={colors.text}
@@ -249,6 +258,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>تاریخ پایان: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'تاریخ پایان'}
                         placeholderTextColor={colors.text}
@@ -263,6 +273,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>علت تاخیر: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'علت تاخیر'}
                         placeholderTextColor={colors.text}
@@ -286,6 +297,7 @@ const RequestView = (props) => {
                         placeholder={'هماهنگ کننده'}
                         placeholderTextColor={colors.text}
                         // onSubmitEditing={()=>passwordInput.current.focus()}
+                        multiline={true}
                         returnKeyType={'next'}
                         keyboardType={'default'}
                         value={''}
@@ -299,6 +311,7 @@ const RequestView = (props) => {
                         placeholder={'شماره تماس'}
                         placeholderTextColor={colors.text}
                         // onSubmitEditing={()=>passwordInput.current.focus()}
+                        multiline={true}
                         returnKeyType={'next'}
                         keyboardType={'default'}
                         value={''}
@@ -324,6 +337,7 @@ const RequestView = (props) => {
                 {deviceInfo && (<View style={styles.content}>
                     <Text style={styles.label}>نام دستگاه: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'نام دستگاه'}
                         placeholderTextColor={colors.text}
@@ -337,6 +351,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>سریال دستگاه: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'سریال دستگاه'}
                         placeholderTextColor={colors.text}
@@ -350,6 +365,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>مدل دستگاه: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'مدل دستگاه'}
                         placeholderTextColor={colors.text}
@@ -363,6 +379,7 @@ const RequestView = (props) => {
                     />
                     <Text style={styles.label}>شماره ترمینال: </Text>
                     <TextInput
+                        multiline={true}
                         style={[styles.textInput]}
                         placeholder={'شماره ترمینال'}
                         placeholderTextColor={colors.text}

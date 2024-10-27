@@ -8,25 +8,8 @@ buildscript {
         kotlinVersion = "1.9.24"
     }
     repositories {
-        // maven {
-        //     url 'https://api.mapbox.com/downloads/v2/releases/maven'
-        //     authentication {
-        //         basic(BasicAuthentication)
-        //     }
-        //     credentials {
-        //         // Do not change the username below.
-        //         // This should always be `mapbox` (not your username).
-        //         username = 'mapbox'
-        //         // Use the secret token you stored in gradle.properties as the password
-        //         password = project.properties['MAPBOX_DOWNLOADS_TOKEN'] ?: ""
-        //     }
-        // }
         google()
         mavenCentral()
-        // maven { url 'https://api.mapbox.com/downloads/v2/releases/maven' }
-        // maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-        // maven { url 'https://jitpack.io' }
-        // maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
@@ -34,5 +17,23 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
     }
 }
+allprojects {
+    repositories {
+        mavenCentral()
+        google()
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                username = 'mapbox'
+                password = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImNhZTQzZGJkZGFiZjIyNjFkODc5MzY2YmFmMTNlOGMzOWYwZGU3Y2FkMjBmYTIzYWEzM2U1YjQ0MDg0ZTMyNDNiOTkxOTM4YWI4ZGFjMjU0In0.eyJhdWQiOiIyOTI5MyIsImp0aSI6ImNhZTQzZGJkZGFiZjIyNjFkODc5MzY2YmFmMTNlOGMzOWYwZGU3Y2FkMjBmYTIzYWEzM2U1YjQ0MDg0ZTMyNDNiOTkxOTM4YWI4ZGFjMjU0IiwiaWF0IjoxNzI5OTI0ODk0LCJuYmYiOjE3Mjk5MjQ4OTQsImV4cCI6MTczMjQzMDQ5NCwic3ViIjoiIiwic2NvcGVzIjpbImJhc2ljIl19.jkWCmApAjUPuG9vvzRspB_DXGOlwK1QaFmANAMfo44HWqWI4Cz7AgIfRaLqU3rvD7IgYQb-1B4U-QqguiTaHTF43UqgfIrOncmZ-OYz3nXkVasXy_8AUYtYn0UzxCLIqtexoP-3KR1asNqTGgyhy7QKxD1WFOsxxcrIffgKGSuLKaYu4sW5bBbzno4heXO6avQ8ms2iQdOFUvpxG9gbTtHKvW6HI_ewIct_i6G7QOQJfo_r-_tvEYL7UiTZb0VG_Q0gx4x-Zuk6re8tE7MYF9NeCXbIYf7fOEx8Um9K3-vObFIhZncv9uOUfx4SzOjyaK8xGyCz0jeuK8MYfN2HKrw'
+            }
+        }
+        maven { url 'https://jitpack.io' }
+    }
+}
+
 
 apply plugin: "com.facebook.react.rootproject"

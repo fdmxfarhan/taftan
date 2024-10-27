@@ -20,7 +20,13 @@ import NavBar from '../components/navbar';
 import SideMenu from '../components/SideMenu';
 const {saveData, readData} = require('../config/save');
 import Geolocation from 'react-native-geolocation-service';
+import MapLibreGL from "@maplibre/maplibre-react-native";
+
+MapLibreGL.setAccessToken(null);
+
+
 // import Mapir from 'mapir-react-native-sdk';
+// import MapView, { PROVIDER_OSM  } from 'react-native-maps'; // remove PROVIDER_GOOGLE import if not using Google Maps
 
 
 const MapPage = (props) => {    
@@ -39,25 +45,25 @@ const MapPage = (props) => {
 
     const requestLocationPermission = async () => {
         if (Platform === 'android') {
-            PermissionsAndroid.requestMultiple(
-              [
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-              ],
-              {
-                title: 'Give Location Permission',
-                message: 'App needs location permission to find your position.',
-              }
-            )
-              .then((granted) => {
-                console.log(granted);
-                resolve();
-              })
-              .catch((err) => {
-                console.warn(err);
-                reject(err);
-              });
-          }
+          PermissionsAndroid.requestMultiple(
+            [
+              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+              PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            ],
+            {
+              title: 'Give Location Permission',
+              message: 'App needs location permission to find your position.',
+            }
+          )
+            .then((granted) => {
+              console.log(granted);
+              resolve();
+            })
+            .catch((err) => {
+              console.warn(err);
+              reject(err);
+            });
+        }
     };
     
     const getCurrentLocation = async () => {
@@ -70,7 +76,7 @@ const MapPage = (props) => {
           },
           (error) => {
             console.warn(error.message);
-            Alert.alert('Error', 'Could not fetch location');
+            requestLocationPermission();
           },
           {
             enableHighAccuracy: true,
@@ -109,10 +115,13 @@ const MapPage = (props) => {
                 leftIcon="arrow-back"
                 rightIcon="menu"
             />
+            <MapLibreGL.MapView
+              style={styles.map}
+              logoEnabled={false}
+              styleURL="https://demotiles.maplibre.org/style.json"
+            />
             {location ? (
-                <View>
-
-                </View>
+              <View></View>
              ) : (
                 <Text>Fetching location...</Text>
             )}
@@ -146,7 +155,17 @@ const styles = StyleSheet.create({
         color: colors.lightBackground,
         marginTop: 20,
         fontWeight: 'bold',
-
+    },
+    mapContainer: {
+      height: 400,
+      width: 400,
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+    },
+    map: {
+      flex: 1,
+      width: '100%',
+      height: 400,
     },
 });
 
