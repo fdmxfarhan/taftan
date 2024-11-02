@@ -10,6 +10,16 @@ import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
+import firebase from '@react-native-firebase/app';
+
+const firebaseConfig = {
+    
+};
+
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
 
 const Home = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);

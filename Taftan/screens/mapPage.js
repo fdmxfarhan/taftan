@@ -117,9 +117,22 @@ const MapPage = (props) => {
             />
             <MapLibreGL.MapView
               style={styles.map}
-              logoEnabled={false}
-              styleURL="https://demotiles.maplibre.org/style.json"
-            />
+              // styleURL="https://demotiles.maplibre.org/style.json" // Default MapLibre style
+              styleURL="https://maps.tilehosting.com/styles/streets/style.json" // Default MapLibre style
+            >
+              {/* Camera to set initial zoom and position */}
+              <MapLibreGL.Camera
+                zoomLevel={2}
+                centerCoordinate={[12.4924, 41.8902]} // Longitude, Latitude for Rome, Italy
+              />
+              {/* <MapLibreGL.RasterLayer /> */}
+              {/* Example Marker */}
+              <MapLibreGL.MarkerView coordinate={[12.4924, 41.8902]}>
+                <View style={styles.markerContainer}>
+                  <View style={styles.marker} />
+                </View>
+              </MapLibreGL.MarkerView>
+            </MapLibreGL.MapView>
             {location ? (
               <View></View>
              ) : (

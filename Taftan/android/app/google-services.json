@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "289904883904",
+    "project_id": "taftan-19de2",
+    "storage_bucket": "taftan-19de2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289904883904:android:432eb2aed9a1a019345525",
+        "android_client_info": {
+          "package_name": "com.taftan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo6deaQf2PVKRzv8dXojuMwS3LQKe69Kg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
