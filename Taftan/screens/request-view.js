@@ -23,9 +23,11 @@ const {saveData, readData} = require('../config/save');
 import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
 import { FlatList } from 'react-native-gesture-handler';
+import Popup from '../components/popup';
 
 const RequestView = (props) => {   
     const { item } = props.route.params;
+    const [modalEnable, setModalEnable] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [reqinfoEN, setReqinfoEN] = useState(false);
@@ -54,6 +56,13 @@ const RequestView = (props) => {
         {id: '2', name: 'فاطمه حمزه', type: 'اصلی'},
         {id: '3', name: 'فاطمه حمزه', type: 'اصلی'},
         {id: '4', name: 'فاطمه حمزه', type: 'اصلی'},
+    ])
+    const [configuration, setConfiguration] = useState([
+        {id: '1',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
+        {id: '2',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
+        {id: '3',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
+        {id: '4',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
+        {id: '5',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
     ])
     
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -108,13 +117,34 @@ const RequestView = (props) => {
 
     return(
         <View style={styles.container}>
-            <NavBar
-                rightCallback={saveEverything} 
+            <NavBar rightCallback={saveEverything} 
                 leftCallback={handleSearchPress} 
                 title="درخواست‌های خرابی" 
                 leftIcon="arrow-back"
-                rightIcon="save-outline"
-            />
+                rightIcon="save-outline"/>
+            
+            <Popup modalVisible={modalEnable} setModalVisible={setModalEnable}>
+                <View style={popupStyles.titleView}>
+                    <Text style={popupStyles.titleText}>مدل ماژول</Text>
+                    <Text style={popupStyles.titleText}>سریال</Text>
+                    <Text style={popupStyles.titleText}>کد انبار</Text>
+                    <Text style={popupStyles.titleText}>ماژول</Text>
+                </View>
+                <ScrollView style={popupStyles.scroll}>
+                    {configuration.map((item, index) => (
+                        <View key={index} style={popupStyles.itemView}>
+                            <Text style={popupStyles.itemText}>{item.moduleModel}</Text>
+                            <Text style={popupStyles.itemText}>{item.serial}</Text>
+                            <Text style={popupStyles.itemText}>{item.warehouseCode}</Text>
+                            <Text style={popupStyles.itemText}>{item.module}</Text>
+                        </View>
+                    ))}
+                </ScrollView>
+                <TouchableOpacity style={popupStyles.closeButton} onPress={() => setModalEnable(false)}>
+                    <Ionicons style={popupStyles.closeIcon} name={"close"} size={30} color={colors.white} />
+                    <Text style={popupStyles.closeButtonText}>بستن</Text>
+                </TouchableOpacity>
+            </Popup>
             <ScrollView style={styles.contents} keyboardShouldPersistTaps="handled" scrollEnabled={true}>
                 <TouchableOpacity style={styles.titleView} onPress={toggleReqinfoEN}>
                     <Text style={styles.title}>اطلاعات درخواست</Text>
@@ -397,7 +427,7 @@ const RequestView = (props) => {
                                 <Ionicons style={styles.buttonIcon} name="desktop-outline" />
                                 <Text style={styles.buttonText}>آخرین درخواست‌های دستگاه</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
+                            <TouchableOpacity style={styles.submitButton} onPress={() => setModalEnable(true)}>
                                 <Ionicons style={styles.buttonIcon} name="bookmark-outline" />
                                 <Text style={styles.buttonText}>آخرین پیکر بندی دستگاه</Text>
                             </TouchableOpacity>
@@ -932,6 +962,57 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 0,
         borderBottomLeftRadius: 0,
     },
+});
+const popupStyles = StyleSheet.create({
+    scroll: {
+
+    },
+    titleView: {
+        flexDirection: 'row-reverse',
+    },
+    titleText: {
+        width: '25%',
+        textAlign: 'center',
+        fontFamily: 'iransans',
+        fontSize: 15,
+        backgroundColor: colors.gray,
+        color: colors.white,
+        paddingVertical: 4,
+        borderWidth: 1,
+        borderColor: colors.gray,
+    },
+    itemView: {
+        flexDirection: 'row-reverse',
+    },
+    itemText: {
+        width: '25%',
+        textAlign: 'center',
+        fontFamily: 'iransans',
+        fontSize: 15,
+        paddingVertical: 4,
+        borderWidth: 1,
+        borderColor: colors.lightgray,
+    },
+    closeButton: {
+        backgroundColor: colors.blue,
+        flexDirection: 'row-reverse',
+        marginTop: 10,
+        borderRadius: 5,
+        paddingHorizontal: 20,
+    },
+    closeIcon: {
+        fontFamily: 'iransans',
+        fontSize: 16,
+        paddingVertical: 4,
+        paddingHorizontal: 2,
+    },
+    closeButtonText: {
+        color: colors.white,
+        fontFamily: 'iransans',
+        fontSize: 16,
+        paddingVertical: 4,
+        paddingHorizontal: 20,
+    }
 });
 
 export default RequestView;

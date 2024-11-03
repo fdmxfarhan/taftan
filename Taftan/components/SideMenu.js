@@ -45,15 +45,23 @@ const SideMenu = (props) => {
             props.navigation.navigate('Home'); 
             onClose();
           }}>
-            <Text style={styles.menuText}>درخواست خرابی</Text>
+            <Text style={styles.menuText}>سرویس خرابی</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
-            <Text style={styles.menuText}>سرویس دوره‌ای</Text>
+            <Text style={styles.menuText}>سرویس نصب</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
-            <Text style={styles.menuText}>پروژه</Text>
+            <Text style={styles.menuText}>سرویس سایت سازی</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
+            <Text style={styles.menuText}>سرویس پروژه</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
+            <Text style={styles.menuText}>سرویس دوره ای</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => { 

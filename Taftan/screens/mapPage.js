@@ -117,8 +117,8 @@ const MapPage = (props) => {
             />
             <MapLibreGL.MapView
               style={styles.map}
-              // styleURL="https://demotiles.maplibre.org/style.json" // Default MapLibre style
-              styleURL="https://maps.tilehosting.com/styles/streets/style.json" // Default MapLibre style
+              styleURL="https://demotiles.maplibre.org/style.json" // Default MapLibre style
+              // styleURL="https://maps.tilehosting.com/styles/streets/style.json" // Default MapLibre style
             >
               {/* Camera to set initial zoom and position */}
               <MapLibreGL.Camera
