@@ -11,11 +11,26 @@ import {
   useColorScheme,
   View,
   TextInput,
+  ToastAndroid,
 } from 'react-native';
 import colors from '../components/colors';
+import { login } from '../services/auth';
 
 const Login = (props) => {
     var [loginView, setLoginView] = useState('admin');
+    var [username, setUsername] = useState('');
+    var [password, setPassword] = useState('');
+
+    const handleLogin = async () => {
+        const result = await login(username, password);
+        if (result.success){
+            console.log('Logged in!! ', result.user);
+            props.navigation.navigate('Home');
+        }
+        else{
+            ToastAndroid.show('به اینترنت متصل نیستید.', ToastAndroid.SHORT);
+        }
+    }
 
     return(
         <View style={styles.container}>
@@ -60,7 +75,7 @@ const Login = (props) => {
             </View>
             <TouchableOpacity 
                 style={styles.loginBtn}
-                onPress={() => props.navigation.navigate('Home')}
+                onPress={handleLogin}
                 >
                 <Text style={styles.loginText}>ورود</Text>
             </TouchableOpacity>

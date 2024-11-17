@@ -9,12 +9,14 @@ import {
   Dimensions,
   Modal,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
+import colors from './colors';
 
 const { width } = Dimensions.get('window');
 
 const SideMenu = (props) => {
   const [slideAnim] = useState(new Animated.Value(width * 0.7)); // Initial position off screen
-  var {isVisible, onClose, navigation} = props;
+  var { isVisible, onClose, navigation } = props;
 
   // Slide the menu in and out
   const toggleMenu = () => {
@@ -41,34 +43,39 @@ const SideMenu = (props) => {
         <View style={styles.menu}>
           <Text style={styles.menuTitle}>تفتان</Text>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => { 
-            props.navigation.navigate('Home'); 
-            onClose();
-          }}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceDamage'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'construct-outline'} />
             <Text style={styles.menuText}>سرویس خرابی</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceInstallation'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'hammer-outline'} />
             <Text style={styles.menuText}>سرویس نصب</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceSite'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'business-outline'} />
             <Text style={styles.menuText}>سرویس سایت سازی</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceProjects'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'clipboard-outline'} />
             <Text style={styles.menuText}>سرویس پروژه</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => { /* Handle navigation or action */ }}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServicePeriodic'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'repeat-outline'} />
             <Text style={styles.menuText}>سرویس دوره ای</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => { 
-            props.navigation.navigate('MapPage'); 
-            onClose();
-          }}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('MapPage'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'map-outline'} />
             <Text style={styles.menuText}>نقشه</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('Profile'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'person'} />
+            <Text style={styles.menuText}>پروفایل</Text>
           </TouchableOpacity>
         </View>
       </Animated.View>
@@ -103,9 +110,17 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    flexDirection: 'row-reverse',
+  },
+  sideButtonIcon: {
+    paddingTop: 4,
+    fontSize: 18,
+    paddingLeft: 10,
+    color: colors.darkBackground,
   },
   menuText: {
-    fontSize: 18,
+    fontSize: 16,
+    fontFamily: 'iransans'
   },
 });
 

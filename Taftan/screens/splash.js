@@ -14,8 +14,8 @@ import {
   View,
 } from 'react-native';
 import colors from '../components/colors';
-const {saveData, readData} = require('../config/save');
 import { request, PERMISSIONS } from 'react-native-permissions';
+import { getAuthData } from '../services/auth';
 
 const requestReadStoragePermission = async () => {
     try {
@@ -30,6 +30,7 @@ const requestReadStoragePermission = async () => {
       console.warn(err);
     }
 };
+
 const requestWriteStoragePermission = async () => {
     try {
         const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
@@ -42,6 +43,7 @@ const requestWriteStoragePermission = async () => {
       console.warn(err);
     }
 };
+
 const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
         try {
@@ -72,17 +74,17 @@ const Splash = (props) => {
         requestReadStoragePermission();
         requestWriteStoragePermission();
         requestLocationPermission();
-        setTimeout(() => {
-            readData().then((data) => {
-                if(data != null){
-                    props.navigation.navigate('Home');
-                }
-                else {
-                    props.navigation.navigate('Login');
-                    // props.navigation.navigate('Intro');
-                }
-            });
-        }, 1000);
+        const checkLogin = async () => {
+            const authData = await getAuthData();
+            if (authData && authData.token){
+                console.log('Login User: ', authData);
+                props.navigation.navigate('Home');
+            }
+            else {
+                props.navigation.navigate('Login');
+            }
+        }
+        checkLogin();
     })
     return(
         <View style={styles.container}>
