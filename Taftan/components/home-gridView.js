@@ -66,7 +66,6 @@ const styles = StyleSheet.create({
     },
     gridRow: {
         flexDirection: 'row-reverse',
-
     },
     gridButton: {
         width: '30%',
@@ -83,6 +82,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         paddingVertical: 15,
         borderRadius: 10,
+        // elevation: 5,
     },
     gridButtonText: {
         fontFamily: 'iransans',

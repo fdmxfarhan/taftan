@@ -51,6 +51,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         position: 'relative',
         height: 120,
+        backgroundColor: colors.lightBackground,
+        elevation: 5,
         // backgroundColor: colors.white,
     },
     notifStat: {
