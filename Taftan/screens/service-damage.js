@@ -29,6 +29,7 @@ const ServiceDamage = (props) => {
     };
     
     const sendRequest = async () => {
+        setIsLoading(true);
         var result = await submitDamageRequest();
         if(result.success){
             setDamageRequests(result.data.Data);
@@ -43,7 +44,8 @@ const ServiceDamage = (props) => {
     }
     useEffect(() => {
         sendRequest();
-    })
+        console.log('loading')
+    }, [])
 
     const [damageRequests, setDamageRequests] = useState([])
 

@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 14,
         paddingTop: 5,
+        color: colors.text,
     },
 });
 

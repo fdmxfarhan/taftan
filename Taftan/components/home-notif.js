@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         left: 20,
         top: 10,
+        color: colors.gray,
         fontFamily: 'iransans',
         fontSize: 14,
         color: colors.darkGreen,
@@ -69,10 +70,12 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
     },
     notifInfoTitle: {
+        color: colors.gray,
         fontFamily: 'iransans',
         fontSize: 14,
     },
     notifDate: {
+        color: colors.gray,
         fontFamily: 'iransans',
         fontSize: 11,
         textAlign: 'right',

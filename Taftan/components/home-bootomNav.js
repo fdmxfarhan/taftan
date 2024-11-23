@@ -64,11 +64,13 @@ const styles = StyleSheet.create({
     },
     bottomNavIcon: {
         fontSize: 23,
+        color: colors.gray,
     },
     bottomNavText: {
         fontFamily: 'iransans',
         fontSize: 12,
         paddingTop: 3,
+        color: colors.gray,
     },
 });
 

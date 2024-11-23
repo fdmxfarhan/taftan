@@ -27,11 +27,13 @@ const styles = StyleSheet.create({
         fontSize: 100,
         textAlign: 'center',
         marginTop: 200,
+        color: colors.gray,
     },
     text: {
         fontFamily: 'iransans',
         fontSize: 15,
         textAlign: 'center',
+        color: colors.gray,
     },
     refreshButton: {
         backgroundColor: colors.blue,
