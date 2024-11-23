@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { AppRegistry, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { AppRegistry, BackHandler, Text, View } from 'react-native';
 import { name as appName } from './app.json';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -18,13 +18,28 @@ import ServiceSite from './screens/service-site';
 import ServiceProjects from './screens/service-projects';
 import ServicePeriodic from './screens/service-periodic';
 
-
 const App = (props) => {
+  const navigationRef = useRef();
+
+  useEffect(() => {
+    const backAction = () => {
+      const currentRoute = navigationRef.current.getCurrentRoute().name;
+      if (currentRoute === 'Home') {
+        BackHandler.exitApp();
+        return true;
+      } else {
+        return false;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', backAction);
+    return () => backHandler.remove();
+  }, []);
   return (
     // <View>
     //     <Text>Hello World</Text>
     // </View>
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
       <Stack.Navigator>
         <Stack.Screen
           name="Splash"

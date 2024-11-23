@@ -1,17 +1,31 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Text,
     StyleSheet,
     View,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    Animated,
+    Dimensions
 } from 'react-native';
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
+const { width, height } = Dimensions.get('window');
+
 const BottomNav = ({ navigation }) => {    
+    const [slideAnim] = useState(new Animated.Value(height * 0.7)); // Initial position off screen
+
+    useEffect(() => {
+        Animated.timing(slideAnim, {
+            toValue: 0, // 70% of screen width
+            duration: 300,
+            useNativeDriver: true,
+        }).start();
+    });
+
     return (
-        <View style={styles.bottomNav}>
+        <Animated.View style={[styles.bottomNav, { transform: [{ translateY: slideAnim }] }]}>
             <TouchableOpacity style={styles.bottomNavButton}>
                 <Ionicons name={"settings-outline"} style={styles.bottomNavIcon} />
                 <Text style={styles.bottomNavText}>تنظیمات</Text>
@@ -24,7 +38,7 @@ const BottomNav = ({ navigation }) => {
                 <Ionicons name={"person-outline"} style={styles.bottomNavIcon} />
                 <Text style={styles.bottomNavText}>حساب کاربری</Text>
             </TouchableOpacity>
-        </View>
+        </Animated.View>
     );
 }
 

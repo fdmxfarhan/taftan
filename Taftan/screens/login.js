@@ -39,7 +39,7 @@ const Login = (props) => {
                 style={styles.logo}
             />
             <Text style={styles.title}>به سامانه تفتان خوش آمدید</Text>
-
+            
             {/* <View style={styles.viewSelector}>
                 <TouchableOpacity style={[styles.viewSelectorButton, {backgroundColor: loginView == 'admin'? colors.blue : 'transparent'}]} onPress={() => setLoginView('admin')}>
                     <Text style={styles.viewSelectorText}>کارشناس</Text>
@@ -48,6 +48,7 @@ const Login = (props) => {
                     <Text style={styles.viewSelectorText}>مدیر</Text>
                 </TouchableOpacity>
             </View> */}
+
             <View style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
                 <TextInput
                     style={[styles.textInput]}

@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
     Text,
     StyleSheet,
     View,
     FlatList,
-    TouchableOpacity
+    TouchableOpacity,
+    BackHandler
 } from 'react-native';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
@@ -27,6 +28,7 @@ if (!firebase.apps.length) {
 const Home = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [tabItem, setTabItem] = useState('Home');
+    
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -34,7 +36,6 @@ const Home = (props) => {
     const handleSearchPress = () => {
         console.log('Search clicked');
     };
-
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
@@ -62,7 +63,6 @@ const styles = StyleSheet.create({
         flex: 1,
         // backgroundColor: colors.white,
     },
-    
 });
 
 export default Home;
