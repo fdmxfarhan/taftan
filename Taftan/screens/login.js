@@ -1,17 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
     Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-  TextInput,
-  ToastAndroid,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableHighlight,
+    TouchableOpacity,
+    useColorScheme,
+    View,
+    TextInput,
+    ToastAndroid,
 } from 'react-native';
 import colors from '../components/colors';
 import { login } from '../services/auth';
@@ -23,23 +23,23 @@ const Login = (props) => {
 
     const handleLogin = async () => {
         const result = await login(username, password);
-        if (result.success){
+        if (result.success) {
             console.log('Logged in!! ', result.user);
             props.navigation.navigate('Home');
         }
-        else{
+        else {
             ToastAndroid.show('به اینترنت متصل نیستید.', ToastAndroid.SHORT);
         }
     }
 
-    return(
+    return (
         <View style={styles.container}>
-            <Image 
+            <Image
                 source={require('../assets/logo.png')}
                 style={styles.logo}
             />
             <Text style={styles.title}>به سامانه تفتان خوش آمدید</Text>
-            
+
             {/* <View style={styles.viewSelector}>
                 <TouchableOpacity style={[styles.viewSelectorButton, {backgroundColor: loginView == 'admin'? colors.blue : 'transparent'}]} onPress={() => setLoginView('admin')}>
                     <Text style={styles.viewSelectorText}>کارشناس</Text>
@@ -48,8 +48,8 @@ const Login = (props) => {
                     <Text style={styles.viewSelectorText}>مدیر</Text>
                 </TouchableOpacity>
             </View> */}
-            <View style={{display: 'flex', width: '100%', alignItems: 'center'}}>
-                <TextInput 
+            <View style={{ display: 'flex', width: '100%', alignItems: 'center' }}>
+                <TextInput
                     style={[styles.textInput]}
                     placeholder={'کد پرسنلی'}
                     placeholderTextColor={colors.white}
@@ -59,24 +59,24 @@ const Login = (props) => {
                     onChange={(text) => {
                         console.log('hello')
                     }}
-                    />
-                <TextInput 
+                />
+                <TextInput
                     style={[styles.textInput]}
                     placeholder={'کلمه عبور'}
                     secureTextEntry={true}
                     placeholderTextColor={colors.white}
                     // ref={passwordInput}
                     keyboardType={'number-pad'}
-                    // onSubmitEditing={checkLogin}
-                    // onChange={(text) => {
-                    //     setPassword(text.nativeEvent.text)
-                    // }}
-                    />
+                // onSubmitEditing={checkLogin}
+                // onChange={(text) => {
+                //     setPassword(text.nativeEvent.text)
+                // }}
+                />
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
                 style={styles.loginBtn}
                 onPress={handleLogin}
-                >
+            >
                 <Text style={styles.loginText}>ورود</Text>
             </TouchableOpacity>
         </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 50,
     },
-    textInput:{
+    textInput: {
         backgroundColor: 'transparent',
         borderBottomColor: colors.white,
         borderBottomWidth: 2,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
     },
-    loginBtn:{
+    loginBtn: {
         backgroundColor: colors.blue,
         width: '80%',
         borderBottomWidth: 2,
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         paddingVertical: 15,
     },
-    loginText:{
+    loginText: {
         textAlign: 'center',
         fontFamily: 'iransans',
         color: colors.white,
