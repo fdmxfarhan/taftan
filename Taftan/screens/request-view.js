@@ -24,11 +24,15 @@ import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
 import { FlatList } from 'react-native-gesture-handler';
 import Popup from '../components/popup';
+import { getRequestDetail } from '../services/req-detail';
+import LoadingView from '../components/loading';
 
 const RequestView = (props) => {   
     const { item } = props.route.params;
+    const [requestDetail, setRequestDetail] = useState(null);
     const [modalEnable, setModalEnable] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingSave, setIsLoadingSave] = useState(false);
     const [menuVisible, setMenuVisible] = useState(false);
     const [reqinfoEN, setReqinfoEN] = useState(false);
     const [damageInfo, setDamageInfo] = useState(false);
@@ -102,9 +106,9 @@ const RequestView = (props) => {
         setsupervisorInfo(!supervisorInfo);
     };
     const saveEverything = () => {
-        setIsLoading(true);
+        setIsLoadingSave(true);
         setTimeout(() => {
-          setIsLoading(false); // Stops loading after 3 seconds
+            setIsLoadingSave(false); // Stops loading after 3 seconds
           ToastAndroid.show('اطلاعات ذخیره شد.', ToastAndroid.SHORT);
         }, 3000);
     };
@@ -114,15 +118,22 @@ const RequestView = (props) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     }
-
+    useEffect(() => {
+        const sendRequest = async () => {
+            var result = await getRequestDetail(item.requestId);
+            setRequestDetail(result.data);
+            setIsLoading(false);
+        }
+        sendRequest();
+    })
     return(
         <View style={styles.container}>
+            <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <NavBar rightCallback={saveEverything} 
                 leftCallback={handleSearchPress} 
                 title="درخواست‌های خرابی" 
                 leftIcon="arrow-back"
                 rightIcon="save-outline"/>
-            
             <Popup modalVisible={modalEnable} setModalVisible={setModalEnable}>
                 <View style={popupStyles.titleView}>
                     <Text style={popupStyles.titleText}>مدل ماژول</Text>
@@ -160,7 +171,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.workNum}
+                        value={item.requestId.toString()}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -175,7 +186,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.customer}
+                        value={item.customerName}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -190,7 +201,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.submitedBy}
+                        value={item.customerInsertName}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -205,7 +216,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={`${item.date.year}/${item.date.month}/${item.date.day}`}
+                        value={requestDetail.requestInfo.persianStartDate}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -220,7 +231,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.sla + ' ساعت'}
+                        value={(item.requestDeadLine/3600) + ' ساعت'}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -235,7 +246,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'number-pad'}
-                        value={item.repeat.toString()}
+                        value={'-'}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -250,7 +261,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.damageTitle}
+                        value={item.serviceName}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -265,7 +276,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.branch}
+                        value={item.branchName}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -280,7 +291,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={`${item.date.year}/${item.date.month}/${item.date.day}`}
+                        value={item.persianInsertedDate}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -295,7 +306,7 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={`${item.date.year}/${item.date.month}/${item.date.day}`}
+                        value={requestDetail.requestInfo.persianEndDate}
                         editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -311,6 +322,7 @@ const RequestView = (props) => {
                         returnKeyType={'next'}
                         keyboardType={'default'}
                         editable={false}
+                        value={'-'}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -330,7 +342,8 @@ const RequestView = (props) => {
                         multiline={true}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.damageInfo.userApplicator}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -344,7 +357,8 @@ const RequestView = (props) => {
                         multiline={true}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.damageInfo.phone}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -355,8 +369,9 @@ const RequestView = (props) => {
                         placeholder="توضیحات"
                         multiline={true}
                         numberOfLines={5}
-                        // value={''
+                        value={requestDetail.damageInfo.description}
                         keyboardType={'default'}
+                        editable={false}
                         // onChangeText={text => setDescription(text)}
                     />
                 </View>)}
@@ -374,7 +389,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.damageInfo.deviceName}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -388,7 +404,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.damageInfo.deviceSerial}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -402,7 +419,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.damageInfo.modelTitle}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -416,7 +434,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.damageInfo.deviceTerminal}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -447,7 +466,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={item.persianLastState}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -460,7 +480,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={item.areaName}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -473,7 +494,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={item.persianInsertedDate}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -486,7 +508,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={item.expertName}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -499,7 +522,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.requestInfo.action}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -512,7 +536,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.requestInfo.description}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -539,7 +564,8 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={''}
+                        value={requestDetail.requestInfo.contractNum}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -553,6 +579,7 @@ const RequestView = (props) => {
                         returnKeyType={'next'}
                         keyboardType={'default'}
                         value={''}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -566,6 +593,7 @@ const RequestView = (props) => {
                         returnKeyType={'next'}
                         keyboardType={'default'}
                         value={''}
+                        editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
                         // }}
@@ -684,7 +712,7 @@ const RequestView = (props) => {
                     </TouchableOpacity>
                 </ScrollView>
             </View>
-            {isLoading && (
+            {isLoadingSave && (
                 <View style={styles.blackModal}>
                     <View style={styles.loadingView}>
                         <ActivityIndicator size="large" color="#00ff00" />
@@ -741,6 +769,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         width: '85%',
         margin: 'auto',
+        fontFamily: 'iransansbold',
     },
     textInput: {
         borderColor: colors.gray,
@@ -755,6 +784,7 @@ const styles = StyleSheet.create({
         direction: 'rtl',
         paddingVertical: 4,
         paddingHorizontal: 15,
+        color: colors.text,
     },
     textArea: {
         borderColor: colors.gray,
@@ -974,7 +1004,7 @@ const popupStyles = StyleSheet.create({
         width: '25%',
         textAlign: 'center',
         fontFamily: 'iransans',
-        fontSize: 15,
+        fontSize: 12,
         backgroundColor: colors.gray,
         color: colors.white,
         paddingVertical: 4,
@@ -988,7 +1018,7 @@ const popupStyles = StyleSheet.create({
         width: '25%',
         textAlign: 'center',
         fontFamily: 'iransans',
-        fontSize: 15,
+        fontSize: 11,
         paddingVertical: 4,
         borderWidth: 1,
         borderColor: colors.lightgray,
@@ -1002,14 +1032,14 @@ const popupStyles = StyleSheet.create({
     },
     closeIcon: {
         fontFamily: 'iransans',
-        fontSize: 16,
-        paddingVertical: 4,
+        fontSize: 15,
+        paddingTop: 8,
         paddingHorizontal: 2,
     },
     closeButtonText: {
         color: colors.white,
         fontFamily: 'iransans',
-        fontSize: 16,
+        fontSize: 14,
         paddingVertical: 4,
         paddingHorizontal: 20,
     }
