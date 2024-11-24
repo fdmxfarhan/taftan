@@ -13,11 +13,13 @@ import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
 import LoadingView from '../components/loading';
 import { submitPeriodicRequest } from '../services/ser-periodic';
+import NotConnected from '../components/no-connection';
 
 const ServicePeriodic = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
     const [periodicRequests, setPeriodicRequests] = useState([])
     const [isLoading, setIsLoading] = useState(true);
+    const [serviceConnected, setServiceConnected] = useState(true);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -25,20 +27,23 @@ const ServicePeriodic = (props) => {
     const handleSearchPress = () => {
         console.log('Search clicked');
     };
-    useEffect(() => {
-        const sendRequest = async () => {
-            var result = await submitPeriodicRequest();
-            if(result.success){
-                setPeriodicRequests(result.data.Data);
-                setIsLoading(false);
-            }
-            else{
-                ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
-                setIsLoading(false);
-            }
+    const sendRequest = async () => {
+        setIsLoading(true);
+        var result = await submitPeriodicRequest();
+        if(result.success){
+            setPeriodicRequests(result.data.Data);
+            setIsLoading(false);
+            setServiceConnected(true);
         }
+        else{
+            ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
+            setIsLoading(false);
+            setServiceConnected(false);
+        }
+    }
+    useEffect(() => {
         sendRequest();
-    })
+    }, []);
 
     const handleItemPress = (item) => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه', ToastAndroid.SHORT);
@@ -67,6 +72,7 @@ const ServicePeriodic = (props) => {
                 leftIcon="search"
                 rightIcon="menu"
             />
+            <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList
                 data={periodicRequests}
                 renderItem={renderItem}

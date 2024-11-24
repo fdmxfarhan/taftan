@@ -13,11 +13,13 @@ import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
 import LoadingView from '../components/loading';
 import { submitSiteRequest } from '../services/ser-site';
+import NotConnected from '../components/no-connection';
 
 const ServiceSite = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
     const [siteRequests, setSiteRequests] = useState([])
     const [isLoading, setIsLoading] = useState(true);
+    const [serviceConnected, setServiceConnected] = useState(true);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -26,20 +28,23 @@ const ServiceSite = (props) => {
         console.log('Search clicked');
     };
 
-    useEffect(() => {
-        const sendRequest = async () => {
-            var result = await submitSiteRequest();
-            if(result.success){
-                setSiteRequests(result.data.Data);
-                setIsLoading(false);
-            }
-            else{
-                ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
-                setIsLoading(false);
-            }
+    const sendRequest = async () => {
+        setIsLoading(true);
+        var result = await submitSiteRequest();
+        if(result.success){
+            setSiteRequests(result.data.Data);
+            setIsLoading(false);
+            setServiceConnected(true);
         }
+        else{
+            ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
+            setIsLoading(false);
+            setServiceConnected(false);
+        }
+    }
+    useEffect(() => {
         sendRequest();
-    })
+    }, []);
 
     const handleItemPress = (item) => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه', ToastAndroid.SHORT);
@@ -69,6 +74,7 @@ const ServiceSite = (props) => {
                 leftIcon="search"
                 rightIcon="menu"
             />
+            <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList
                 data={siteRequests}
                 renderItem={renderItem}

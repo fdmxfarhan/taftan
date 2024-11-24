@@ -13,11 +13,13 @@ import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
 import LoadingView from '../components/loading';
 import { submitInstallRequest } from '../services/ser-install';
+import NotConnected from '../components/no-connection';
 
 const ServiceInstallation = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
     const [installRequests, setInstallRequests] = useState([])
     const [isLoading, setIsLoading] = useState(true);
+    const [serviceConnected, setServiceConnected] = useState(true);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -25,20 +27,23 @@ const ServiceInstallation = (props) => {
     const handleSearchPress = () => {
         console.log('Search clicked');
     };
-    useEffect(() => {
-        const sendRequest = async () => {
-            var result = await submitInstallRequest();
-            if(result.success){
-                setInstallRequests(result.data.Data);
-                setIsLoading(false);
-            }
-            else{
-                ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
-                setIsLoading(false);
-            }
+    const sendRequest = async () => {
+        setIsLoading(true);
+        var result = await submitInstallRequest();
+        if(result.success){
+            setInstallRequests(result.data.Data);
+            setIsLoading(false);
+            setServiceConnected(true);
         }
+        else{
+            ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
+            setIsLoading(false);
+            setServiceConnected(false);
+        }
+    }
+    useEffect(() => {
         sendRequest();
-    })
+    }, []);
 
     const handleItemPress = (item) => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه', ToastAndroid.SHORT);
@@ -68,6 +73,7 @@ const ServiceInstallation = (props) => {
                 leftIcon="search"
                 rightIcon="menu"
             />
+            <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList
                 data={installRequests}
                 renderItem={renderItem}
