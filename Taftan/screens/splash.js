@@ -58,7 +58,7 @@ const requestLocationPermission = async () => {
                 },
             );
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                console.log('You can use the location');
+                // console.log('You can use the location');
             } else {
                 console.log('Location permission denied');
             }
@@ -77,7 +77,7 @@ const Splash = (props) => {
         const checkLogin = async () => {
             const authData = await getAuthData();
             if (authData && authData.token){
-                console.log('Login User: ', authData);
+                // console.log('Login User: ', authData);
                 props.navigation.navigate('Home');
             }
             else {

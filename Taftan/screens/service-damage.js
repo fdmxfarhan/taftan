@@ -44,7 +44,6 @@ const ServiceDamage = (props) => {
     }
     useEffect(() => {
         sendRequest();
-        console.log('loading')
     }, [])
 
     const [damageRequests, setDamageRequests] = useState([])

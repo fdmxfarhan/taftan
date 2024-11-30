@@ -19,15 +19,19 @@ import {
 } from 'react-native';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
-const {saveData, readData} = require('../config/save');
+const { saveData, readData } = require('../config/save');
 import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
 import { FlatList } from 'react-native-gesture-handler';
 import Popup from '../components/popup';
 import { getRequestDetail } from '../services/req-detail';
 import LoadingView from '../components/loading';
+import RequestActions from '../components/req-actions';
+import DropDownPicker from 'react-native-dropdown-picker';
+import PersianDatePicker from '../components/persian-date-picker';
+import NewActionPopup from '../components/rec-new-action';
 
-const RequestView = (props) => {   
+const RequestView = (props) => {
     const { item } = props.route.params;
     const [requestDetail, setRequestDetail] = useState(null);
     const [modalEnable, setModalEnable] = useState(false);
@@ -42,31 +46,32 @@ const RequestView = (props) => {
     const [serviceStateInfo, setserviceStateInfo] = useState(false);
     const [actionsInfo, setactionsInfo] = useState(false);
     const [supervisorInfo, setsupervisorInfo] = useState(false);
-
+    const [actionPopupEN, setActionPopupEN] = useState(false);
+    
     const [stateHistory, setstateHistory] = useState([
-        {id: '1', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.'},
-        {id: '2', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.'},
-        {id: '3', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.'},
-        {id: '4', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.'},
+        { id: '1', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
+        { id: '2', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
+        { id: '3', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
+        { id: '4', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
     ])
     const [actionsHistory, setactionsHistory] = useState([
-        {id: '1', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false},
-        {id: '2', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false},
-        {id: '3', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false},
-        {id: '4', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false},
+        { id: '1', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
+        { id: '2', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
+        { id: '3', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
+        { id: '4', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
     ])
     const [supervisors, setSupervisors] = useState([
-        {id: '1', name: 'فاطمه حمزه', type: 'اصلی'},
-        {id: '2', name: 'فاطمه حمزه', type: 'اصلی'},
-        {id: '3', name: 'فاطمه حمزه', type: 'اصلی'},
-        {id: '4', name: 'فاطمه حمزه', type: 'اصلی'},
+        { id: '1', name: 'فاطمه حمزه', type: 'اصلی' },
+        { id: '2', name: 'فاطمه حمزه', type: 'اصلی' },
+        { id: '3', name: 'فاطمه حمزه', type: 'اصلی' },
+        { id: '4', name: 'فاطمه حمزه', type: 'اصلی' },
     ])
     const [configuration, setConfiguration] = useState([
-        {id: '1',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
-        {id: '2',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
-        {id: '3',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
-        {id: '4',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
-        {id: '5',moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer'},
+        { id: '1', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
+        { id: '2', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
+        { id: '3', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
+        { id: '4', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
+        { id: '5', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
     ])
     
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -109,7 +114,7 @@ const RequestView = (props) => {
         setIsLoadingSave(true);
         setTimeout(() => {
             setIsLoadingSave(false); // Stops loading after 3 seconds
-          ToastAndroid.show('اطلاعات ذخیره شد.', ToastAndroid.SHORT);
+            ToastAndroid.show('اطلاعات ذخیره شد.', ToastAndroid.SHORT);
         }, 3000);
     };
     const handleSearchPress = () => {
@@ -117,7 +122,8 @@ const RequestView = (props) => {
     };
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
-    }
+    };
+
     useEffect(() => {
         const sendRequest = async () => {
             var result = await getRequestDetail(item.requestId);
@@ -126,14 +132,14 @@ const RequestView = (props) => {
         }
         sendRequest();
     })
-    return(
+    return (
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
-            <NavBar rightCallback={saveEverything} 
-                leftCallback={handleSearchPress} 
-                title="درخواست‌های خرابی" 
+            <NavBar rightCallback={saveEverything}
+                leftCallback={handleSearchPress}
+                title="درخواست‌های خرابی"
                 leftIcon="arrow-back"
-                rightIcon="save-outline"/>
+                rightIcon="save-outline" />
             <Popup modalVisible={modalEnable} setModalVisible={setModalEnable}>
                 <View style={popupStyles.titleView}>
                     <Text style={popupStyles.titleText}>مدل ماژول</Text>
@@ -156,6 +162,7 @@ const RequestView = (props) => {
                     <Text style={popupStyles.closeButtonText}>بستن</Text>
                 </TouchableOpacity>
             </Popup>
+            <NewActionPopup actionPopupEN={actionPopupEN} setActionPopupEN={setActionPopupEN} requestItem={item} />
             <ScrollView style={styles.contents} keyboardShouldPersistTaps="handled" scrollEnabled={true}>
                 <TouchableOpacity style={styles.titleView} onPress={toggleReqinfoEN}>
                     <Text style={styles.title}>اطلاعات درخواست</Text>
@@ -173,9 +180,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.requestId.toString()}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>مشتری: </Text>
                     <TextInput
@@ -188,9 +195,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.customerName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>کاربر درخواست کننده: </Text>
                     <TextInput
@@ -203,9 +210,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.customerInsertName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>تاریخ شروع: </Text>
                     <TextInput
@@ -218,9 +225,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.requestInfo.persianStartDate}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>مهلت انجام کار: </Text>
                     <TextInput
@@ -231,11 +238,11 @@ const RequestView = (props) => {
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={(item.requestDeadLine/3600) + ' ساعت'}
+                        value={(item.requestDeadLine / 3600) + ' ساعت'}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>تکرار خرابی: </Text>
                     <TextInput
@@ -248,9 +255,9 @@ const RequestView = (props) => {
                         keyboardType={'number-pad'}
                         value={'-'}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>سرویس: </Text>
                     <TextInput
@@ -263,9 +270,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.serviceName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>شعبه: </Text>
                     <TextInput
@@ -278,9 +285,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.branchName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>تاریخ ثبت: </Text>
                     <TextInput
@@ -293,9 +300,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.persianInsertedDate}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>تاریخ پایان: </Text>
                     <TextInput
@@ -308,9 +315,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.requestInfo.persianEndDate}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>علت تاخیر: </Text>
                     <TextInput
@@ -323,9 +330,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         editable={false}
                         value={'-'}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                 </View>)}
                 <TouchableOpacity style={styles.titleView} onPress={toggleDamageInfo}>
@@ -344,9 +351,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.damageInfo.userApplicator}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>شماره تماس: </Text>
                     <TextInput
@@ -359,9 +366,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.damageInfo.phone}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>توضیحات: </Text>
                     <TextInput
@@ -372,7 +379,7 @@ const RequestView = (props) => {
                         value={requestDetail.damageInfo.description}
                         keyboardType={'default'}
                         editable={false}
-                        // onChangeText={text => setDescription(text)}
+                    // onChangeText={text => setDescription(text)}
                     />
                 </View>)}
                 <TouchableOpacity style={styles.titleView} onPress={toggleDeviceInfo}>
@@ -391,9 +398,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.damageInfo.deviceName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>سریال دستگاه: </Text>
                     <TextInput
@@ -406,9 +413,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.damageInfo.deviceSerial}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>مدل دستگاه: </Text>
                     <TextInput
@@ -421,9 +428,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.damageInfo.modelTitle}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>شماره ترمینال: </Text>
                     <TextInput
@@ -436,9 +443,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.damageInfo.deviceTerminal}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <View style={styles.buttonsView}>
                         <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
@@ -468,9 +475,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.persianLastState}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>دفتر: </Text>
                     <TextInput
@@ -482,9 +489,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.areaName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>زمان: </Text>
                     <TextInput
@@ -496,9 +503,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.persianInsertedDate}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>کارشناس: </Text>
                     <TextInput
@@ -510,9 +517,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={item.expertName}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>اقدام: </Text>
                     <TextInput
@@ -524,9 +531,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.requestInfo.action}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>شرح: </Text>
                     <TextInput
@@ -538,9 +545,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.requestInfo.description}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <View style={styles.buttonsView}>
                         <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
@@ -566,9 +573,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={requestDetail.requestInfo.contractNum}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>زمان سپری شده: </Text>
                     <TextInput
@@ -580,9 +587,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={''}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                     <Text style={styles.label}>مهلت زمان انجام درخواست: </Text>
                     <TextInput
@@ -594,9 +601,9 @@ const RequestView = (props) => {
                         keyboardType={'default'}
                         value={''}
                         editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
                     />
                 </View>)}
                 <TouchableOpacity style={styles.titleView} onPress={toggleserviceStateInfo}>
@@ -696,22 +703,7 @@ const RequestView = (props) => {
                     ))}
                 </View>)}
             </ScrollView>
-            <View style={styles.buttonsView}>
-                <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                    <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
-                        <Ionicons style={styles.buttonIcon} name="shuffle" />
-                        <Text style={styles.buttonText}>بازگشت کار</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
-                        <Ionicons style={styles.buttonIcon} name="chatbubbles" />
-                        <Text style={styles.buttonText}>ارجاع کار/تخصیص کارشناس</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
-                        <Ionicons style={styles.buttonIcon} name="stats-chart" />
-                        <Text style={styles.buttonText}>وضعیت سرویس</Text>
-                    </TouchableOpacity>
-                </ScrollView>
-            </View>
+            <RequestActions notWorking={notWorking} addActionHandler={() => setActionPopupEN(true)} />
             {isLoadingSave && (
                 <View style={styles.blackModal}>
                     <View style={styles.loadingView}>
@@ -799,36 +791,6 @@ const styles = StyleSheet.create({
         direction: 'rtl',
         paddingVertical: 4,
         paddingHorizontal: 15,
-    },
-    buttonsView: {
-        flexDirection: 'row-reverse',
-        width: '90%',
-        margin: 'auto',
-    },
-    submitButton: {
-        backgroundColor: colors.blue,
-        paddingHorizontal: 20,
-        paddingVertical: 13,
-        marginHorizontal: 5,
-        marginVertical: 10,
-        borderRadius: 5,
-        textAlign: 'center',
-        flexDirection: 'row-reverse',
-        direction: 'rtl',
-    },
-    buttonIcon: {
-        color: colors.white,
-        textAlign: 'center',
-        paddingLeft: 10,
-        fontSize: 16,
-    },
-    buttonText: {
-        color: colors.white,
-        fontSize: 16,
-    },
-    buttonScrollView: {
-        direction: 'rtl',
-        textAlign: 'right',
     },
     stateItemView: {
         width: '90%',
@@ -992,6 +954,7 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 0,
         borderBottomLeftRadius: 0,
     },
+    
 });
 const popupStyles = StyleSheet.create({
     scroll: {

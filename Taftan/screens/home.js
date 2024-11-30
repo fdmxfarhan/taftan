@@ -16,6 +16,8 @@ import TabLink from '../components/home-tabLinks';
 import GridView from '../components/home-gridView';
 import BottomNav from '../components/home-bootomNav';
 import HomeNotif from '../components/home-notif';
+import PersianDatePicker from '../components/persian-date-picker';
+import SimpleScrollPicker from '../components/Picker';
 
 const firebaseConfig = {
 
@@ -47,6 +49,7 @@ const Home = (props) => {
                     <BottomNav navigation={props.navigation} />
                 </View>
             )}
+            
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
         </View>
     );
