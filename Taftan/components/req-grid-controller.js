@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
     },
     button: {
         paddingHorizontal: 9,
-        paddingVertical: 5,
+        paddingTop: 5,
+        paddingBottom: 0,
     },
     number: {
         fontFamily: 'iransans',
