@@ -10,13 +10,14 @@ import Home from './screens/home';
 import Login from './screens/login';
 import Splash from './screens/splash';
 import MapPage from './screens/mapPage';
-import RequestView from './screens/request-view';
+import DamageReqView from './screens/request-view-damage';
 import Profile from './screens/profile';
 import ServiceDamage from './screens/service-damage';
 import ServiceInstallation from './screens/service-installations';
 import ServiceSite from './screens/service-site';
 import ServiceProjects from './screens/service-projects';
 import ServicePeriodic from './screens/service-periodic';
+import InstallationReqView from './screens/request-view-installation';
 
 const App = (props) => {
   const navigationRef = useRef();
@@ -57,8 +58,13 @@ const App = (props) => {
           options={({ route }) => ({ headerShown: false })}
         />
         <Stack.Screen
-          name="RequestView"
-          component={RequestView}
+          name="DamageReqView"
+          component={DamageReqView}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="InstallationReqView"
+          component={InstallationReqView}
           options={({ route }) => ({ headerShown: false })}
         />
         <Stack.Screen

@@ -13,6 +13,7 @@ module.exports = {
     darkGreen: '#4ac91c',
     red: '#f1683f',
     red2: '#F72585',
+    red3: '#F72535',
     button: '#3FAEE0',
     blue: '#36B3FF',
     darkblue: '#38719B',

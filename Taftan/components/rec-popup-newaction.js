@@ -11,7 +11,7 @@ import TimePicker from './time-picker';
 import TwoChoice from './twochoice';
 import { saveRequestActionReport } from '../services/save-request-action-report';
 
-const NewActionPopup = ({ requestItem, actionPopupEN, setActionPopupEN }) => {
+const NewActionPopup = ({ requestItem, popupEN, setPopupEN }) => {
     const [actionTypeList, setActionTypeList] = useState([
         { label: 'مراجعه', value: '1' },
         { label: 'اقدام از طریق مانیتورینگ', value: '2' },
@@ -39,18 +39,17 @@ const NewActionPopup = ({ requestItem, actionPopupEN, setActionPopupEN }) => {
                 Date: `${selectedYear}/${selectedMonth}/${selectedDay}`,
                 startTime: `${selectStartHour}:${selectStartMin}`,
                 endTime: `${selectEndHour}:${selectEndMin}`,
-                actionTypeId: actionTypeValue,
+                actionTypeId: parseInt(actionTypeValue),
                 actinResult: actionResult,
                 unsuccessfullActionReasonId: 0,
                 unsuccessfullActionSide: true,
                 description: actionDescription,
-                requestId: requestItem.requestId.toString(),
-                reportId: 0,
-                fileName: ""
+                requestId: requestItem.requestId,
+                fileName: "asdf"
             });
             if (result.success) {
                 ToastAndroid.show('اقدام جدید ثبت شد.', ToastAndroid.LONG);
-                setActionPopupEN(false);
+                setPopupEN(false);
             }
             else {
                 ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
@@ -61,7 +60,7 @@ const NewActionPopup = ({ requestItem, actionPopupEN, setActionPopupEN }) => {
 
     return (
         <View>
-            <Popup modalVisible={actionPopupEN} setModalVisible={setActionPopupEN}>
+            <Popup modalVisible={popupEN} setModalVisible={setPopupEN}>
                 <Text style={styles.actionLabel}>نوع اقدام: </Text>
                 <DropDownPicker
                     open={actionTypeOpen}
@@ -102,13 +101,13 @@ const NewActionPopup = ({ requestItem, actionPopupEN, setActionPopupEN }) => {
                     numberOfLines={5}
                     value={actionDescription}
                     keyboardType={'default'}
-                    onChange={(text) => {setactionDescription(text)}}
+                    onChange={(text) => {setactionDescription(text.nativeEvent.text)}}
                 />
                 <View style={styles.submitButtonsView}>
                     <TouchableOpacity style={styles.submitButton} onPress={saveActionRequest}>
                         <Text style={styles.submitButtonText}>تایید</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.cancleButton} onPress={() => setActionPopupEN(false)}>
+                    <TouchableOpacity style={styles.cancleButton} onPress={() => setPopupEN(false)}>
                         <Text style={styles.cancleButtonText}>انصراف</Text>
                     </TouchableOpacity>
                 </View>
@@ -197,7 +196,7 @@ const styles = StyleSheet.create({
         width: '46%',
         marginHorizontal: '2%',
         paddingVertical: 5,
-        backgroundColor: colors.darkGreen,
+        backgroundColor: colors.emerald,
         borderRadius: 5,
     },
     submitButtonText: {
@@ -210,7 +209,7 @@ const styles = StyleSheet.create({
         width: '46%',
         marginHorizontal: '2%',
         paddingVertical: 5,
-        backgroundColor: colors.red,
+        backgroundColor: colors.red3,
         borderRadius: 5,
     },
     cancleButtonText: {

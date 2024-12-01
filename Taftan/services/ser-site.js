@@ -1,11 +1,11 @@
 import api from '../config/api';
 
-export const submitSiteRequest = async () => {
+export const submitSiteRequest = async (skip, take) => {
     try {
         const response = await api.post('/RequestSiteController/loadAllSiteRequestList',
             {
-                "skip": 0,
-                "take": 10,
+                "skip": skip,
+                "take": take,
                 "sort": [{
                     "field": "id",
                     "dir": "desc"

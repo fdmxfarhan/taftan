@@ -14,12 +14,16 @@ import NavBar from '../components/navbar';
 import LoadingView from '../components/loading';
 import { submitProjectRequest } from '../services/ser-projects';
 import NotConnected from '../components/no-connection';
+import getSLAColor from '../config/getSLAColor';
+import ReqGridController from '../components/req-grid-controller';
 
 const ServiceProjects = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
     const [projectsRequests, setProjectsRequests] = useState([])
     const [isLoading, setIsLoading] = useState(true);
     const [serviceConnected, setServiceConnected] = useState(true);
+    const [skipValue, setskipValue] = useState(1);
+    const [rowsValue, setrowsValue] = useState(10);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -27,9 +31,9 @@ const ServiceProjects = (props) => {
     const handleSearchPress = () => {
         console.log('Search clicked');
     };
-    const sendRequest = async () => {
+    const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitProjectRequest();
+        var result = await submitProjectRequest(skip, take);
         if(result.success){
             setProjectsRequests(result.data.Data);
             setIsLoading(false);
@@ -42,7 +46,7 @@ const ServiceProjects = (props) => {
         }
     }
     useEffect(() => {
-        sendRequest();
+        sendRequest(skipValue, rowsValue);
     },[])
 
     const handleItemPress = (item) => {
@@ -58,7 +62,7 @@ const ServiceProjects = (props) => {
             
             <View style={styles.stateView}>
                 <Text style={styles.state}>{item.persianLastState}</Text>
-                <View style={[styles.stateCircle, {backgroundColor: item.stateColor == 'red'? colors.red : colors.green}]}/>
+                <View style={[styles.stateCircle, {backgroundColor: getSLAColor(item.SLAStyle)}]}/>
             </View>
             <Text style={styles.date}>{item.persianInsertedDate}</Text>
         </TouchableOpacity>
@@ -72,6 +76,15 @@ const ServiceProjects = (props) => {
                 leftIcon="search"
                 rightIcon="menu"
             />
+            <ReqGridController 
+                currentPage={skipValue} 
+                skipValue={skipValue}
+                setskipValue={setskipValue}
+                setData={(skip, rows) => {
+                    setskipValue(skip);
+                    setrowsValue(rows);
+                    sendRequest(skip, rows);
+                }}/>
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList
                 data={projectsRequests}
@@ -102,7 +115,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginBottom: 2,
         fontFamily: 'iransansbold',
-        color: colors.darkBackground
+        textAlign: 'right',
+        color: colors.darkBackground,
     },
     damageTitle: {
         fontSize: 12,

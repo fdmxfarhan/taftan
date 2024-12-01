@@ -1,33 +1,46 @@
 // components/NavBar.js
 
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, ToastAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
+import NewActionPopup from './rec-popup-newaction';
+import AssignPopup from './rec-popup-assign';
+import ReturnPopup from './rec-popup-return';
 
-const RequestActions = ({ notWorking, addActionHandler }) => {
+const RequestActions = ({ item, requestDetail, userList, refrenceCauseList }) => {
+    var [actionPopupEN, setActionPopupEN] = useState(false);
+    var [assignPopupEN, setAssignPopupEN] = useState(false);
+    var [returnPopupEN, setReturnPopupEN] = useState(false);
+    const notWorking = () => {
+        ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
+    };
     return (
         <View style={styles.buttonsView}>
+            <NewActionPopup popupEN={actionPopupEN} setPopupEN={setActionPopupEN} requestItem={item} />
+            <AssignPopup popupEN={assignPopupEN} setPopupEN={setAssignPopupEN} reqInfo={requestDetail} userList={userList} />
+            <ReturnPopup popupEN={returnPopupEN} setPopupEN={setReturnPopupEN} refrenceCauseList={refrenceCauseList} />
+
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.orangepeel}]} onPress={notWorking}>
-                    <Ionicons style={styles.buttonIcon} name="shuffle" />
-                    <Text style={styles.buttonText}>بازگشت کار</Text>
+                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => setAssignPopupEN(true)}>
+                    <Ionicons style={styles.buttonIcon} name="chatbubbles" />
+                    <Text style={styles.buttonText}>ارجاع کار/تخصیص کارشناس</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={notWorking}>
-                    <Ionicons style={styles.buttonIcon} name="person-remove" />
-                    <Text style={styles.buttonText}>بستن کار توسط کارشناس</Text>
+                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setActionPopupEN(true)}>
+                    <Ionicons style={styles.buttonIcon} name="newspaper" />
+                    <Text style={styles.buttonText}>ثبت اقدام</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={notWorking}>
                     <Ionicons style={styles.buttonIcon} name="stats-chart" />
                     <Text style={styles.buttonText}>وضعیت سرویس</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={addActionHandler}>
-                    <Ionicons style={styles.buttonIcon} name="newspaper" />
-                    <Text style={styles.buttonText}>ثبت اقدام</Text>
+                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={notWorking}>
+                    <Ionicons style={styles.buttonIcon} name="person-remove" />
+                    <Text style={styles.buttonText}>بستن کار توسط کارشناس</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={notWorking}>
-                    <Ionicons style={styles.buttonIcon} name="chatbubbles" />
-                    <Text style={styles.buttonText}>ارجاع کار/تخصیص کارشناس</Text>
+                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.orangepeel}]} onPress={() => setReturnPopupEN(true)}>
+                    <Ionicons style={styles.buttonIcon} name="shuffle" />
+                    <Text style={styles.buttonText}>بازگشت کار</Text>
                 </TouchableOpacity>
             </ScrollView>
         </View>

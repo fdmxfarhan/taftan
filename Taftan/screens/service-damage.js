@@ -15,11 +15,15 @@ import NavBar from '../components/navbar';
 import { submitDamageRequest } from '../services/ser-damage';
 import LoadingView from '../components/loading';
 import NotConnected from '../components/no-connection';
+import getSLAColor from '../config/getSLAColor';
+import ReqGridController from '../components/req-grid-controller';
 
 const ServiceDamage = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [serviceConnected, setServiceConnected] = useState(true);
+    const [skipValue, setskipValue] = useState(1);
+    const [rowsValue, setrowsValue] = useState(10);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -27,10 +31,9 @@ const ServiceDamage = (props) => {
     const handleSearchPress = () => {
         console.log('Search clicked');
     };
-    
-    const sendRequest = async () => {
+    const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitDamageRequest();
+        var result = await submitDamageRequest(skip, take);
         if(result.success){
             setDamageRequests(result.data.Data);
             setIsLoading(false);
@@ -43,15 +46,13 @@ const ServiceDamage = (props) => {
         }
     }
     useEffect(() => {
-        sendRequest();
-    }, [])
+        sendRequest(skipValue, rowsValue);
+    }, []);
 
     const [damageRequests, setDamageRequests] = useState([])
-
     const handleItemPress = (item) => {
-        props.navigation.navigate('RequestView', { item }); // Navigate to 'Request' screen, passing the item as a prop
+        props.navigation.navigate('DamageReqView', { item });
     };
-
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
@@ -60,7 +61,12 @@ const ServiceDamage = (props) => {
             
             <View style={styles.stateView}>
                 <Text style={styles.state}>{item.persianLastState}</Text>
-                <View style={[styles.stateCircle, {backgroundColor: item.stateColor == 'red'? colors.red : colors.green}]}/>
+                {item.isPilot == 0 ? (
+                    <View style={[styles.stateCircle, {backgroundColor: getSLAColor(item.SLAStyle)}]}/>
+                ) : (
+                    <Ionicons style={styles.pilotIcon} name={'build'} />
+                )}
+                
             </View>
             <Text style={styles.date}>{item.persianInsertedDate}</Text>
         </TouchableOpacity>
@@ -75,6 +81,15 @@ const ServiceDamage = (props) => {
                 leftIcon="search"
                 rightIcon="menu"
             />
+            <ReqGridController 
+                currentPage={skipValue} 
+                skipValue={skipValue}
+                setskipValue={setskipValue}
+                setData={(skip, rows) => {
+                    setskipValue(skip);
+                    setrowsValue(rows);
+                    sendRequest(skip, rows);
+                }}/>
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList
                 data={damageRequests}
@@ -105,7 +120,9 @@ const styles = StyleSheet.create({
         fontSize: 14,
         marginBottom: 2,
         fontFamily: 'iransansbold',
-        color: colors.darkBackground
+        direction: 'rtl',
+        color: colors.darkBackground,
+        textAlign: 'right',
     },
     damageTitle: {
         fontSize: 12,
@@ -138,6 +155,10 @@ const styles = StyleSheet.create({
         width: 10, 
         height: 10,
         borderRadius: 5,
+    },
+    pilotIcon: {
+        color: colors.red3,
+        fontSize: 15,
     },
     state: {
         fontFamily: 'iransans',
