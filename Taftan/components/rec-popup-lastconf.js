@@ -1,18 +1,23 @@
 // components/NavBar.js
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
-import DropDownPicker from 'react-native-dropdown-picker';
-import PersianDatePicker from './persian-date-picker';
-import TimePicker from './time-picker';
-import TwoChoice from './twochoice';
-import { saveRequestActionReport } from '../services/save-request-action-report';
+import { loadDeviceConfigList } from '../services/device-load-device-config-list';
 
-const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, configuration }) => {
-    
+const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo }) => {
+    const [configuration, setConfiguration] = useState([]);
+    useEffect(() => {
+        const sendRequest = async () => {
+            var result = await loadDeviceConfigList(reqInfo.deviceId);
+            if(result.success){
+                setConfiguration(result.data.Data);
+            }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        }
+        sendRequest();
+    }, [])
     return (
         <View>
             <Popup modalVisible={lastConfModalEnable} setModalVisible={setlastConfModalEnable}>
@@ -24,11 +29,11 @@ const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, configurat
                 </View>
                 <ScrollView style={styles.scroll}>
                     {configuration.map((item, index) => (
-                        <View key={index} style={styles.itemView}>
-                            <Text style={styles.itemText}>{item.moduleModel}</Text>
+                        <View key={item.id} style={styles.itemView}>
+                            <Text style={styles.itemText}>{item.deviceModuleModel}</Text>
                             <Text style={styles.itemText}>{item.serial}</Text>
-                            <Text style={styles.itemText}>{item.warehouseCode}</Text>
-                            <Text style={styles.itemText}>{item.module}</Text>
+                            <Text style={styles.itemText}>{item.code}</Text>
+                            <Text style={styles.itemText}>{item.deviceHWTitle}</Text>
                         </View>
                     ))}
                 </ScrollView>

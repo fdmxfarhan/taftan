@@ -7,11 +7,15 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import NewActionPopup from './rec-popup-newaction';
 import AssignPopup from './rec-popup-assign';
 import ReturnPopup from './rec-popup-return';
+import StatusPopup from './rec-popup-status';
+import CloseCasePopup from './rec-popup-close';
 
-const RequestActions = ({ item, requestDetail, userList, refrenceCauseList }) => {
+const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, workCausesListTitle }) => {
     var [actionPopupEN, setActionPopupEN] = useState(false);
     var [assignPopupEN, setAssignPopupEN] = useState(false);
     var [returnPopupEN, setReturnPopupEN] = useState(false);
+    var [statusPopupEN, setStatusPopupEN] = useState(false);
+    var [closePopupEN, setClosePopupEN] = useState(false);
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
@@ -20,6 +24,8 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList }) =>
             <NewActionPopup popupEN={actionPopupEN} setPopupEN={setActionPopupEN} requestItem={item} />
             <AssignPopup popupEN={assignPopupEN} setPopupEN={setAssignPopupEN} reqInfo={requestDetail} userList={userList} />
             <ReturnPopup popupEN={returnPopupEN} setPopupEN={setReturnPopupEN} refrenceCauseList={refrenceCauseList} />
+            <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCausesListTitle={workCausesListTitle} />
+            <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} />
 
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
                 <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => setAssignPopupEN(true)}>
@@ -30,11 +36,11 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList }) =>
                     <Ionicons style={styles.buttonIcon} name="newspaper" />
                     <Text style={styles.buttonText}>ثبت اقدام</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={notWorking}>
+                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setStatusPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="stats-chart" />
                     <Text style={styles.buttonText}>وضعیت سرویس</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={notWorking}>
+                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => setClosePopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="person-remove" />
                     <Text style={styles.buttonText}>بستن کار توسط کارشناس</Text>
                 </TouchableOpacity>

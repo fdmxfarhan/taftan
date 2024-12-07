@@ -11,7 +11,7 @@ import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
-import firebase from '@react-native-firebase/app';
+// import firebase from '@react-native-firebase/app';
 import TabLink from '../components/home-tabLinks';
 import GridView from '../components/home-gridView';
 import BottomNav from '../components/home-bootomNav';
@@ -19,13 +19,13 @@ import HomeNotif from '../components/home-notif';
 import PersianDatePicker from '../components/persian-date-picker';
 import SimpleScrollPicker from '../components/Picker';
 
-const firebaseConfig = {
+// const firebaseConfig = {
 
-};
+// };
 
-if (!firebase.apps.length) {
-    firebase.initializeApp(firebaseConfig);
-}
+// if (!firebase.apps.length) {
+//     firebase.initializeApp(firebaseConfig);
+// }
 
 const Home = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);

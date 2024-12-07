@@ -1,12 +1,9 @@
 import api from '../config/api';
+import { use_local_data } from '../config/consts';
 
 export const getRequestDetail = async (requestId) => {
     try {
-        const response = await api.get(`/RequestController/GetRequestDetail/${requestId}`);
-        return { success: true, data: response.data };
-
-        ////////////////////////////////////////// Sample Data
-        return {
+        if (use_local_data) return {
             success: true, data: {
                 "requestInfo": {
                     "serviceGroup": 1,
@@ -70,6 +67,9 @@ export const getRequestDetail = async (requestId) => {
                 "pmInfo": null
             }
         };
+        const response = await api.get(`/RequestController/GetRequestDetail/${requestId}`);
+        return { success: true, data: response.data };
+
     } catch (error) {
         console.log('Error submitting damage request:', error);
         return { success: false, error: 'Failed to submit damage request' };

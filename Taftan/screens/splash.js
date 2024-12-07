@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import {
     Image,
-  PermissionsAndroid,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableOpacity,
-  useColorScheme,
-  View,
+    PermissionsAndroid,
+    Platform,
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableHighlight,
+    TouchableOpacity,
+    useColorScheme,
+    View,
 } from 'react-native';
 import colors from '../components/colors';
 import { request, PERMISSIONS } from 'react-native-permissions';
 import { getAuthData } from '../services/auth';
+import messaging from '@react-native-firebase/messaging';
 
 const requestReadStoragePermission = async () => {
     try {
         const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
             // console.log("You can use the camera");
         } else {
             console.log("Read_Storage permission denied");
         }
     } catch (err) {
-      console.warn(err);
+        console.warn(err);
     }
 };
 
@@ -40,7 +41,7 @@ const requestWriteStoragePermission = async () => {
             console.log("Write_Storage permission denied");
         }
     } catch (err) {
-      console.warn(err);
+        console.warn(err);
     }
 };
 
@@ -48,7 +49,7 @@ const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
         try {
             const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
                 {
                     title: 'Location Permission',
                     message: 'App needs access to your location',
@@ -67,16 +68,37 @@ const requestLocationPermission = async () => {
         }
     }
 };
+async function requestUserPermission() {
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-const Splash = (props) => {    
+    if (enabled) {
+        console.log('Authorization status:', authStatus);
+    }
+}
+
+const Splash = (props) => {
     const [location, setLocation] = useState(null);
+
+    const getToken = async () => {
+        const token = await messaging().getToken();
+        console.log(token);
+    }
+
     useEffect(() => {
         requestReadStoragePermission();
         requestWriteStoragePermission();
         requestLocationPermission();
+        requestUserPermission();
+        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
+        // getToken();
+
+        // ca7kxuyUQ0KxAYs8mxYser:APA91bG_zmUxcjDqhpRig7_0xF-wamr607GqYuAxu9i_75KnAwu8OBlDPxWa413lvqoojmNMTvIob2Juwoi2n8bzPAbJKfcY24bRzaS252rpea-ItJP2ns8
         const checkLogin = async () => {
             const authData = await getAuthData();
-            if (authData && authData.token){
+            if (authData && authData.token) {
                 // console.log('Login User: ', authData);
                 props.navigation.navigate('Home');
             }
@@ -86,10 +108,10 @@ const Splash = (props) => {
         }
         checkLogin();
     })
-    return(
+    return (
         <View style={styles.container}>
-            <StatusBar backgroundColor={colors.darkBackground}/>
-            <Image 
+            <StatusBar backgroundColor={colors.darkBackground} />
+            <Image
                 source={require('../assets/logo.png')}
                 style={styles.logo}
             />

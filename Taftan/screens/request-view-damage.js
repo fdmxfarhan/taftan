@@ -42,6 +42,7 @@ import ReqServiceStateInfo from '../components/reqview-servicestateinfo';
 import ReqActionInfo from '../components/reqview-actionsinfo';
 import ReqExpertsInfo from '../components/reqview-expertsinfo';
 import { getRefrenceCauseList } from '../services/refrence-cause-list';
+import { getWorkCausesListTitle } from '../services/req-work-cause-list-title';
 
 const DamageReqView = (props) => {
     var { item } = props.route.params;
@@ -58,6 +59,7 @@ const DamageReqView = (props) => {
     var [supervisorInfo, setsupervisorInfo] = useState(false);
     var [userList, setUserList] = useState([]);
     var [refrenceCauseList, setrefrenceCauseList] = useState([]);
+    var [workCausesListTitle, setWorkCausesListTitle] = useState([]);
     
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -111,16 +113,23 @@ const DamageReqView = (props) => {
         const sendRequest = async () => {
             var result = await getRequestDetail(item.requestId);
             if(result.success){
-                requestDetail = result.data;
-                setRequestDetail(requestDetail);
-                setIsLoading(false);
+                if (result.data != 'داده پیدا نشد'){
+                    requestDetail = result.data;
+                    setRequestDetail(requestDetail);
+                    setIsLoading(false);
+                }
+                else {
+                    ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
+                    props.navigation.goBack();
+                    return;
+                }
             }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
             
             result = await getRequestExpertlist(item.requestId);
             if(result.success){
                 // setreqExpertList(result.data.Data)
             }else ToastAndroid.show('لیست کارشناسان دریافت نشد', ToastAndroid.SHORT);
-            
+
             result = await getUserList(requestDetail.requestInfo.areaId, requestDetail.requestInfo.requestId);
             if(result.success){
                 setUserList(result.data);
@@ -130,6 +139,11 @@ const DamageReqView = (props) => {
             if(result.success){
                 setrefrenceCauseList(result.data);
             }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
+            result = await getWorkCausesListTitle();
+            if(result.success){
+                setWorkCausesListTitle(result.data);
+            }else ToastAndroid.show('لیست وضعیت سرویس بارگیری نشد.', ToastAndroid.SHORT);
 
         }
         sendRequest();
@@ -142,7 +156,7 @@ const DamageReqView = (props) => {
             <ScrollView style={styles.contents} keyboardShouldPersistTaps="handled" scrollEnabled={true}>
                 <ReqInfoView toggleReqinfoEN={toggleReqinfoEN} reqinfoEN={reqinfoEN} item={item} requestDetail={requestDetail}/> 
                 <ReqDamageView toggleDamageInfo={toggleDamageInfo} damageInfo={damageInfo} item={item} requestDetail={requestDetail}/> 
-                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} item={item} requestDetail={requestDetail}/> 
+                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} reqInfo={item} requestDetail={requestDetail}/> 
                 <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} item={item} requestDetail={requestDetail}/> 
                 <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} item={item} requestDetail={requestDetail}/> 
                 <ReqServiceStateInfo toggleserviceStateInfo={toggleserviceStateInfo} serviceStateInfo={serviceStateInfo} item={item} requestDetail={requestDetail}/> 
@@ -150,7 +164,7 @@ const DamageReqView = (props) => {
                 <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} item={item} requestDetail={requestDetail}/> 
             </ScrollView>
 
-            <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList} />
+            <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList} workCausesListTitle={workCausesListTitle} />
             <LoadingView isLoading={isLoadingSave} text={'در حال ذخیره اطلاعات...'}/>
         </View>
     )

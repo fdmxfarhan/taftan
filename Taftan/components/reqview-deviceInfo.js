@@ -4,21 +4,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
 
-const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, item, requestDetail }) => {
+const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail }) => {
     var [lastConfModalEnable, setlastConfModalEnable] = useState(false);
-    const [configuration, setConfiguration] = useState([
-        { id: '1', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
-        { id: '2', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
-        { id: '3', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
-        { id: '4', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
-        { id: '5', moduleModel: 'Receipt Printer TP07', serial: '5671828802', warehouseCode: '20101050901', module: 'Receipt Printer' },
-    ])
+    
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
     return (
         <View style={styles.container}>
-            <LastConfPopup lastConfModalEnable={lastConfModalEnable} setlastConfModalEnable={setlastConfModalEnable} configuration={configuration} />
+            <LastConfPopup lastConfModalEnable={lastConfModalEnable} setlastConfModalEnable={setlastConfModalEnable} reqInfo={reqInfo} />
             <TouchableOpacity style={styles.titleView} onPress={toggleDeviceInfo}>
                 <Text style={styles.title}>دستگاه</Text>
                 <Ionicons style={styles.chevron} name={deviceInfo == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />
