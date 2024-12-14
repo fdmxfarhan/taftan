@@ -5,16 +5,10 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import DropDownPicker from 'react-native-dropdown-picker';
 
-const StatusPopup = ({ popupEN, setPopupEN, reqInfo, workCausesListTitle }) => {
-    var [workCauseList, setworkCauseList] = useState([]);
+const StatusPopup = ({ popupEN, setPopupEN, reqInfo, workCauseList, setworkCauseList }) => {
     var [workCauseOpen, setworkCauseOpen] = useState(false);
     var [workCauseValue, setworkCauseValue] = useState('1');
     var [Description, setDescription] = useState('');
-    useEffect(() => {
-        workCauseList = [];
-        for(var i=0; i < workCausesListTitle.length; i++) workCauseList.push({label: workCausesListTitle[i].description, value: workCausesListTitle[i].id});
-        setworkCauseList(workCauseList);
-    }, []);
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };

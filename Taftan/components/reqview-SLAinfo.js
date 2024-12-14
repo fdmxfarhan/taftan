@@ -8,6 +8,13 @@ const ReqSLAInfo = ({ toggleslaInfo, slaInfo, item, requestDetail }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
+    var getDayHourMinutes = (time) =>{
+        return(
+            parseInt(time.substr(0, 2)).toString() + ' روز و ' +
+            parseInt(time.substr(3, 2)).toString() + ' ساعت و ' +
+            parseInt(time.substr(6, 2)).toString() + ' دقیقه '
+        )
+    }
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.titleView} onPress={toggleslaInfo}>
@@ -37,7 +44,7 @@ const ReqSLAInfo = ({ toggleslaInfo, slaInfo, item, requestDetail }) => {
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={''}
+                    value={getDayHourMinutes(requestDetail.requestInfo.requestActingTime)}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -51,7 +58,7 @@ const ReqSLAInfo = ({ toggleslaInfo, slaInfo, item, requestDetail }) => {
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={''}
+                    value={getDayHourMinutes(requestDetail.requestInfo.requestDeadLineTime)}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')

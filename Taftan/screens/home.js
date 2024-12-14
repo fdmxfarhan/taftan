@@ -18,6 +18,7 @@ import BottomNav from '../components/home-bootomNav';
 import HomeNotif from '../components/home-notif';
 import PersianDatePicker from '../components/persian-date-picker';
 import SimpleScrollPicker from '../components/Picker';
+import { GetUnreadMessageCount } from '../services/msgbox-unread-count';
 
 // const firebaseConfig = {
 
@@ -30,6 +31,7 @@ import SimpleScrollPicker from '../components/Picker';
 const Home = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [tabItem, setTabItem] = useState('Home');
+    var [unreadMessagesCount, setunreadMessagesCount] = useState({});
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -37,11 +39,20 @@ const Home = (props) => {
     const handleSearchPress = () => {
         console.log('Search clicked');
     };
-
+    useEffect(() => {
+        const sendRequest = async () => {
+            var result = await GetUnreadMessageCount();
+            if (result.success) {
+                console.log(result.data)
+                setunreadMessagesCount(result.data);
+            } else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
+        }
+        sendRequest();
+    }, [])
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
-            <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} />
+            <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} />
             {tabItem == 'Home' && (
                 <View style={styles.tabContainer}>
                     <HomeNotif navigation={props.navigation} />
@@ -49,7 +60,7 @@ const Home = (props) => {
                     <BottomNav navigation={props.navigation} />
                 </View>
             )}
-            
+
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
         </View>
     );

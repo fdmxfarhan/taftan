@@ -2,12 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
-import Popup from './popup';
-import DropDownPicker from 'react-native-dropdown-picker';
-import PersianDatePicker from './persian-date-picker';
-import TimePicker from './time-picker';
-import TwoChoice from './twochoice';
-import { saveRequestActionReport } from '../services/save-request-action-report';
 
 const DropDown = ({ list, setValue, value, placeHolder, buttonStyle, buttonTextStyle, onSubmit }) => {
     const [numOfRowsOpen, setnumOfRowsOpen] = useState(false);

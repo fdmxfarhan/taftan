@@ -10,7 +10,7 @@ import ReturnPopup from './rec-popup-return';
 import StatusPopup from './rec-popup-status';
 import CloseCasePopup from './rec-popup-close';
 
-const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, workCausesListTitle }) => {
+const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, workCauseList, setworkCauseList, actionTypeList, setactionTypeList, allowdActionList }) => {
     var [actionPopupEN, setActionPopupEN] = useState(false);
     var [assignPopupEN, setAssignPopupEN] = useState(false);
     var [returnPopupEN, setReturnPopupEN] = useState(false);
@@ -21,10 +21,10 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
     };
     return (
         <View style={styles.buttonsView}>
-            <NewActionPopup popupEN={actionPopupEN} setPopupEN={setActionPopupEN} requestItem={item} />
+            <NewActionPopup popupEN={actionPopupEN} setPopupEN={setActionPopupEN} requestItem={item} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} />
             <AssignPopup popupEN={assignPopupEN} setPopupEN={setAssignPopupEN} reqInfo={requestDetail} userList={userList} />
             <ReturnPopup popupEN={returnPopupEN} setPopupEN={setReturnPopupEN} refrenceCauseList={refrenceCauseList} />
-            <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCausesListTitle={workCausesListTitle} />
+            <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCauseList={workCauseList} setworkCauseList={setworkCauseList} />
             <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} />
 
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>

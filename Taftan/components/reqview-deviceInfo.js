@@ -3,36 +3,47 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, ToastA
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
+import LastReqPopup from './rec-popup-lastrec';
+import DeviceNameInfoPopup from './rec-popup-device-name-info';
 
-const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail }) => {
+const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail, lastRequestList, deviceDetail }) => {
     var [lastConfModalEnable, setlastConfModalEnable] = useState(false);
-    
+    var [lastReqModalEnable, setlastReqModalEnable] = useState(false);
+    var [DeviceNameInfoModalEnable, setDeviceNameInfoModalEnable] = useState(false);
+
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
     return (
         <View style={styles.container}>
             <LastConfPopup lastConfModalEnable={lastConfModalEnable} setlastConfModalEnable={setlastConfModalEnable} reqInfo={reqInfo} />
+            <LastReqPopup lastRequestList={lastRequestList} modalEnable={lastReqModalEnable} setmodalEnable={setlastReqModalEnable} reqInfo={reqInfo} />
+            <DeviceNameInfoPopup modalEnable={DeviceNameInfoModalEnable} setmodalEnable={setDeviceNameInfoModalEnable} deviceDetail={deviceDetail} />
             <TouchableOpacity style={styles.titleView} onPress={toggleDeviceInfo}>
                 <Text style={styles.title}>دستگاه</Text>
                 <Ionicons style={styles.chevron} name={deviceInfo == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />
             </TouchableOpacity>
             {deviceInfo && (<View style={styles.content}>
                 <Text style={styles.label}>نام دستگاه: </Text>
-                <TextInput
-                    multiline={true}
-                    style={[styles.textInput]}
-                    placeholder={'نام دستگاه'}
-                    placeholderTextColor={colors.text}
-                    // onSubmitEditing={()=>passwordInput.current.focus()}
-                    returnKeyType={'next'}
-                    keyboardType={'default'}
-                    value={requestDetail.damageInfo.deviceName}
-                    editable={false}
-                // onChange={(text) => {
-                //     console.log('hello')
-                // }}
-                />
+                <View style={styles.inputWithActionView}>
+                    <TextInput
+                        multiline={true}
+                        style={[styles.inputWithActionInput]}
+                        placeholder={'نام دستگاه'}
+                        placeholderTextColor={colors.text}
+                        // onSubmitEditing={()=>passwordInput.current.focus()}
+                        returnKeyType={'next'}
+                        keyboardType={'default'}
+                        value={requestDetail.damageInfo.deviceName}
+                        editable={false}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
+                    />
+                    <TouchableOpacity style={styles.inputWithActionButton} onPress={() => setDeviceNameInfoModalEnable(true)} >
+                        <Ionicons name={'information-circle'} style={styles.inputWithActionIcon} />
+                    </TouchableOpacity>
+                </View>
                 <Text style={styles.label}>سریال دستگاه: </Text>
                 <TextInput
                     multiline={true}
@@ -80,7 +91,7 @@ const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail })
                 />
                 <View style={styles.buttonsView}>
                     <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                        <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
+                        <TouchableOpacity style={styles.submitButton} onPress={() => setlastReqModalEnable(true)}>
                             <Ionicons style={styles.buttonIcon} name="desktop-outline" />
                             <Text style={styles.buttonText}>آخرین درخواست‌های دستگاه</Text>
                         </TouchableOpacity>
@@ -187,6 +198,36 @@ const styles = StyleSheet.create({
     buttonScrollView: {
         direction: 'rtl',
         textAlign: 'right',
+    },
+    inputWithActionView: {
+        flexDirection: 'row-reverse'
+    },
+    inputWithActionInput: {
+        borderColor: colors.gray,
+        borderWidth: 1,
+        width: '73%',
+        marginRight: '7.5%',
+        fontFamily: 'iransans',
+        fontSize: 13,
+        backgroundColor: colors.white,
+        borderRadius: 8,
+        textAlign: 'right',
+        direction: 'rtl',
+        paddingVertical: 4,
+        paddingHorizontal: 15,
+        color: colors.text,
+    },
+    inputWithActionButton: {
+        width: '10%',
+        marginRight: '2%',
+        backgroundColor: colors.blue,
+        borderRadius: 8,
+    },
+    inputWithActionIcon: {
+        textAlign: 'center',
+        marginVertical: 'auto',
+        color: colors.white,
+        fontSize: 20,
     },
 });
 

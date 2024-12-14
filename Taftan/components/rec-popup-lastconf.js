@@ -5,16 +5,16 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
-import { loadDeviceConfigList } from '../services/device-load-device-config-list';
+import { loadDeviceConfigList } from '../services/device-load-config-list';
 
 const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo }) => {
     const [configuration, setConfiguration] = useState([]);
     useEffect(() => {
         const sendRequest = async () => {
             var result = await loadDeviceConfigList(reqInfo.deviceId);
-            if(result.success){
+            if (result.success) {
                 setConfiguration(result.data.Data);
-            }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+            } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
         }
         sendRequest();
     }, [])
@@ -28,14 +28,20 @@ const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo })
                     <Text style={styles.titleText}>ماژول</Text>
                 </View>
                 <ScrollView style={styles.scroll}>
-                    {configuration.map((item, index) => (
-                        <View key={item.id} style={styles.itemView}>
-                            <Text style={styles.itemText}>{item.deviceModuleModel}</Text>
-                            <Text style={styles.itemText}>{item.serial}</Text>
-                            <Text style={styles.itemText}>{item.code}</Text>
-                            <Text style={styles.itemText}>{item.deviceHWTitle}</Text>
-                        </View>
-                    ))}
+                    {configuration.length > 0 ?
+                        configuration.map((item, index) => (
+                            <View key={item.id} style={styles.itemView}>
+                                <Text style={styles.itemText}>{item.deviceModuleModel}</Text>
+                                <Text style={styles.itemText}>{item.serial}</Text>
+                                <Text style={styles.itemText}>{item.code}</Text>
+                                <Text style={styles.itemText}>{item.deviceHWTitle}</Text>
+                            </View>
+                        ))
+                        : (
+                            <View>
+                                <Text style={styles.noRecords}>موردی جهت نمایش وجود ندارد.</Text>
+                            </View>
+                        )}
                 </ScrollView>
                 <TouchableOpacity style={styles.closeButton} onPress={() => setlastConfModalEnable(false)}>
                     <Ionicons style={styles.closeIcon} name={"close"} size={30} color={colors.white} />
@@ -95,6 +101,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         paddingVertical: 4,
         paddingHorizontal: 20,
+    },
+    noRecords:{
+        color: colors.text,
+        fontFamily: 'iransans',
+        fontSize: 14,
+        paddingVertical: 10,
     }
 });
 

@@ -51,8 +51,8 @@ export const getUserList = async (areaId, requestId) => {
         const response = await api.get(`/User/LoadUserListByAreaIdAndRequestId?AreaId=${areaId}&RequestId=${requestId}`);
         return { success: true, data: response.data };
     } catch (error) {
-        console.log('Error submitting damage request:', error);
-        return { success: false, error: 'Failed to submit damage request' };
+        console.log('Error submitting LoadUserListByAreaIdAndRequestId request:', error);
+        return { success: false, error: 'Failed to submit LoadUserListByAreaIdAndRequestId request' };
     }
 };
 

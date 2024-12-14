@@ -3,14 +3,10 @@ import {
     Image,
     PermissionsAndroid,
     Platform,
-    SafeAreaView,
-    ScrollView,
     StatusBar,
     StyleSheet,
     Text,
-    TouchableHighlight,
     TouchableOpacity,
-    useColorScheme,
     View,
 } from 'react-native';
 import colors from '../components/colors';
@@ -78,6 +74,11 @@ async function requestUserPermission() {
         console.log('Authorization status:', authStatus);
     }
 }
+
+messaging().onMessage(async (remoteMessage) => {
+    console.log('Foreground message received!', remoteMessage);
+    // Display a custom notification or alert here.
+});
 
 const Splash = (props) => {
     const [location, setLocation] = useState(null);

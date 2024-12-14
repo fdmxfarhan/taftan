@@ -9,10 +9,7 @@ const ReqServiceStateInfo = ({ toggleserviceStateInfo, serviceStateInfo, item, r
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
     const [stateHistory, setstateHistory] = useState([
-        { id: '1', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
-        { id: '2', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
-        { id: '3', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
-        { id: '4', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
+        // { id: '1', state: 'مشاهده مدیر', date: '1403/7/28', time: '12:43', description: 'این درخواست توسط مدیر مشاهده شد.' },
     ])
     return (
         <View style={styles.container}>

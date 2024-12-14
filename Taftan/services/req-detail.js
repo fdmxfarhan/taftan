@@ -71,8 +71,8 @@ export const getRequestDetail = async (requestId) => {
         return { success: true, data: response.data };
 
     } catch (error) {
-        console.log('Error submitting damage request:', error);
-        return { success: false, error: 'Failed to submit damage request' };
+        console.log('Error submitting GetRequestDetail request:', error);
+        return { success: false, error: 'Failed to submit GetRequestDetail request' };
     }
 };
 

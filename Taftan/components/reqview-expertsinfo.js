@@ -4,16 +4,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
 
-const ReqExpertsInfo = ({ togglesupervisorInfo, supervisorInfo, item, requestDetail }) => {
+const ReqExpertsInfo = ({ togglesupervisorInfo, supervisorInfo, item, requestDetail, reqExpertList }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
-    const [supervisors, setSupervisors] = useState([
-        { id: '1', name: 'فاطمه حمزه', type: 'اصلی' },
-        { id: '2', name: 'فاطمه حمزه', type: 'اصلی' },
-        { id: '3', name: 'فاطمه حمزه', type: 'اصلی' },
-        { id: '4', name: 'فاطمه حمزه', type: 'اصلی' },
-    ])
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.titleView} onPress={togglesupervisorInfo}>
@@ -21,10 +15,10 @@ const ReqExpertsInfo = ({ togglesupervisorInfo, supervisorInfo, item, requestDet
                 <Ionicons style={styles.chevron} name={supervisorInfo == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />
             </TouchableOpacity>
             {supervisorInfo && (<View style={styles.content}>
-                {supervisors.map((item, index) => (
-                    <View key={index} style={styles.supervisorItem}>
-                        <Text style={styles.supervisorName}>{item.name}</Text>
-                        <Text style={styles.supervisorType}>{item.type}</Text>
+                {reqExpertList.map((item, index) => (
+                    <View key={item.id} style={styles.supervisorItem}>
+                        <Text style={styles.supervisorName}>{item.currentUserName}</Text>
+                        <Text style={styles.supervisorType}>{item.expertType_String}</Text>
                     </View>
                 ))}
             </View>)}

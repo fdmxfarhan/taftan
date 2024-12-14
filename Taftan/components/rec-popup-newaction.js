@@ -9,14 +9,9 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import PersianDatePicker from './persian-date-picker';
 import TimePicker from './time-picker';
 import TwoChoice from './twochoice';
-import { saveRequestActionReport } from '../services/save-request-action-report';
+import { saveRequestActionReport } from '../services/report-save-request-action';
 
-const NewActionPopup = ({ requestItem, popupEN, setPopupEN }) => {
-    const [actionTypeList, setActionTypeList] = useState([
-        { label: 'مراجعه', value: '1' },
-        { label: 'اقدام از طریق مانیتورینگ', value: '2' },
-        { label: 'راهنمایی تلفنی', value: '3' },
-    ]);
+const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, setactionTypeList }) => {
     const [actionTypeOpen, setactionTypeOpen] = useState(false);
     const [actionTypeValue, setactionTypeValue] = useState('1');
     const [selectedDay, setselectedDay] = useState('1');
@@ -34,19 +29,36 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN }) => {
 
     const saveActionRequest = () => {
         const sendRequest = async () => {
-            var result = await saveRequestActionReport({
-                id: 0,
-                Date: `${selectedYear}/${selectedMonth}/${selectedDay}`,
-                startTime: `${selectStartHour}:${selectStartMin}`,
-                endTime: `${selectEndHour}:${selectEndMin}`,
-                actionTypeId: parseInt(actionTypeValue),
-                actinResult: actionResult,
-                unsuccessfullActionReasonId: 0,
-                unsuccessfullActionSide: true,
-                description: actionDescription,
-                requestId: requestItem.requestId,
-                fileName: "asdf"
-            });
+            var optionsSample = {
+                "id": 0,
+                "Date": "1403/09/04",
+                "startTime": "01:01",
+                "endTime": "06:00",
+                "actionTypeId": 1,
+                "actinResult": true,
+                "unsuccessfullActionReasonId": 0,
+                "unsuccessfullActionSide": true,
+                "description": "asdf",
+                "requestId": 1031359,
+                "reportId": 0,
+                "fileName": ""
+            }
+            var options = {
+                "id": 0,
+                "Date": `${selectedYear}/${selectedMonth}/${selectedDay}`,
+                "startTime": `${selectStartHour}:${selectStartMin}`,
+                "endTime": `${selectEndHour}:${selectEndMin}`,
+                "actionTypeId": parseInt(actionTypeValue),
+                "actinResult": actionResult,
+                "unsuccessfullActionReasonId": 0,
+                "unsuccessfullActionSide": true,
+                "description": actionDescription,
+                "requestId": requestItem.requestId,
+                "reportId": 0,
+                "fileName": ""
+            }
+            console.log(options)
+            var result = await saveRequestActionReport(options);
             if (result.success) {
                 ToastAndroid.show('اقدام جدید ثبت شد.', ToastAndroid.LONG);
                 setPopupEN(false);
@@ -68,7 +80,7 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN }) => {
                     items={actionTypeList}
                     setOpen={setactionTypeOpen}
                     setValue={setactionTypeValue}
-                    setItems={setActionTypeList}
+                    setItems={setactionTypeList}
                     placeholder="انتخاب نوع اقدام"
                     style={styles.dropdown}
                     dropDownContainerStyle={styles.dropdownContainer}

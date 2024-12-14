@@ -3,13 +3,19 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, ToastA
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
+import WorkFlowPopup from './rec-popup-workflow';
+import AreaDetailPopup from './rec-popup-area-detail';
 
-const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, item, requestDetail }) => {
+const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, reqHistoryList, areaDetail }) => {
+    var [workflowModalEN, setworkflowModalEN] = useState(false);
+    var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
     return (
         <View style={styles.container}>
+            <WorkFlowPopup reqHistoryList={reqHistoryList} modalEnable={workflowModalEN} setmodalEnable={setworkflowModalEN} reqInfo={reqInfo} />
+            <AreaDetailPopup modalEnable={areaDetailModalEN} setmodalEnable={setareaDetailModalEN} areaDetail={areaDetail} />
             <TouchableOpacity style={styles.titleView} onPress={toggleWorkflow}>
                 <Text style={styles.title}>گردش کار</Text>
                 <Ionicons style={styles.chevron} name={workflow == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />
@@ -23,26 +29,31 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, item, requestDetail }) => {
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={item.persianLastState}
+                    value={reqInfo.persianLastState}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
                 // }}
                 />
                 <Text style={styles.label}>دفتر: </Text>
-                <TextInput
-                    style={[styles.textInput]}
-                    placeholder={'دفتر'}
-                    placeholderTextColor={colors.text}
-                    // onSubmitEditing={()=>passwordInput.current.focus()}
-                    returnKeyType={'next'}
-                    keyboardType={'default'}
-                    value={item.areaName}
-                    editable={false}
-                // onChange={(text) => {
-                //     console.log('hello')
-                // }}
-                />
+                <View style={styles.inputWithActionView}>
+                    <TextInput
+                        style={[styles.inputWithActionInput]}
+                        placeholder={'دفتر'}
+                        placeholderTextColor={colors.text}
+                        // onSubmitEditing={()=>passwordInput.current.focus()}
+                        returnKeyType={'next'}
+                        keyboardType={'default'}
+                        value={reqInfo.areaName}
+                        editable={false}
+                    // onChange={(text) => {
+                    //     console.log('hello')
+                    // }}
+                    />
+                    <TouchableOpacity style={styles.inputWithActionButton} onPress={() => setareaDetailModalEN(true)} >
+                        <Ionicons name={'information-circle'} style={styles.inputWithActionIcon} />
+                    </TouchableOpacity>
+                </View>
                 <Text style={styles.label}>زمان: </Text>
                 <TextInput
                     style={[styles.textInput]}
@@ -51,7 +62,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, item, requestDetail }) => {
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={item.persianInsertedDate}
+                    value={reqInfo.persianInsertedDate}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -65,7 +76,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, item, requestDetail }) => {
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={item.expertName}
+                    value={reqInfo.expertName}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -101,7 +112,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, item, requestDetail }) => {
                 />
                 <View style={styles.buttonsView}>
                     <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                        <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
+                        <TouchableOpacity style={styles.submitButton} onPress={() => setworkflowModalEN(true)}>
                             <Ionicons style={styles.buttonIcon} name="refresh" />
                             <Text style={styles.buttonText}>گردش کار</Text>
                         </TouchableOpacity>
@@ -204,6 +215,36 @@ const styles = StyleSheet.create({
     buttonScrollView: {
         direction: 'rtl',
         textAlign: 'right',
+    },
+    inputWithActionView: {
+        flexDirection: 'row-reverse'
+    },
+    inputWithActionInput: {
+        borderColor: colors.gray,
+        borderWidth: 1,
+        width: '73%',
+        marginRight: '7.5%',
+        fontFamily: 'iransans',
+        fontSize: 13,
+        backgroundColor: colors.white,
+        borderRadius: 8,
+        textAlign: 'right',
+        direction: 'rtl',
+        paddingVertical: 4,
+        paddingHorizontal: 15,
+        color: colors.text,
+    },
+    inputWithActionButton: {
+        width: '10%',
+        marginRight: '2%',
+        backgroundColor: colors.blue,
+        borderRadius: 8,
+    },
+    inputWithActionIcon: {
+        textAlign: 'center',
+        marginVertical: 'auto',
+        color: colors.white,
+        fontSize: 20,
     },
 });
 

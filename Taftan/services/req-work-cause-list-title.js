@@ -97,13 +97,13 @@ export const getWorkCausesListTitle = async () => {
                 }
             ]
         };
-
+        
         const response = await api.get(`/WorkCauses/WorkCausesListTitle?isActive=true&api_key=getExpertList`);
         return { success: true, data: response.data };
 
     } catch (error) {
-        console.log('Error submitting damage request:', error);
-        return { success: false, error: 'Failed to submit damage request' };
+        console.log('Error submitting WorkCausesListTitle request:', error);
+        return { success: false, error: 'Failed to submit WorkCausesListTitle request' };
     }
 };
 

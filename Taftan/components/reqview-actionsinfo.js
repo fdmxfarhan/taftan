@@ -4,16 +4,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
 
-const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail }) => {
+const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, actionsHistory, setactionsHistory }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
-    const [actionsHistory, setactionsHistory] = useState([
-        { id: '1', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
-        { id: '2', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
-        { id: '3', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
-        { id: '4', actionDate: '1403/7/27', fromTime: '12:00', toTime: '15:30', actionType: 'بررسی دستگاه', result: 'موفق', reasonOfFailure: '', customer: '', description: '', workflow: 'اقدام شده', showAll: false },
-    ])
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.titleView} onPress={toggleactionsInfo}>
@@ -31,11 +25,11 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail }) 
                             setactionsHistory(updatedActions);
                         }}>
                             <View style={styles.actionHistoryRight}>
-                                <Text style={styles.actionHistoryTitle}>{item.actionType}</Text>
-                                <Text style={styles.actionHistoryTitle2}>{item.workflow}</Text>
+                                <Text style={styles.actionHistoryTitle}>{item.actionTypeTitle}</Text>
+                                <Text style={styles.actionHistoryTitle2}>{item.description}</Text>
                             </View>
                             <View style={styles.actionHistoryLeft}>
-                                <Text style={styles.actionResult}>{item.result}</Text>
+                                <Text style={styles.actionResult}>{item.actinResult}</Text>
                                 <Text style={styles.actionDateText}>{item.actionDate}</Text>
                             </View>
                         </TouchableOpacity>
@@ -43,40 +37,41 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail }) 
                             <View style={styles.actionMoreInfo}>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>تاریخ اقدام:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.actionDate}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.endDateTime.toString().substr(0, 4)}/{item.endDateTime.toString().substr(4, 2)}/{item.endDateTime.toString().substr(6, 2)}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>از ساعت:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.fromTime}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.startDateTime.toString().substr(8, 2)}:{item.startDateTime.toString().substr(10, 2)}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>تا ساعت:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.toTime}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.endDateTime.toString().substr(8, 2)}:{item.endDateTime.toString().substr(10, 2)}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>نوع اقدام:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.actionType}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.actionTypeTitle}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>نتیجه اقدام:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.result}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.actinResult}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>علت اقدام ناموفق:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.reasonOfFailure}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.unsuccessfullActionReasonTitle}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>مشتری:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.customer}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.unsuccessfullActionSide == true? '✔️':''}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>توضیحات:</Text>
                                     <Text style={styles.actionMoreInfoText}>{item.description}</Text>
                                 </View>
-                                <View style={styles.actionMoreInfoItem}>
-                                    <Text style={styles.actionMoreInfoTitle}>گردش کار:</Text>
+                                {/* <View style={styles.actionMoreInfoItem}>
+                                    <Text style={styles.actionMoreInfoTitle}>گزارش کار:</Text>
                                     <Text style={styles.actionMoreInfoText}>{item.workflow}</Text>
-                                </View>
+                                </View> */}
+                                
                             </View>
                         )}
                     </View>
