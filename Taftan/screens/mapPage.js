@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     height: 400,
   },
   webviewmap: {
-    width: width * 0.9,
+    width: width ,
     height: height * 0.5,
   },
 });

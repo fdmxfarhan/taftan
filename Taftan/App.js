@@ -18,10 +18,12 @@ import ServiceSite from './screens/service-site';
 import ServiceProjects from './screens/service-projects';
 import ServicePeriodic from './screens/service-periodic';
 import InstallationReqView from './screens/request-view-installation';
+import Icons from './screens/icons';
+import AddRequest from './screens/request-add';
+import Report from './screens/report';
 
 const App = (props) => {
   const navigationRef = useRef();
-
   useEffect(() => {
     const backAction = () => {
       const currentRoute = navigationRef.current.getCurrentRoute().name;
@@ -50,6 +52,11 @@ const App = (props) => {
         <Stack.Screen
           name="Home"
           component={Home}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="Icons"
+          component={Icons}
           options={({ route }) => ({ headerShown: false })}
         />
         <Stack.Screen
@@ -100,6 +107,16 @@ const App = (props) => {
         <Stack.Screen
           name="ServicePeriodic"
           component={ServicePeriodic}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="AddRequest"
+          component={AddRequest}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="Report"
+          component={Report}
           options={({ route }) => ({ headerShown: false })}
         />
       </Stack.Navigator>

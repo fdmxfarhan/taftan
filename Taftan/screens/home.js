@@ -31,13 +31,13 @@ import { GetUnreadMessageCount } from '../services/msgbox-unread-count';
 const Home = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [tabItem, setTabItem] = useState('Home');
-    var [unreadMessagesCount, setunreadMessagesCount] = useState({});
+    var   [unreadMessagesCount, setunreadMessagesCount] = useState(0);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
     const handleSearchPress = () => {
-        console.log('Search clicked');
+        props.navigation.navigate('Icons');
     };
     useEffect(() => {
         const sendRequest = async () => {

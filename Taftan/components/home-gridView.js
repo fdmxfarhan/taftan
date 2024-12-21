@@ -36,7 +36,7 @@ const GridView = ({ navigation }) => {
                     <Text style={styles.gridButtonText}>سرویس نصب</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('ServiceSite')}>
-                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.blue }]} name={'business-outline'} />
+                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.blue }]} name={'storefront-outline'} />
                     <Text style={styles.gridButtonText}>سایت سازی</Text>
                 </TouchableOpacity>
             </View>
@@ -52,6 +52,12 @@ const GridView = ({ navigation }) => {
                 <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('MapPage')}>
                     <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.darkblue }]} name={'map-outline'} />
                     <Text style={styles.gridButtonText}>نقشه</Text>
+                </TouchableOpacity>
+            </View>
+            <View style={styles.gridRow}>
+                <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('AddRequest')}>
+                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.red3 }]} name={'add'} />
+                    <Text style={styles.gridButtonText}>افزودن درخواست</Text>
                 </TouchableOpacity>
             </View>
         </Animated.View>

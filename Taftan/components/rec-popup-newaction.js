@@ -1,7 +1,7 @@
 // components/NavBar.js
 
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, ToastAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
@@ -31,15 +31,15 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
         const sendRequest = async () => {
             var optionsSample = {
                 "id": 0,
-                "Date": "1403/09/04",
-                "startTime": "01:01",
-                "endTime": "06:00",
+                "Date": "1403/10/01",
+                "startTime": "10:00",
+                "endTime": "10:37",
                 "actionTypeId": 1,
                 "actinResult": true,
                 "unsuccessfullActionReasonId": 0,
                 "unsuccessfullActionSide": true,
-                "description": "asdf",
-                "requestId": 1031359,
+                "description": "dsafasdf",
+                "requestId": 364041,
                 "reportId": 0,
                 "fileName": ""
             }
@@ -57,8 +57,8 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
                 "reportId": 0,
                 "fileName": ""
             }
-            console.log(options)
-            var result = await saveRequestActionReport(options);
+            console.log(optionsSample)
+            var result = await saveRequestActionReport(optionsSample);
             if (result.success) {
                 ToastAndroid.show('اقدام جدید ثبت شد.', ToastAndroid.LONG);
                 setPopupEN(false);

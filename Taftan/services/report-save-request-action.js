@@ -11,10 +11,8 @@ export const saveRequestActionReport = async (options) => {
                 "result": 1
             }
         };
-
         response = await api.post('/ReportController/SaveRequestActionReport', options);
         return { success: true, data: response.data };
-
     } catch (error) {
         console.log('Error saveRequestActionReport:', error);
         console.log(response);

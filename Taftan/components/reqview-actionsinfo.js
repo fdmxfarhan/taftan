@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
 
-const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, actionsHistory, setactionsHistory }) => {
+const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, actionsHistory, setactionsHistory, navigation }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
@@ -61,7 +61,7 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, ac
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>مشتری:</Text>
-                                    <Text style={styles.actionMoreInfoText}>{item.unsuccessfullActionSide == true? '✔️':''}</Text>
+                                    <Text style={styles.actionMoreInfoText}>{item.unsuccessfullActionSide == true ? '✔️' : ''}</Text>
                                 </View>
                                 <View style={styles.actionMoreInfoItem}>
                                     <Text style={styles.actionMoreInfoTitle}>توضیحات:</Text>
@@ -71,7 +71,12 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, ac
                                     <Text style={styles.actionMoreInfoTitle}>گزارش کار:</Text>
                                     <Text style={styles.actionMoreInfoText}>{item.workflow}</Text>
                                 </View> */}
-                                
+                                <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
+                                    <TouchableOpacity style={styles.submitButton} onPress={() => {navigation.navigate('Report', {item, requestDetail})}}>
+                                        <Ionicons style={styles.buttonIcon} name="file-tray" />
+                                        <Text style={styles.buttonText}>مشاهده گزارش کار</Text>
+                                    </TouchableOpacity>
+                                </ScrollView>
                             </View>
                         )}
                     </View>

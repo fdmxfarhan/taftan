@@ -182,12 +182,12 @@ const DamageReqView = (props) => {
                 setactionTypeList(actionTypeList);
             }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
             
-            result = await GetBranchDetail(item.requestId);
+            result = await GetBranchDetail(requestDetail.requestInfo.branchId);
             if(result.success){
                 setbranchInfo(result.data);
             }else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
             
-            result = await GetDeviceDetail(item.requestId);
+            result = await GetDeviceDetail(requestDetail.damageInfo.deviceId);
             if(result.success){
                 setdeviceDetail(result.data);
             }else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
@@ -220,7 +220,7 @@ const DamageReqView = (props) => {
                 <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} reqInfo={item} requestDetail={requestDetail} reqHistoryList={reqHistoryList} areaDetail={areaDetail} /> 
                 <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} item={item} requestDetail={requestDetail}/> 
                 <ReqServiceStateInfo toggleserviceStateInfo={toggleserviceStateInfo} serviceStateInfo={serviceStateInfo} item={item} requestDetail={requestDetail}/> 
-                <ReqActionInfo toggleactionsInfo={toggleactionsInfo} actionsInfo={actionsInfo} item={item} requestDetail={requestDetail} actionsHistory={reqActionList} setactionsHistory={setreqActionList} /> 
+                <ReqActionInfo toggleactionsInfo={toggleactionsInfo} actionsInfo={actionsInfo} item={item} requestDetail={requestDetail} actionsHistory={reqActionList} setactionsHistory={setreqActionList} navigation={props.navigation} /> 
                 <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} item={item} requestDetail={requestDetail} reqExpertList={reqExpertList}/> 
             </ScrollView>
 

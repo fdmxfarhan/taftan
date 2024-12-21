@@ -54,7 +54,7 @@ const SideMenu = (props) => {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceSite'); onClose();}}>
-            <Ionicons style={styles.sideButtonIcon} name={'business-outline'} />
+            <Ionicons style={styles.sideButtonIcon} name={'storefront-outline'} />
             <Text style={styles.menuText}>سرویس سایت سازی</Text>
           </TouchableOpacity>
 
