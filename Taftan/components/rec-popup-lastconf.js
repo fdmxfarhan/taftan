@@ -21,21 +21,30 @@ const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo })
     return (
         <View>
             <Popup modalVisible={lastConfModalEnable} setModalVisible={setlastConfModalEnable}>
-                <View style={styles.titleView}>
+                {/* <View style={styles.titleView}>
                     <Text style={styles.titleText}>مدل ماژول</Text>
                     <Text style={styles.titleText}>سریال</Text>
                     <Text style={styles.titleText}>کد انبار</Text>
                     <Text style={styles.titleText}>ماژول</Text>
-                </View>
+                </View> */}
                 <ScrollView style={styles.scroll}>
                     {configuration.length > 0 ?
                         configuration.map((item, index) => (
-                            <View key={item.id} style={styles.itemView}>
-                                <Text style={styles.itemText}>{item.deviceModuleModel}</Text>
-                                <Text style={styles.itemText}>{item.serial}</Text>
-                                <Text style={styles.itemText}>{item.code}</Text>
-                                <Text style={styles.itemText}>{item.deviceHWTitle}</Text>
+                            <View key={item.id} style={styles.itemContainer}>
+                                <Text style={styles.deviceName}>مدل ماژول: {item.deviceModuleModel}</Text>
+                                <Text style={styles.damageTitle}>کد انبار: {item.code}</Text>
+                                <Text style={styles.damageTitle}>ماژول: {item.deviceHWTitle}</Text>
+                                <Text style={styles.date}>سریال: {item.serial}</Text>
+                                {/* <View style={styles.stateView}>
+                                    <Text style={styles.state}>{item.requestId}</Text>
+                                </View> */}
                             </View>
+                            // <View key={item.id} style={styles.itemView}>
+                            //     <Text style={styles.itemText}>{item.deviceModuleModel}</Text>
+                            //     <Text style={styles.itemText}>{item.serial}</Text>
+                            //     <Text style={styles.itemText}>{item.code}</Text>
+                            //     <Text style={styles.itemText}>{item.deviceHWTitle}</Text>
+                            // </View>
                         ))
                         : (
                             <View>
@@ -54,7 +63,7 @@ const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo })
 
 const styles = StyleSheet.create({
     scroll: {
-
+        width: '100%',
     },
     titleView: {
         flexDirection: 'row-reverse',
@@ -102,12 +111,57 @@ const styles = StyleSheet.create({
         paddingVertical: 4,
         paddingHorizontal: 20,
     },
-    noRecords:{
+    noRecords: {
         color: colors.text,
         fontFamily: 'iransans',
         fontSize: 14,
         paddingVertical: 10,
-    }
+    },
+    itemContainer: {
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        marginVertical: 0,
+        backgroundColor: colors.lightergray,
+        borderColor: colors.lightgray,
+        borderWidth: 1,
+        direction: 'rtl',
+    },
+    deviceName: {
+        fontSize: 14,
+        marginBottom: 2,
+        fontFamily: 'iransansbold',
+        direction: 'rtl',
+        color: colors.darkBackground,
+        textAlign: 'right',
+    },
+    damageTitle: {
+        fontSize: 12,
+        fontFamily: 'iransansbold',
+        color: colors.gray,
+        textAlign: 'right',
+    },
+    textTitle: {
+        fontSize: 12,
+        fontFamily: 'iransansbold',
+        color: colors.darkblue,
+        textAlign: 'right',
+        marginTop: 5,
+    },
+    date: {
+        position: 'absolute',
+        bottom: 5,
+        left: 15,
+        fontFamily: 'iransans',
+        fontSize: 12,
+    },
+    stateView: {
+        position: 'absolute',
+        top: 5,
+        left: 15,
+        flexDirection: 'row-reverse',
+        alignContent: 'center',
+        alignItems: 'center',
+    },
 });
 
 export default LastConfPopup;

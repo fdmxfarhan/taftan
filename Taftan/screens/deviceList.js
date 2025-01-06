@@ -11,20 +11,20 @@ import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
-import { submitDamageRequest } from '../services/ser-damage';
 import LoadingView from '../components/loading';
 import NotConnected from '../components/no-connection';
-import getSLAColor from '../config/getSLAColor';
 import ReqGridController from '../components/req-grid-controller';
 import SearchView from '../components/search';
+import { getDeviceList } from '../services/device-get-list';
 
-const ServiceDamage = (props) => {    
+const DeviceListView = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [serviceConnected, setServiceConnected] = useState(true);
     const [skipValue, setskipValue] = useState(1);
     const [rowsValue, setrowsValue] = useState(10);
     const [searchEN, setsearchEN] = useState(false);
+    const [devicelist, setdevicelist] = useState([])
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -33,9 +33,10 @@ const ServiceDamage = (props) => {
     };
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitDamageRequest(skip, take);
+        console.log(take)
+        var result = await getDeviceList(skip, take);
         if(result.success){
-            setDamageRequests(result.data.Data);
+            setdevicelist(result.data.Data);
             setIsLoading(false);
             setServiceConnected(true);
         }
@@ -48,29 +49,24 @@ const ServiceDamage = (props) => {
     useEffect(() => {
         sendRequest(skipValue, rowsValue);
     }, []);
-    const [damageRequests, setDamageRequests] = useState([])
     const handleItemPress = (item) => {
-        props.navigation.navigate('DamageReqView', { item });
+        props.navigation.navigate('DeviceDetailView', { item });
     };
     const renderItem = ({ item }) => (
-        <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
-            <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
-            <Text style={styles.damageTitle}>{item.serviceName}</Text>
-            <Text style={styles.textTitle}>{item.requestId}</Text>
+        <TouchableOpacity key={item.id} onPress={() => handleItemPress(item)} style={styles.itemContainer}>
+            <Text style={styles.deviceName}>{item.customerName} (<Text>{item.deviceName}</Text>)</Text>
+            <Text style={styles.damageTitle}>دفتر: {item.areaName}</Text>
+            <Text style={styles.damageTitle}>مدل: {item.deviceModelTitle}</Text>
+            <Text style={styles.textTitle}>سریال: {item.deviceSerial}</Text>
             <View style={styles.stateView}>
-                <Text style={styles.state}>{item.persianLastState}</Text>
-                {item.isPilot == 0 ? (
-                    <View style={[styles.stateCircle, {backgroundColor: getSLAColor(item.SLAStyle)}]}/>
-                ) : (
-                    <Ionicons style={styles.pilotIcon} name={'build'} />
-                )}
+                <Text style={styles.state}>{item.deviceTypeTitle}</Text>
             </View>
-            <Text style={styles.date}>{item.persianInsertedDate}</Text>
+            <Text style={styles.date}>ترمینال: {item.deviceTerminal}</Text>
         </TouchableOpacity>
     );
     return (
         <View style={styles.container}>
-            <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="درخواست‌های خرابی" leftIcon="search" rightIcon="menu" />
+            <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="لیست دستگاه‌ها" leftIcon="search" rightIcon="menu" />
             <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
             <ReqGridController 
                 currentPage={skipValue} 
@@ -82,7 +78,7 @@ const ServiceDamage = (props) => {
                     sendRequest(skip, rows);
                 }}/>
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
-            <FlatList data={damageRequests} renderItem={renderItem} keyExtractor={item => item.requestId} />
+            <FlatList data={devicelist} renderItem={renderItem} keyExtractor={item => item.id} />
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation}/>
         </View>
@@ -115,6 +111,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: 'iransansbold',
         color: colors.gray,
+        textAlign: 'right',
     },
     textTitle: {
         fontSize: 12,
@@ -129,6 +126,7 @@ const styles = StyleSheet.create({
         left: 15,
         fontFamily: 'iransans',
         fontSize: 12,
+        paddingLeft: 5,
     },
     stateView: {
         position: 'absolute',
@@ -148,10 +146,11 @@ const styles = StyleSheet.create({
         fontSize: 15,
     },
     state: {
-        fontFamily: 'iransans',
-        fontSize: 11,
-        paddingLeft: 10,
+        color: colors.darkcyan,
+        fontFamily: 'iransansbold',
+        fontSize: 12,
+        paddingLeft: 5,
     },
 });
 
-export default ServiceDamage;
+export default DeviceListView;

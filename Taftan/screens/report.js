@@ -32,6 +32,9 @@ const Report = (props) => {
     var [recognitionExpertList, setrecognitionExpertList] = useState([]);
     var [JobTitleList, setJobTitleList] = useState([]);
 
+    const handleSearchPress = () => {
+        props.navigation.goBack();
+    };
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
@@ -52,7 +55,7 @@ const Report = (props) => {
     return (
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
-            <NavBar rightCallback={() => { }} leftCallback={() => { }} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
+            <NavBar rightCallback={() => {props.navigation.navigate('Home')}} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
             <ReportTabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} />
             {tabItem == 'Recognition' && (
                 <ScrollView style={styles.contents}>
@@ -62,7 +65,7 @@ const Report = (props) => {
                         list={damageReasonsList}
                         getLabel={(item) => item.Title}
                         getValue={(item) => item.Title}
-                        setValue={(id) => { setdamageReason(id) }}
+                        setValue={(item) => { setdamageReason(item.id) }}
                         value={damageReason}
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
@@ -73,7 +76,7 @@ const Report = (props) => {
                         list={recognitionExpertList}
                         getLabel={(item) => item.title}
                         getValue={(item) => item.title}
-                        setValue={(id) => { setrecognitionExpert(id) }}
+                        setValue={(item) => { setrecognitionExpert(item.id) }}
                         value={recognitionExpert}
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
@@ -100,7 +103,7 @@ const Report = (props) => {
                         list={JobTitleList}
                         getLabel={(item) => item.title}
                         getValue={(item) => item.title}
-                        setValue={(id) => { setjobTitle(id) }}
+                        setValue={(item) => { setjobTitle(item.id) }}
                         value={jobTitle}
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}

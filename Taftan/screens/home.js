@@ -19,6 +19,7 @@ import HomeNotif from '../components/home-notif';
 import PersianDatePicker from '../components/persian-date-picker';
 import SimpleScrollPicker from '../components/Picker';
 import { GetUnreadMessageCount } from '../services/msgbox-unread-count';
+import SearchView from '../components/search';
 
 // const firebaseConfig = {
 
@@ -32,26 +33,28 @@ const Home = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [tabItem, setTabItem] = useState('Home');
     var   [unreadMessagesCount, setunreadMessagesCount] = useState(0);
+    const [searchEN, setsearchEN] = useState(false);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
     const handleSearchPress = () => {
-        props.navigation.navigate('Icons');
+        setsearchEN(true); 
+        // props.navigation.navigate('Icons');
     };
     useEffect(() => {
         const sendRequest = async () => {
             var result = await GetUnreadMessageCount();
             if (result.success) {
-                console.log(result.data)
                 setunreadMessagesCount(result.data);
-            } else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
+            } else ToastAndroid.show('تعداد پیام ها بارگیری نشد.', ToastAndroid.SHORT);
         }
         sendRequest();
     }, [])
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
+            <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
             <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} />
             {tabItem == 'Home' && (
                 <View style={styles.tabContainer}>

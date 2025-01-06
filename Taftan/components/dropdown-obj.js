@@ -7,10 +7,11 @@ const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, b
     const [numOfRowsOpen, setnumOfRowsOpen] = useState(false);
 
     const renderListItem = ({ item }) => (
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity key={getLabel(item)} onPress={() => {
             setnumOfRowsOpen(false);
-            setValue(getValue(item));
-            onSubmit(getValue(item));
+            // setValue(getValue(item));
+            setValue(item);
+            // onSubmit(getValue(item));
         }}>
             <Text style={styles.itemText}>{getLabel(item)}</Text>
         </TouchableOpacity>
@@ -24,14 +25,21 @@ const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, b
                     <Ionicons name={'chevron-down'} style={styles.chevron} />
                 </Text>
             </TouchableOpacity>
-            {numOfRowsOpen && <View style={styles.listContainer}>
-                <FlatList
-                    nestedScrollEnabled={true}
-                    data={list}
-                    keyExtractor={item => getValue(item)}
-                    renderItem={renderListItem}
-                />
-            </View>}
+            {numOfRowsOpen &&
+                <View style={styles.listContainer}>
+                    <ScrollView nestedScrollEnabled={true}>
+                        {list.map((item) => renderListItem({item}))}
+                    </ScrollView>
+                    {/* <FlatList
+                        // decelerationRate="fast"
+                        // showsVerticalScrollIndicator={false}
+                        nestedScrollEnabled={true}
+                        data={list}
+                        keyExtractor={item => getLabel(item)}
+                        renderItem={renderListItem}
+                    /> */}
+                </View>
+            }
         </View>
     );
 };

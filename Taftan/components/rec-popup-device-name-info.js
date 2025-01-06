@@ -22,6 +22,7 @@ const DeviceNameInfoPopup = ({ modalEnable, setmodalEnable, reqInfo, branchInfo,
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>
                 <View style={styles.mapView}>
                     <WebView
+                        nestedScrollEnabled={true}
                         source={{
                             html: `
                                 <!DOCTYPE html>

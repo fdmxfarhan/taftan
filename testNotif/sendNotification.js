@@ -1,6 +1,6 @@
 var admin = require("firebase-admin");
 
-var serviceAccount = require("./taftan-19de2-firebase-adminsdk-xnhmv-1e12816443.json");
+var serviceAccount = require("../../taftan-19de2-firebase-adminsdk-xnhmv-1e12816443.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -8,7 +8,7 @@ admin.initializeApp({
 
 const sendNotification = async () => {
   // The device token you want to send the notification to
-  const deviceToken = "ca7kxuyUQ0KxAYs8mxYser:APA91bG_zmUxcjDqhpRig7_0xF-wamr607GqYuAxu9i_75KnAwu8OBlDPxWa413lvqoojmNMTvIob2Juwoi2n8bzPAbJKfcY24bRzaS252rpea-ItJP2ns8"; // Replace with your device's token
+  const deviceToken = "edNIpEa0TpGJyIgtcuh7PN:APA91bGiTJ-8OBxRWBmPHXDS2pzPGMuAjEMLRM0ZVcovqbFOTwrRk4Ga9aTVi0cvATm3AkGGAs8rByBcOm1lgfajywLwhEW8HmCSdAcjhp4rNVP6CPhO9RM";
   
   // The message payload
   const message = {

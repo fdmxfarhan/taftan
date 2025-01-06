@@ -28,6 +28,7 @@
     "react-native-fs": "^2.20.0",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.21.2",
+    "react-native-image-picker": "^7.2.3",
     "react-native-maps": "^1.18.2",
     "react-native-permissions": "^5.0.1",
     "react-native-redash": "^18.1.3",

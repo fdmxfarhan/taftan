@@ -7,21 +7,24 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 
-const LastReqPopup = ({ modalEnable, setmodalEnable, reqInfo, lastRequestList }) => {
+const LastReqPopup = ({ modalEnable, setmodalEnable, reqInfo, lastRequestList, navigation }) => {
     return (
         <View>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>
                 <ScrollView style={styles.scroll}>
                     {lastRequestList.map((item, index) => (
-                        <View key={item.id} style={styles.itemContainer}>
-                            <Text style={styles.deviceName}>{item.branchName} ({item.areaNAme})</Text>
-                            <Text style={styles.damageTitle}>{item.persianLastState}</Text>
-                            <Text style={styles.damageTitle}>{item.serviceGroupTitle}</Text>
+                        <TouchableOpacity key={item.id} style={styles.itemContainer} onPress={() => {
+                            navigation.navigate('DamageReqView', { item, key: Math.random().toString() });
+                            setmodalEnable(false);
+                        }}>
+                            <Text style={styles.deviceName}>{item.branchName}</Text>
+                            <Text style={styles.damageTitle}>{item.serviceGroupTitle} ({item.areaNAme})</Text>
+                            <Text style={styles.damageTitle}>{item.requestId}</Text>
                             <Text style={styles.date}>{item.persianInsertedDate}</Text>
                             <View style={styles.stateView}>
-                                <Text style={styles.state}>{item.requestId}</Text>
+                                <Text style={styles.state}>{item.persianLastState}</Text>
                             </View>
-                        </View>
+                        </TouchableOpacity>
                     ))}
                 </ScrollView>
                 <TouchableOpacity style={styles.closeButton} onPress={() => setmodalEnable(false)}>
@@ -58,6 +61,7 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontFamily: 'iransansbold',
         color: colors.gray,
+        textAlign: 'right',
     },
     textTitle: {
         fontSize: 12,

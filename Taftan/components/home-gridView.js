@@ -55,10 +55,14 @@ const GridView = ({ navigation }) => {
                 </TouchableOpacity>
             </View>
             <View style={styles.gridRow}>
-                <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('AddRequest')}>
-                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.red3 }]} name={'add'} />
-                    <Text style={styles.gridButtonText}>افزودن درخواست</Text>
+                <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('DeviceListView')}>
+                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.red2 }]} name={'calculator'} />
+                    <Text style={styles.gridButtonText}>دستگاه های من</Text>
                 </TouchableOpacity>
+                {/* <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('Icons')}>
+                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.lightblue }]} name={'information'} />
+                    <Text style={styles.gridButtonText}>آیکون ها(تست)</Text>
+                </TouchableOpacity> */}
             </View>
         </Animated.View>
     );

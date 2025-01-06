@@ -10,10 +10,16 @@ import PersianDatePicker from './persian-date-picker';
 import TimePicker from './time-picker';
 import TwoChoice from './twochoice';
 import { saveRequestActionReport } from '../services/report-save-request-action';
+import { twoDigit } from '../config/consts';
+import ReportChose from './rec-popup-report-chose';
+import { GetUnsuccessfullActionReasonList } from '../services/get-full-action-reasons-list';
+import DropDownObj from './dropdown-obj';
+import CheckBox from './checkbox';
 
-const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, setactionTypeList }) => {
+const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, setactionTypeList, updateActionList, setreqActionList, navigation, requestDetail }) => {
     const [actionTypeOpen, setactionTypeOpen] = useState(false);
-    const [actionTypeValue, setactionTypeValue] = useState('1');
+    const [actionTypeValue, setactionTypeValue] = useState('انتخاب کنید');
+    const [actionTypeValueId, setactionTypeValueId] = useState('1');
     const [selectedDay, setselectedDay] = useState('1');
     const [selectedMonth, setselectedMonth] = useState('1');
     const [selectedYear, setselectedYear] = useState('1303');
@@ -26,64 +32,86 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
     const [selectEndHour, setselectEndHour] = useState('00');
     const [actionResult, setactionResult] = useState(true);
     const [actionDescription, setactionDescription] = useState('');
+    const [reportChoseEN, setreportChoseEN] = useState(false);
+    const [unsuccessfullCustomer, setunsuccessfullCustomer] = useState(false);
+    const [reasonsList, setreasonsList] = useState([]);
+    const [unsuccessfullActionReasonId, setunsuccessfullActionReasonId] = useState('');
+    const [unsuccessfullActionReason, setunsuccessfullActionReason] = useState('انتخاب کنید');
 
-    const saveActionRequest = () => {
-        const sendRequest = async () => {
-            var optionsSample = {
-                "id": 0,
-                "Date": "1403/10/01",
-                "startTime": "10:00",
-                "endTime": "10:37",
-                "actionTypeId": 1,
-                "actinResult": true,
-                "unsuccessfullActionReasonId": 0,
-                "unsuccessfullActionSide": true,
-                "description": "dsafasdf",
-                "requestId": 364041,
-                "reportId": 0,
-                "fileName": ""
-            }
-            var options = {
-                "id": 0,
-                "Date": `${selectedYear}/${selectedMonth}/${selectedDay}`,
-                "startTime": `${selectStartHour}:${selectStartMin}`,
-                "endTime": `${selectEndHour}:${selectEndMin}`,
-                "actionTypeId": parseInt(actionTypeValue),
-                "actinResult": actionResult,
-                "unsuccessfullActionReasonId": 0,
-                "unsuccessfullActionSide": true,
-                "description": actionDescription,
-                "requestId": requestItem.requestId,
-                "reportId": 0,
-                "fileName": ""
-            }
-            console.log(optionsSample)
-            var result = await saveRequestActionReport(optionsSample);
-            if (result.success) {
-                ToastAndroid.show('اقدام جدید ثبت شد.', ToastAndroid.LONG);
-                setPopupEN(false);
-            }
-            else {
-                ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
+    var updateUnsuccessfullReasonsList = async () => {
+        var result = await GetUnsuccessfullActionReasonList();
+        setreasonsList(result.data);
+    }
+
+    const saveActionRequest = async () => {
+        var startMin = parseInt(selectStartHour * 60 + selectStartMin);
+        var endMin = parseInt(selectEndHour * 60 + selectEndMin);
+        if (endMin <= startMin) {
+            ToastAndroid.show('ساعت پایان نباید کوچکتر از ساعت شروع باشد.', ToastAndroid.SHORT);
+            return;
+        }
+        var optionsSample = {
+            "id": 0,
+            "Date": "1403/10/01",
+            "startTime": "10:00",
+            "endTime": "10:37",
+            "actionTypeId": 1,
+            "actinResult": true,
+            "unsuccessfullActionReasonId": 0,
+            "unsuccessfullActionSide": true,
+            "description": "dsafasdf",
+            "requestId": 364041,
+            "reportId": 0,
+            "fileName": ""
+        }
+        var options = {
+            "id": 0,
+            "Date": `${selectedYear}/${twoDigit(selectedMonth)}/${twoDigit(selectedDay)}`,
+            "startTime": `${selectStartHour}:${selectStartMin}`,
+            "endTime": `${selectEndHour}:${selectEndMin}`,
+            "actionTypeId": parseInt(actionTypeValueId),
+            "actinResult": actionResult,
+            "unsuccessfullActionReasonId": 0,
+            "unsuccessfullActionSide": true,
+            "description": actionDescription,
+            "requestId": requestItem.requestId,
+            "reportId": 0,
+            "fileName": ""
+        }
+        var result = await saveRequestActionReport(options);
+        if (result.success) {
+            ToastAndroid.show('اقدام جدید ثبت شد.', ToastAndroid.LONG);
+            updateActionList(setreqActionList);
+            setPopupEN(false);
+            if (parseInt(actionTypeValueId) == 1) { // مراجعه
+                if (actionResult) { // موفق
+                    navigation.navigate('Report', { item: requestItem, requestDetail });
+                } else { // ناموفق
+                    setreportChoseEN(true);
+                }
+            } else { // هر چی به جز مراجعه
+                // هیچ کاری نکنه
             }
         }
-        sendRequest();
+        else {
+            ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
+        }
     }
 
     return (
         <View>
+            <ReportChose popupEN={reportChoseEN} setPopupEN={setreportChoseEN} navigation={navigation} requestItem={requestItem} requestDetail={requestDetail} />
             <Popup modalVisible={popupEN} setModalVisible={setPopupEN}>
                 <Text style={styles.actionLabel}>نوع اقدام: </Text>
-                <DropDownPicker
-                    open={actionTypeOpen}
+                <DropDownObj
+                    list={actionTypeList}
+                    getLabel={(item) => item.label}
+                    getValue={(item) => item.label}
+                    setValue={(item) => { setactionTypeValue(item.label); setactionTypeValueId(item.value) }}
                     value={actionTypeValue}
-                    items={actionTypeList}
-                    setOpen={setactionTypeOpen}
-                    setValue={setactionTypeValue}
-                    setItems={setactionTypeList}
-                    placeholder="انتخاب نوع اقدام"
-                    style={styles.dropdown}
-                    dropDownContainerStyle={styles.dropdownContainer}
+                    buttonStyle={styles.dropdown}
+                    buttonTextStyle={styles.dropdownText}
+                    onSubmit={() => { }}
                 />
                 <Text style={styles.actionLabel}>تاریخ: </Text>
                 <TouchableOpacity style={styles.dateInputButton} onPress={() => setdatePickerVisible(true)}>
@@ -104,7 +132,36 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
                     </View>
                 </View>
                 <Text style={styles.actionLabel}>نتیجه اقدام: </Text>
-                <TwoChoice active={actionResult} setActive={setactionResult} texts={['موفق', 'ناموفق']} />
+                <TwoChoice active={actionResult} setActive={(result) => { setactionResult(result); updateUnsuccessfullReasonsList(); }} texts={['موفق', 'ناموفق']} />
+
+                {!actionResult &&
+                    <View style={styles.unsuccessfullActionView}>
+                        <Text style={styles.actionLabel}>علت اقدام ناموفق: </Text>
+                        <DropDownObj
+                            list={reasonsList}
+                            getLabel={(item) => item.title}
+                            getValue={(item) => item.title}
+                            setValue={(item) => { setunsuccessfullActionReason(item.title); setunsuccessfullActionReasonId(item.id) }}
+                            value={unsuccessfullActionReason}
+                            buttonStyle={styles.dropdown}
+                            buttonTextStyle={styles.dropdownText}
+                            onSubmit={() => { }}
+                        />
+                        <View style={styles.twoSideAction}>
+                            <CheckBox
+                                text={'مشتری'}
+                                value={unsuccessfullCustomer}
+                                onChange={() => setunsuccessfullCustomer(!unsuccessfullCustomer)}
+                                checkboxstyle={styles.checkbox}
+                            />
+                            <TouchableOpacity style={styles.uploadPicker}>
+                                <Ionicons style={styles.uploadPickerIcon} name={'attach'} />
+                                <Text style={styles.uploadPickerText}>فایل ضمیمه</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                }
+
                 <Text style={styles.actionLabel}>توضیحات: </Text>
                 <TextInput
                     style={styles.textArea}
@@ -113,7 +170,7 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
                     numberOfLines={5}
                     value={actionDescription}
                     keyboardType={'default'}
-                    onChange={(text) => {setactionDescription(text.nativeEvent.text)}}
+                    onChange={(text) => { setactionDescription(text.nativeEvent.text) }}
                 />
                 <View style={styles.submitButtonsView}>
                     <TouchableOpacity style={styles.submitButton} onPress={saveActionRequest}>
@@ -141,24 +198,12 @@ const styles = StyleSheet.create({
         margin: 'auto',
         fontFamily: 'iransansbold',
     },
-    dropdown: {
-        fontFamily: 'iransans',
-        color: colors.text,
-        borderColor: colors.gray,
-        borderWidth: 1,
-    },
-    dropdownContainer: {
-        fontFamily: 'iransans',
-        color: colors.text,
-        borderColor: colors.gray,
-        borderWidth: 1,
-    },
     dateInputButton: {
         width: '100%',
         borderWidth: 1,
         borderColor: colors.gray,
         borderRadius: 10,
-        paddingVertical: 10,
+        paddingVertical: 4,
         paddingHorizontal: 10,
     },
     dateInputButtonText: {
@@ -178,11 +223,11 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.gray,
         borderRadius: 10,
-        paddingVertical: 4,
+        paddingVertical: 2,
     },
     timeInputButtonText: {
         fontFamily: 'iransans',
-        fontSize: 18,
+        fontSize: 17,
         textAlign: 'center',
     },
     textArea: {
@@ -228,6 +273,56 @@ const styles = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 14,
         textAlign: 'center',
+        color: colors.white,
+    },
+    unsuccessfullActionView: {
+        width: '100%',
+    },
+    dropdown: {
+        backgroundColor: colors.white,
+        borderWidth: 1,
+        borderColor: colors.lightgray,
+        borderRadius: 7,
+        width: '100%',
+        marginHorizontal: 0,
+        alignContent: 'center',
+        alignItems: 'center',
+    },
+    dropdownText: {
+        paddingVertical: 5,
+        paddingHorizontal: 5,
+        textAlign: 'center',
+        width: '100%',
+        fontFamily: 'iransans',
+        fontSize: 14,
+    },
+    dropdownContainer: {
+        padding: 0,
+    },
+    twoSideAction: {
+        flexDirection: 'row-reverse',
+        marginTop: 10,
+    },
+    checkbox: {
+        width: '60%',
+        marginTop: 5,
+    },
+    uploadPicker: {
+        width: '40%',
+        flexDirection: 'row-reverse',
+        backgroundColor: colors.blue,
+        alignItems: 'center',
+        alignContent: 'center',
+        borderRadius: 7,
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+    },
+    uploadPickerIcon: {
+        fontSize: 17,
+        color: colors.white,
+    },
+    uploadPickerText: {
         color: colors.white,
     },
 });

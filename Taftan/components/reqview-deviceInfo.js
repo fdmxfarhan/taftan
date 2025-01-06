@@ -6,7 +6,7 @@ import LastConfPopup from './rec-popup-lastconf';
 import LastReqPopup from './rec-popup-lastrec';
 import DeviceNameInfoPopup from './rec-popup-device-name-info';
 
-const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail, lastRequestList, deviceDetail }) => {
+const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail, lastRequestList, deviceDetail, navigation }) => {
     var [lastConfModalEnable, setlastConfModalEnable] = useState(false);
     var [lastReqModalEnable, setlastReqModalEnable] = useState(false);
     var [DeviceNameInfoModalEnable, setDeviceNameInfoModalEnable] = useState(false);
@@ -17,7 +17,7 @@ const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail, l
     return (
         <View style={styles.container}>
             <LastConfPopup lastConfModalEnable={lastConfModalEnable} setlastConfModalEnable={setlastConfModalEnable} reqInfo={reqInfo} />
-            <LastReqPopup lastRequestList={lastRequestList} modalEnable={lastReqModalEnable} setmodalEnable={setlastReqModalEnable} reqInfo={reqInfo} />
+            <LastReqPopup lastRequestList={lastRequestList} modalEnable={lastReqModalEnable} setmodalEnable={setlastReqModalEnable} reqInfo={reqInfo} navigation={navigation} />
             <DeviceNameInfoPopup modalEnable={DeviceNameInfoModalEnable} setmodalEnable={setDeviceNameInfoModalEnable} deviceDetail={deviceDetail} />
             <TouchableOpacity style={styles.titleView} onPress={toggleDeviceInfo}>
                 <Text style={styles.title}>دستگاه</Text>
@@ -93,11 +93,11 @@ const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail, l
                     <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
                         <TouchableOpacity style={styles.submitButton} onPress={() => setlastReqModalEnable(true)}>
                             <Ionicons style={styles.buttonIcon} name="desktop-outline" />
-                            <Text style={styles.buttonText}>آخرین درخواست‌های دستگاه</Text>
+                            <Text style={styles.buttonText}>آخرین درخواست‌</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.submitButton} onPress={() => setlastConfModalEnable(true)}>
                             <Ionicons style={styles.buttonIcon} name="bookmark-outline" />
-                            <Text style={styles.buttonText}>آخرین پیکر بندی دستگاه</Text>
+                            <Text style={styles.buttonText}>آخرین پیکر بندی</Text>
                         </TouchableOpacity>
                     </ScrollView>
                 </View>

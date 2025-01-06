@@ -25,11 +25,11 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, ac
                             setactionsHistory(updatedActions);
                         }}>
                             <View style={styles.actionHistoryRight}>
-                                <Text style={styles.actionHistoryTitle}>{item.actionTypeTitle}</Text>
+                                <Text style={styles.actionHistoryTitle}>{item.actinResult}</Text>
                                 <Text style={styles.actionHistoryTitle2}>{item.description}</Text>
                             </View>
                             <View style={styles.actionHistoryLeft}>
-                                <Text style={styles.actionResult}>{item.actinResult}</Text>
+                                <Text style={styles.actionResult}>{item.actionTypeTitle}</Text>
                                 <Text style={styles.actionDateText}>{item.actionDate}</Text>
                             </View>
                         </TouchableOpacity>
@@ -75,6 +75,10 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, ac
                                     <TouchableOpacity style={styles.submitButton} onPress={() => {navigation.navigate('Report', {item, requestDetail})}}>
                                         <Ionicons style={styles.buttonIcon} name="file-tray" />
                                         <Text style={styles.buttonText}>مشاهده گزارش کار</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.submitButton} onPress={() => {}}>
+                                        <Ionicons style={styles.buttonIcon} name="cloud-download" />
+                                        <Text style={styles.buttonText}>دانلود فایل گزارش</Text>
                                     </TouchableOpacity>
                                 </ScrollView>
                             </View>
@@ -249,11 +253,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: colors.black,
         paddingTop: 10,
+        textAlign: 'right',
     },
     actionHistoryTitle2: {
         fontFamily: 'iransans',
         fontSize: 14,
         paddingTop: 3,
+        textAlign: 'right',
     },
     actionHistoryLeft: {
         flex: 1,

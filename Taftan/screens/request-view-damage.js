@@ -121,91 +121,97 @@ const DamageReqView = (props) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
+    const updateActionList = async (setreqActionList) => {
+        result = await loadRequestReportActionList(item.requestId);
+        if(result.success){
+            setreqActionList(result.data.Data);
+        }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
+    }
+    const sendRequest = async () => {
+        var result = await getRequestDetail(item.requestId);
+        if(result.success){
+            if (result.data != 'داده پیدا نشد'){
+                requestDetail = result.data;
+                setRequestDetail(requestDetail);
+            }
+            else {
+                ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
+                props.navigation.goBack();
+                return;
+            }
+        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        
+        result = await loadRequestExpertList(item.requestId);
+        if(result.success){
+            setreqExpertList(result.data.Data);
+        }else ToastAndroid.show('لیست کارشناسان دریافت نشد', ToastAndroid.SHORT);
+
+        result = await getUserList(requestDetail.requestInfo.areaId, requestDetail.requestInfo.requestId);
+        if(result.success){
+            setUserList(result.data);
+        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
+        result = await getRefrenceCauseList();
+        if(result.success){
+            setrefrenceCauseList(result.data);
+        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
+        result = await getWorkCausesListTitle();
+        if(result.success){
+            workCausesListTitle = result.data;
+            setWorkCausesListTitle(workCausesListTitle);
+            workCauseList = [];
+            for(var i=0; i < workCausesListTitle.length; i++) workCauseList.push({label: workCausesListTitle[i].description, value: workCausesListTitle[i].id});
+            setworkCauseList(workCauseList);
+        }else ToastAndroid.show('لیست وضعیت سرویس بارگیری نشد.', ToastAndroid.SHORT);
+        
+        result = await loadDeviceRequestList(item.deviceId);
+        if(result.success){
+            setLastRequestList(result.data.Data);
+        }else ToastAndroid.show('لیست درخواست‌های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+        
+        result = await loadRequestHistoryList(item.requestId);
+        if(result.success){
+            setreqHistoryList(result.data.Data);
+        }else ToastAndroid.show('تاریخچه درخواست های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+        
+        result = await loadRequestReportActionList(item.requestId);
+        if(result.success){
+            setreqActionList(result.data.Data);
+        }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
+        
+        result = await GetActionTypeList();
+        if(result.success){
+            actionTypeList = []
+            for(var i=0; i < result.data.length; i++) actionTypeList.push({label: result.data[i].title, value: result.data[i].id});
+            setactionTypeList(actionTypeList);
+        }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
+        
+        result = await GetBranchDetail(requestDetail.requestInfo.branchId);
+        if(result.success){
+            setbranchInfo(result.data);
+        }else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
+        
+        result = await GetDeviceDetail(requestDetail.damageInfo.deviceId);
+        if(result.success){
+            setdeviceDetail(result.data);
+        }else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+
+        result = await GetAreaDetail(requestDetail.requestInfo.areaId);
+        if(result.success){
+            setareaDetail(result.data);
+        }else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
+
+        result = await LoadAllowedRequestAction(item.requestId);
+        if(result.success){
+            // console.log(result.data)
+            setallowdActionList(result.data);
+        }else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
+
+        
+        setIsLoading(false);
+    }
     useEffect(() => {
-        const sendRequest = async () => {
-            var result = await getRequestDetail(item.requestId);
-            if(result.success){
-                if (result.data != 'داده پیدا نشد'){
-                    requestDetail = result.data;
-                    setRequestDetail(requestDetail);
-                }
-                else {
-                    ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
-                    props.navigation.goBack();
-                    return;
-                }
-            }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-            
-            result = await loadRequestExpertList(item.requestId);
-            if(result.success){
-                setreqExpertList(result.data.Data);
-            }else ToastAndroid.show('لیست کارشناسان دریافت نشد', ToastAndroid.SHORT);
-
-            result = await getUserList(requestDetail.requestInfo.areaId, requestDetail.requestInfo.requestId);
-            if(result.success){
-                setUserList(result.data);
-            }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-
-            result = await getRefrenceCauseList();
-            if(result.success){
-                setrefrenceCauseList(result.data);
-            }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-
-            result = await getWorkCausesListTitle();
-            if(result.success){
-                workCausesListTitle = result.data;
-                setWorkCausesListTitle(workCausesListTitle);
-                workCauseList = [];
-                for(var i=0; i < workCausesListTitle.length; i++) workCauseList.push({label: workCausesListTitle[i].description, value: workCausesListTitle[i].id});
-                setworkCauseList(workCauseList);
-            }else ToastAndroid.show('لیست وضعیت سرویس بارگیری نشد.', ToastAndroid.SHORT);
-            
-            result = await loadDeviceRequestList(item.deviceId);
-            if(result.success){
-                setLastRequestList(result.data.Data);
-            }else ToastAndroid.show('لیست درخواست‌های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
-            
-            result = await loadRequestHistoryList(item.requestId);
-            if(result.success){
-                setreqHistoryList(result.data.Data);
-            }else ToastAndroid.show('تاریخچه درخواست های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
-            
-            result = await loadRequestReportActionList(item.requestId);
-            if(result.success){
-                setreqActionList(result.data.Data);
-            }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
-            
-            result = await GetActionTypeList();
-            if(result.success){
-                actionTypeList = []
-                for(var i=0; i < result.data.length; i++) actionTypeList.push({label: result.data[i].title, value: result.data[i].id});
-                setactionTypeList(actionTypeList);
-            }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
-            
-            result = await GetBranchDetail(requestDetail.requestInfo.branchId);
-            if(result.success){
-                setbranchInfo(result.data);
-            }else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
-            
-            result = await GetDeviceDetail(requestDetail.damageInfo.deviceId);
-            if(result.success){
-                setdeviceDetail(result.data);
-            }else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
-
-            result = await GetAreaDetail(requestDetail.requestInfo.areaId);
-            if(result.success){
-                setareaDetail(result.data);
-            }else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
-
-            result = await LoadAllowedRequestAction(item.requestId);
-            if(result.success){
-                console.log(result.data)
-                setallowdActionList(result.data);
-            }else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
-
-            
-            setIsLoading(false);
-        }
         sendRequest();
     }, [])
     return (
@@ -213,10 +219,10 @@ const DamageReqView = (props) => {
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <NavBar rightCallback={saveEverything} leftCallback={handleSearchPress} title="درخواست‌های خرابی" leftIcon="arrow-back" rightIcon="save-outline" />
             
-            <ScrollView style={styles.contents} keyboardShouldPersistTaps="handled" scrollEnabled={true}>
+            <ScrollView style={styles.contents} nestedScrollEnabled={false} keyboardShouldPersistTaps="handled">
                 <ReqInfoView toggleReqinfoEN={toggleReqinfoEN} reqinfoEN={reqinfoEN} item={item} requestDetail={requestDetail} branchInfo={branchInfo} /> 
                 <ReqDamageView toggleDamageInfo={toggleDamageInfo} damageInfo={damageInfo} item={item} requestDetail={requestDetail}/> 
-                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} reqInfo={item} requestDetail={requestDetail} lastRequestList={lastRequestList} deviceDetail={deviceDetail} /> 
+                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} reqInfo={item} requestDetail={requestDetail} lastRequestList={lastRequestList} deviceDetail={deviceDetail} navigation={props.navigation}/> 
                 <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} reqInfo={item} requestDetail={requestDetail} reqHistoryList={reqHistoryList} areaDetail={areaDetail} /> 
                 <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} item={item} requestDetail={requestDetail}/> 
                 <ReqServiceStateInfo toggleserviceStateInfo={toggleserviceStateInfo} serviceStateInfo={serviceStateInfo} item={item} requestDetail={requestDetail}/> 
@@ -224,7 +230,7 @@ const DamageReqView = (props) => {
                 <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} item={item} requestDetail={requestDetail} reqExpertList={reqExpertList}/> 
             </ScrollView>
 
-            <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList}  workCauseList={workCauseList} setworkCauseList={setworkCauseList} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} allowdActionList={allowdActionList} />
+            <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList}  workCauseList={workCauseList} setworkCauseList={setworkCauseList} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} allowdActionList={allowdActionList} updateActionList={updateActionList} setreqActionList={setreqActionList} navigation={props.navigation}/>
             <LoadingView isLoading={isLoadingSave} text={'در حال ذخیره اطلاعات...'}/>
         </View>
     )

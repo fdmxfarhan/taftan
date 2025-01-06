@@ -14,9 +14,9 @@ const WorkFlowPopup = ({ modalEnable, setmodalEnable, reqInfo, reqHistoryList })
                 <ScrollView style={styles.scroll}>
                     {reqHistoryList.map((item, index) => (
                         <View key={item.id} style={styles.itemContainer}>
-                            <Text style={styles.deviceName}>{item.actorName} ({item.areaName})</Text>
-                            <Text style={styles.damageTitle}>{item.persianAction}</Text>
-                            <Text style={styles.damageTitle}>{item.description}</Text>
+                            <Text style={styles.deviceName}>{item.persianAction} </Text>
+                            <Text style={styles.damageTitle}>{item.actorName} ({item.areaName})</Text>
+                            {/* <Text style={styles.damageTitle}>{item.description}</Text> */}
                             <Text style={styles.date}>{item.persianActionDate}</Text>
                             <View style={styles.stateView}>
                                 <Text style={styles.state}>{item.persianState}</Text>

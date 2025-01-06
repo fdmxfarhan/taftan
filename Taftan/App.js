@@ -21,6 +21,8 @@ import InstallationReqView from './screens/request-view-installation';
 import Icons from './screens/icons';
 import AddRequest from './screens/request-add';
 import Report from './screens/report';
+import DeviceListView from './screens/deviceList';
+import DeviceDetailView from './screens/deviceDetail';
 
 const App = (props) => {
   const navigationRef = useRef();
@@ -117,6 +119,16 @@ const App = (props) => {
         <Stack.Screen
           name="Report"
           component={Report}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="DeviceListView"
+          component={DeviceListView}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="DeviceDetailView"
+          component={DeviceDetailView}
           options={({ route }) => ({ headerShown: false })}
         />
       </Stack.Navigator>
