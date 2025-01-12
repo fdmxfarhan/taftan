@@ -21,7 +21,7 @@ const PersianDatePicker = ({ visible, setDay, setMonth, setYear, onsubmit }) => 
         monthInputList.push('');
         setmonthInputList(monthInputList);
         yearInputList = [];
-        for (var i = 0; i < 10; i++) yearInputList.push(`${i + 1403}`);
+        for (var i = 0; i < 50; i++) yearInputList.push(`${i + 1390}`);
         yearInputList.push('');
         setyearInputList(yearInputList);
     }, [])

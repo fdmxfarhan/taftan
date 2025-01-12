@@ -71,7 +71,7 @@ const DamageReqView = (props) => {
     var [branchInfo, setbranchInfo] = useState([]);
     var [deviceDetail, setdeviceDetail] = useState([]);
     var [areaDetail, setareaDetail] = useState({});
-    var [allowdActionList, setallowdActionList] = useState({});
+    var [allowdActionList, setallowdActionList] = useState([]);
     
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -204,7 +204,7 @@ const DamageReqView = (props) => {
 
         result = await LoadAllowedRequestAction(item.requestId);
         if(result.success){
-            // console.log(result.data)
+            console.log(result.data)
             setallowdActionList(result.data);
         }else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
 
@@ -241,12 +241,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 0,
-        backgroundColor: colors.lightBackground,
+        backgroundColor: colors.white,
         paddingBottom: 5,
     },
     contents: {
         width: '100%',
-        backgroundColor: colors.lightBackground,
+        backgroundColor: colors.white,
         flex: 1,
     },
     content: {

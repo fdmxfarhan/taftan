@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatLi
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 
-const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, buttonTextStyle, onSubmit }) => {
+const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, buttonTextStyle, onSubmit, disabled, containerStyle }) => {
     const [numOfRowsOpen, setnumOfRowsOpen] = useState(false);
 
     const renderListItem = ({ item }) => (
@@ -18,12 +18,12 @@ const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, b
     )
 
     return (
-        <View style={styles.container}>
-            <TouchableOpacity style={[buttonStyle, styles.placeHolderButton]} onPress={() => setnumOfRowsOpen(!numOfRowsOpen)}>
+        <View style={containerStyle}>
+            <TouchableOpacity style={[buttonStyle, styles.placeHolderButton]} onPress={() => {if(!disabled) setnumOfRowsOpen(!numOfRowsOpen)}}>
                 <Text style={buttonTextStyle}>
                     {value}
-                    <Ionicons name={'chevron-down'} style={styles.chevron} />
                 </Text>
+                <Ionicons name={'chevron-down'} style={styles.chevron} />
             </TouchableOpacity>
             {numOfRowsOpen &&
                 <View style={styles.listContainer}>
@@ -66,7 +66,12 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     chevron: {
-        paddingHorizontal: 5,
+        position: 'absolute',
+        top: 9,
+        left: 0,
+        paddingHorizontal: 10,
+        fontSize: 10,
+        
     },
 });
 

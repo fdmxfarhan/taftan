@@ -28,26 +28,42 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
             <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} />
 
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => setAssignPopupEN(true)}>
+                {allowdActionList.includes('SendToExpert') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => setAssignPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="chatbubbles" />
                     <Text style={styles.buttonText}>ارجاع کار/تخصیص کارشناس</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setActionPopupEN(true)}>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('SendToOffice') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => notWorking()}>
+                    <Ionicons style={styles.buttonIcon} name="chatbubbles" />
+                    <Text style={styles.buttonText}>ارجاع به دفتر</Text>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('InsertReport') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setActionPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="newspaper" />
                     <Text style={styles.buttonText}>ثبت اقدام</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setStatusPopupEN(true)}>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('RequestStatus') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setStatusPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="stats-chart" />
                     <Text style={styles.buttonText}>وضعیت سرویس</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => setClosePopupEN(true)}>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('Closed') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => setClosePopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="person-remove" />
                     <Text style={styles.buttonText}>بستن کار توسط کارشناس</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.orangepeel}]} onPress={() => setReturnPopupEN(true)}>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('OfficerApprove') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => notWorking()}>
+                    <Ionicons style={styles.buttonIcon} name="checkmark-done" />
+                    <Text style={styles.buttonText}>تایید مدیر</Text>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('adminApprove') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => notWorking()}>
+                    <Ionicons style={styles.buttonIcon} name="checkmark-done" />
+                    <Text style={styles.buttonText}>تایید راهبر</Text>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('Cancel') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.red3}]} onPress={() => notWorking()}>
+                    <Ionicons style={styles.buttonIcon} name="close" />
+                    <Text style={styles.buttonText}>کنسل کار توسط کارشناس</Text>
+                </TouchableOpacity>)}
+                {allowdActionList.includes('Return') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.orangepeel}]} onPress={() => setReturnPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="shuffle" />
                     <Text style={styles.buttonText}>بازگشت کار</Text>
-                </TouchableOpacity>
+                </TouchableOpacity>)}
             </ScrollView>
         </View>
     );

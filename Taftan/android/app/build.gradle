@@ -115,6 +115,7 @@ android {
 dependencies {
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
+    implementation("com.google.mlkit:barcode-scanning:17.0.3")
     // implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:9.7.2'
 
     if (hermesEnabled.toBoolean()) {

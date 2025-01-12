@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import DropDown from './dropdown';
 
-const ReqGridController = ({ setData, skipValue, setskipValue }) => {
+const ReqGridController = ({ setData, skipValue, setskipValue, filtersEN, setFiltersEN, toggleFiltersEN }) => {
     const [numOfRowsValue, setnumOfRowsValue] = useState(10);
     const [numOfRowsList, setnumOfRowsList] = useState([
         { label: '5', value: 5 },
@@ -12,48 +12,7 @@ const ReqGridController = ({ setData, skipValue, setskipValue }) => {
         { label: '50', value: 50 },
         { label: '100', value: 100 },
     ]);
-    const [filtersEN, setFiltersEN] = useState(false);
-    var filter = [
-        {
-            "field": "deviceName",
-            "operator": "contains",
-            "value": "شعب"
-        },
-        {
-            "logic": "or",
-            "filters": [
-                {
-                    "field": "lastState",
-                    "operator": "contains",
-                    "value": "SendToOffice"
-                },
-                {
-                    "field": "lastState",
-                    "operator": "contains",
-                    "value": "OfficeView"
-                },
-                {
-                    "field": "lastState",
-                    "operator": "contains",
-                    "value": "Acting"
-                },
-                {
-                    "field": "lastState",
-                    "operator": "contains",
-                    "value": "DoneLeader"
-                }
-            ]
-        },
-        {
-            "field": "IsArchived",
-            "operator": "Eq",
-            "value": 0
-        }
-    ]
-    const toggleFiltersEN = () => {
-        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-        setFiltersEN(!filtersEN);
-    };
+    
     return (
         <View style={styles.container}>
             <View style={styles.buttonsView}>
@@ -95,178 +54,7 @@ const ReqGridController = ({ setData, skipValue, setskipValue }) => {
                     <Ionicons style={styles.filterButtonIcon} name={'funnel'} />
                 </TouchableOpacity>
             </View>
-            {filtersEN && <View style={styles.filterView}>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>شماره کار:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'شماره کار'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>نام دستگاه:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'نام دستگاه'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>تاریخ: از</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'تاریخ'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>تا</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'تاریخ'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>شماره ترمینال:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'شماره ترمینال'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>مدل:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'مدل'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>مشتری:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'مشتری'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>دفتر:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'دفتر'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>واحد سازمانی:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'واحد سازمانی'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>عنوان خرابی:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'عنوان خرابی'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>کاربر جاری:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'کاربر جاری'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>کاربر ثبت کننده:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'کاربر ثبت کننده'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>تکرار خرابی:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'تکرار خرابی'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>گردش کار:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'گردش کار'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.filterRow}>
-                    <Text style={styles.label}>مشتری:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'مشتری'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                    <Text style={styles.label}>دفتر:</Text>
-                    <TextInput
-                        style={[styles.textInput4]}
-                        placeholder={'دفتر'}
-                        placeholderTextColor={colors.text}
-                        // value={skipValue.toString()}
-                        // onChange={(text) => { setskipValue(text.nativeEvent.text) }}
-                        // onSubmitEditing={() => setData(skipValue, numOfRowsValue)}
-                    />
-                </View>
-                <View style={styles.buttonsView}>
-                    <TouchableOpacity style={[styles.filterBtn, {backgroundColor: colors.blue}]} onPress={toggleFiltersEN}>
-                        <Ionicons style={styles.filterBtnIcon} name={'funnel-outline'} />
-                        <Text style={styles.filterBtnText}>اعمال فیلترها</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.filterBtn, {backgroundColor: colors.red}]} onPress={toggleFiltersEN}>
-                        <Ionicons style={styles.filterBtnIcon} name={'trash'} />
-                        <Text style={styles.filterBtnText}>پاکسازی فیلترها</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>}
+            
         </View>
     );
 };
@@ -285,7 +73,7 @@ const styles = StyleSheet.create({
         color: colors.text,
     },
     button: {
-        paddingHorizontal: 4,
+        paddingHorizontal: 5,
         paddingTop: 5,
         paddingBottom: 0,
     },

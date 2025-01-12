@@ -23,6 +23,7 @@ import AddRequest from './screens/request-add';
 import Report from './screens/report';
 import DeviceListView from './screens/deviceList';
 import DeviceDetailView from './screens/deviceDetail';
+import CameraScan from './screens/cameraScan';
 
 const App = (props) => {
   const navigationRef = useRef();
@@ -129,6 +130,11 @@ const App = (props) => {
         <Stack.Screen
           name="DeviceDetailView"
           component={DeviceDetailView}
+          options={({ route }) => ({ headerShown: false })}
+        />
+        <Stack.Screen
+          name="CameraScan"
+          component={CameraScan}
           options={({ route }) => ({ headerShown: false })}
         />
       </Stack.Navigator>

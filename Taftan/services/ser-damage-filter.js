@@ -1,7 +1,7 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
 
-export const submitDamageRequest = async (skip, take) => {
+export const submitDamageRequestFilter = async (options) => {
     try {
         if (use_local_data) return {
             success: true, data: {
@@ -250,22 +250,8 @@ export const submitDamageRequest = async (skip, take) => {
                 "TotalCount": 3862
             }
         };
-        const response = await api.post('/RequestDamageController/loadAllDamageRequestList', {
-            "skip": skip,
-            "take": take,
-            "sort": [{
-                "field": "id",
-                "dir": "desc"
-            }],
-            "filter": {
-                "logic": "and",
-                "filters": [{
-                    "field": "IsArchived",
-                    "operator": "Eq",
-                    "value": 0
-                }]
-            }
-        });
+
+        const response = await api.post('/RequestDamageController/loadAllDamageRequestList', options);
         return { success: true, data: response.data };
 
     } catch (error) {
@@ -274,3 +260,141 @@ export const submitDamageRequest = async (skip, take) => {
 };
 
 
+
+
+
+// {
+//     "skip": 0,
+//     "take": 10,
+//     "sort": [
+//         {
+//             "field": "id",
+//             "dir": "desc"
+//         }
+//     ],
+//     "filter": {
+//         "logic": "and",
+//         "filters": [
+//             {
+//                 "field": "requestId",
+//                 "operator": "eq",
+//                 "value": 105
+//             },
+//             {
+//                 "field": "deviceName",
+//                 "operator": "contains",
+//                 "value": "asd"
+//             },
+//             {
+//                 "field": "insertedDate",
+//                 "operator": "gt",
+//                 "value": "1403/10/06"
+//             },
+//             {
+//                 "field": "insertedDate",
+//                 "operator": "lt",
+//                 "value": "1403/10/27"
+//             },
+//             {
+//                 "field": "deviceTerminal",
+//                 "operator": "contains",
+//                 "value": "234"
+//             },
+//             {
+//                 "field": "deviceModelTitle",
+//                 "operator": "contains",
+//                 "value": "243"
+//             },
+//             {
+//                 "field": "customerName",
+//                 "operator": "contains",
+//                 "value": "234"
+//             },
+//             {
+//                 "field": "areaName",
+//                 "operator": "contains",
+//                 "value": "123"
+//             },
+//             {
+//                 "field": "branchName",
+//                 "operator": "contains",
+//                 "value": "1123"
+//             },
+//             {
+//                 "field": "serviceName",
+//                 "operator": "contains",
+//                 "value": "132"
+//             },
+//             {
+//                 "field": "currentUserName",
+//                 "operator": "contains",
+//                 "value": "123"
+//             },
+//             {
+//                 "field": "customerInsertName",
+//                 "operator": "contains",
+//                 "value": "123"
+//             },
+//             {
+//                 "logic": "or",
+//                 "filters": [
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "SendToOffice"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "OfficeView"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "Acting"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "DoneExpert"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "DoneLeader"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "DoneOffice"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "ChooseOffice"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "CancelExpert"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "CancelOffice"
+//                     },
+//                     {
+//                         "field": "lastState",
+//                         "operator": "contains",
+//                         "value": "CancelLeader"
+//                     }
+//                 ]
+//             },
+//             {
+//                 "field": "IsArchived",
+//                 "operator": "Eq",
+//                 "value": 0
+//             }
+//         ]
+//     }
+// }

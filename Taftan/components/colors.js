@@ -27,7 +27,7 @@ module.exports = {
     file3: '#e9abab',
     modal: '#00000099',
     gold: '#FFC700',
-
+    purple: '#903090',
     darkcyan: '#009DA0',
     pacificcyan: '#1CBCD8',
     emerald: '#0CC27E',

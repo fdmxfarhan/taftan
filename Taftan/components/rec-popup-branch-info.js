@@ -7,25 +7,25 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 
-const BranchInfoPopup = ({ modalEnable, setmodalEnable, reqInfo, branchInfo }) => {
+const BranchInfoPopup = ({ modalEnable, setmodalEnable, branchInfo }) => {
     return (
         <View>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>
                 <ScrollView style={styles.scroll}>
                     <Text style={styles.label}>استان: </Text>
-                    <TextInput style={styles.textInput} placeholder="استان" value={branchInfo.ProvinceName} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="استان" value={branchInfo.ProvinceName} keyboardType={'default'} />
                     <Text style={styles.label}>شهر: </Text>
-                    <TextInput style={styles.textInput} placeholder="شهر" value={branchInfo.CityName} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="شهر" value={branchInfo.CityName} keyboardType={'default'} />
                     <Text style={styles.label}>بخش: </Text>
-                    <TextInput style={styles.textInput} placeholder="بخش" value={branchInfo.ZoneName} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="بخش" value={branchInfo.ZoneName} keyboardType={'default'} />
                     <Text style={styles.label}>شماره تلفن: </Text>
-                    <TextInput style={styles.textInput} placeholder="شماره تلفن" value={branchInfo.Phone} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="شماره تلفن" value={branchInfo.Phone} keyboardType={'default'} />
                     <Text style={styles.label}>طول جغرافیایی: </Text>
-                    <TextInput style={styles.textInput} placeholder="طول جغرافیایی" value={branchInfo.Latitude} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="طول جغرافیایی" value={branchInfo.Latitude} keyboardType={'default'} />
                     <Text style={styles.label}>عرض جغرافیایی: </Text>
-                    <TextInput style={styles.textInput} placeholder="عرض جغرافیایی" value={branchInfo.Longitude} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="عرض جغرافیایی" value={branchInfo.Longitude} keyboardType={'default'} />
                     <Text style={styles.label}>آدرس: </Text>
-                    <TextInput style={styles.textInput} placeholder="آدرس" value={branchInfo.Address} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="آدرس" value={branchInfo.Address} keyboardType={'default'} />
                 </ScrollView>
                 <TouchableOpacity style={styles.closeButton} onPress={() => setmodalEnable(false)}>
                     <Ionicons style={styles.closeIcon} name={"close"} size={30} color={colors.white} />

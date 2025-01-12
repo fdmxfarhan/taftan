@@ -7,7 +7,7 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 
-const LastReqPopup = ({ modalEnable, setmodalEnable, reqInfo, lastRequestList, navigation }) => {
+const LastReqPopup = ({ modalEnable, setmodalEnable, lastRequestList, navigation }) => {
     return (
         <View>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>

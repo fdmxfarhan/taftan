@@ -63,6 +63,10 @@ const GridView = ({ navigation }) => {
                     <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.lightblue }]} name={'information'} />
                     <Text style={styles.gridButtonText}>آیکون ها(تست)</Text>
                 </TouchableOpacity> */}
+                <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('CameraScan')}>
+                    <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.purple }]} name={'barcode-outline'} />
+                    <Text style={styles.gridButtonText}>اسکن بارکد</Text>
+                </TouchableOpacity>
             </View>
         </Animated.View>
     );

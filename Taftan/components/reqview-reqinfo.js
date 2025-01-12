@@ -8,7 +8,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
     var [branchInfoModalEnable, setbranchInfoModalEnable] = useState(false);
     return (
         <View style={styles.container}>
-            <BranchInfoPopup modalEnable={branchInfoModalEnable} setmodalEnable={setbranchInfoModalEnable} reqInfo={item} branchInfo={branchInfo} />
+            <BranchInfoPopup modalEnable={branchInfoModalEnable} setmodalEnable={setbranchInfoModalEnable} branchInfo={branchInfo} />
             <TouchableOpacity style={styles.titleView} onPress={toggleReqinfoEN}>
                 <Text style={styles.title}>اطلاعات درخواست</Text>
                 <Ionicons style={styles.chevron} name={reqinfoEN == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />

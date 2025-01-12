@@ -7,31 +7,31 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 
-const AreaDetailPopup = ({ modalEnable, setmodalEnable, reqInfo, areaDetail }) => {
+const AreaDetailPopup = ({ modalEnable, setmodalEnable, areaDetail }) => {
     return (
         <View>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>
                 <ScrollView style={styles.scroll}>
                     <Text style={styles.label}>استان: </Text>
-                    <TextInput style={styles.textInput} placeholder="استان" value={areaDetail.provinceName} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="استان" value={areaDetail.provinceName} keyboardType={'default'} />
                     
                     <Text style={styles.label}>شهر: </Text>
-                    <TextInput style={styles.textInput} placeholder="شهر" value={areaDetail.cityName} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="شهر" value={areaDetail.cityName} keyboardType={'default'} />
                     
                     <Text style={styles.label}>بخش: </Text>
-                    <TextInput style={styles.textInput} placeholder="بخش" value={areaDetail.zoneName} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="بخش" value={areaDetail.zoneName} keyboardType={'default'} />
                     
                     <Text style={styles.label}>شماره تلفن: </Text>
-                    <TextInput style={styles.textInput} placeholder="شماره تلفن" value={areaDetail.phoneNumber} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="شماره تلفن" value={areaDetail.phoneNumber} keyboardType={'default'} />
                     
                     <Text style={styles.label}>طول جغرافیایی: </Text>
-                    <TextInput style={styles.textInput} placeholder="طول جغرافیایی" value={areaDetail.strLatitude} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="طول جغرافیایی" value={areaDetail.strLatitude} keyboardType={'default'} />
                     
                     <Text style={styles.label}>عرض جغرافیایی: </Text>
-                    <TextInput style={styles.textInput} placeholder="عرض جغرافیایی" value={areaDetail.strLongitude} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="عرض جغرافیایی" value={areaDetail.strLongitude} keyboardType={'default'} />
                     
                     <Text style={styles.label}>آدرس: </Text>
-                    <TextInput style={styles.textInput} placeholder="آدرس" value={areaDetail.address} keyboardType={'default'} onChange={(text) => { setDescription(text.nativeEvent.text) }} />
+                    <TextInput style={styles.textInput} placeholder="آدرس" value={areaDetail.address} keyboardType={'default'} />
                     
                 </ScrollView>
                 <TouchableOpacity style={styles.closeButton} onPress={() => setmodalEnable(false)}>

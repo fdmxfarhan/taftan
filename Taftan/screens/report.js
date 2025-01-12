@@ -14,6 +14,9 @@ import { GetServiceTitleListByGrupId_DeviceType } from '../services/get-service-
 import { GetRecognitionExpertByDeviceTypeId } from '../services/get-recognition-expert';
 import ReportTabLink from '../components/report-tabLinks';
 import { GetJobTitleByReportTypeId } from '../services/get-job-title-list';
+import ReportInfo from '../components/report-info';
+import ReportRecognition from '../components/report-recognize';
+import ReportActions from '../components/report-Actions';
 
 const Report = (props) => {
     var reqInfo = props.route.params.item;
@@ -55,91 +58,58 @@ const Report = (props) => {
     return (
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
-            <NavBar rightCallback={() => {props.navigation.navigate('Home')}} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
+            <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
             <ReportTabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} />
+            {tabItem == 'Info' && (
+                <View style={{flex: 1,}}>
+                    <ReportInfo />
+                    <View>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
             {tabItem == 'Recognition' && (
-                <ScrollView style={styles.contents}>
-                    <Text style={styles.sectionTitle}>تشخیص کارشناس:</Text>
-                    <Text style={styles.label}>نوع خرابی: </Text>
-                    <DropDownObj
-                        list={damageReasonsList}
-                        getLabel={(item) => item.Title}
-                        getValue={(item) => item.Title}
-                        setValue={(item) => { setdamageReason(item.id) }}
-                        value={damageReason}
-                        buttonStyle={styles.dropdown}
-                        buttonTextStyle={styles.dropdownText}
-                        onSubmit={(val) => { }}
-                    />
-                    <Text style={styles.label}>تشخیص سطح دوم: </Text>
-                    <DropDownObj
-                        list={recognitionExpertList}
-                        getLabel={(item) => item.title}
-                        getValue={(item) => item.title}
-                        setValue={(item) => { setrecognitionExpert(item.id) }}
-                        value={recognitionExpert}
-                        buttonStyle={styles.dropdown}
-                        buttonTextStyle={styles.dropdownText}
-                        onSubmit={(val) => { }}
-                    />
-                    <Text style={styles.label}>توضیحات: </Text>
-                    <TextInput
-                        style={styles.textArea}
-                        placeholder="توضیحات"
-                        keyboardType={'default'}
-                        value={description}
-                        onChange={text => setdescription(text.nativeEvent.text)}
-                    />
-                    <TouchableOpacity style={styles.submitButton} >
-                        <Text style={styles.submitButtonText}>تایید و اضافه</Text>
-                    </TouchableOpacity>
-                </ScrollView>
+                <View style={{flex: 1,}}>
+                    <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription}  />
+                    <View>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Actions')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             )}
             {tabItem == 'Actions' && (
-                <ScrollView style={styles.contents}>
-                    <Text style={styles.sectionTitle}>اقدامات انجام شده:</Text>
-                    <Text style={styles.label}>کار: </Text>
-                    <DropDownObj
-                        list={JobTitleList}
-                        getLabel={(item) => item.title}
-                        getValue={(item) => item.title}
-                        setValue={(item) => { setjobTitle(item.id) }}
-                        value={jobTitle}
-                        buttonStyle={styles.dropdown}
-                        buttonTextStyle={styles.dropdownText}
-                        onSubmit={(val) => { }}
-                    />
-                    <Text style={styles.label}>توضیحات: </Text>
-                    <TextInput
-                        style={styles.textArea}
-                        placeholder="توضیحات"
-                        keyboardType={'default'}
-                        value={descriptionAction}
-                        onChange={text => setdescriptionAction(text.nativeEvent.text)}
-                    />
-                    <TouchableOpacity style={styles.submitButton} >
-                        <Text style={styles.submitButtonText}>تایید و اضافه</Text>
-                    </TouchableOpacity>
-
-                </ScrollView>
+                <View style={{flex: 1,}}>
+                    <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} />
+                    <View>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Components')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon}/>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             )}
             {tabItem == 'Components' && (
                 <ScrollView style={styles.contents}>
                     <Text style={styles.sectionTitle}>اطلاعات قطعات:</Text>
                     <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, {color: garantieConflict? colors.blue : colors.gray}]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
+                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
                         <Text style={styles.checkboxText}>سرویس شامل نقض گارانتی است</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, {color: garantieConflict? colors.blue : colors.gray}]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
+                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
                         <Text style={styles.checkboxText}>عملیات نرم افزاری</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, {color: garantieConflict? colors.blue : colors.gray}]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
+                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
                         <Text style={styles.checkboxText}>سرویس و تعمیر</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, {color: garantieConflict? colors.blue : colors.gray}]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
+                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
                         <Text style={styles.checkboxText}>تعویض ماژول</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -264,7 +234,29 @@ const styles = StyleSheet.create({
     checkboxText: {
         fontFamily: 'iransans',
         fontSize: 13,
-
+    },
+    nextTabButton: {
+        backgroundColor: colors.blue,
+        width: '90%',
+        marginBottom: 10,
+        marginHorizontal: 'auto',
+        borderRadius: 7,
+        paddingVertical: 10,
+        flexDirection: 'row-reverse',
+        justifyContent: 'center',
+    },
+    nextTabButtonText: {
+        color: colors.white,
+        fontFamily: 'iransansbold',
+        fontSize: 14,
+        textAlign: 'center',
+    },
+    nextTabButtonIcon: {
+        color: colors.white,
+        fontSize: 14,
+        fontWeight: 'bold',
+        paddingTop: 5,
+        paddingRight: 10,
     },
 });
 

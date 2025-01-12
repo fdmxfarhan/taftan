@@ -9,7 +9,7 @@ import {
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
-const TabLink = ({ tabItemVar, setTabItemCallback, unreadMessagesCount }) => {    
+const TabLink = ({ tabItemVar, setTabItemCallback, unreadMessagesCount, myRequestCount }) => {    
     return (
         <View style={styles.tabLinksView}>
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Home' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Home')}>
@@ -19,12 +19,12 @@ const TabLink = ({ tabItemVar, setTabItemCallback, unreadMessagesCount }) => {
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'requests' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('requests')}>
                 <Ionicons name={tabItemVar == 'requests' ? "git-pull-request" : "git-pull-request-outline"} style={[styles.tabLinkIcon, tabItemVar == 'requests' ? styles.activeIcon : styles.deactive]} />
                 <Text style={[styles.tabLinkText, tabItemVar == 'requests' ? styles.activeText : styles.deactive]}>درخواست‌های من</Text>
-                {unreadMessagesCount > 0 && (<Text style={styles.tabLinkNotif}>{unreadMessagesCount}</Text>)}
+                {myRequestCount > 0 && (<Text style={styles.tabLinkNotif}>{myRequestCount}</Text>)}
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'archives' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('archives')}>
                 <Ionicons name={tabItemVar == 'archives' ? "chatbubbles" : "chatbubbles-outline"} style={[styles.tabLinkIcon, tabItemVar == 'archives' ? styles.activeIcon : styles.deactive]} />
                 <Text style={[styles.tabLinkText, tabItemVar == 'archives' ? styles.activeText : styles.deactive]}>پیام‌ها</Text>
-                <Text style={styles.tabLinkNotif}>{unreadMessagesCount}</Text>
+                {unreadMessagesCount > 0 && (<Text style={styles.tabLinkNotif}>{unreadMessagesCount}</Text>)}
             </TouchableOpacity>
         </View>
     );
