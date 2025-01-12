@@ -4,5 +4,5 @@ extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autoli
 rootProject.name = 'Taftan'
 include ':app'
 includeBuild('../node_modules/@react-native/gradle-plugin')
-include ':VisionCameraFrameProcessor'
-project(':VisionCameraFrameProcessor').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-vision-camera/android/framprocessor')
+// include ':react-native-scan-barcode', ':app'
+// project(':react-native-scan-barcode').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-scan-barcode/android')
