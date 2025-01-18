@@ -94,7 +94,7 @@ const Splash = (props) => {
         requestLocationPermission();
         requestUserPermission();
         PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-        // getToken();
+        getToken();
 
         // ca7kxuyUQ0KxAYs8mxYser:APA91bG_zmUxcjDqhpRig7_0xF-wamr607GqYuAxu9i_75KnAwu8OBlDPxWa413lvqoojmNMTvIob2Juwoi2n8bzPAbJKfcY24bRzaS252rpea-ItJP2ns8
         const checkLogin = async () => {

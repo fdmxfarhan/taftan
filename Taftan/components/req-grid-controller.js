@@ -4,22 +4,21 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import DropDown from './dropdown';
 
-const ReqGridController = ({ setData, skipValue, setskipValue, filtersEN, setFiltersEN, toggleFiltersEN }) => {
-    const [numOfRowsValue, setnumOfRowsValue] = useState(10);
+const ReqGridController = ({ setData, skipValue, setskipValue, numOfRowsValue, setnumOfRowsValue, toggleFiltersEN }) => {
     const [numOfRowsList, setnumOfRowsList] = useState([
         { label: '5', value: 5 },
         { label: '10', value: 10 },
         { label: '50', value: 50 },
         { label: '100', value: 100 },
     ]);
-    
+
     return (
         <View style={styles.container}>
             <View style={styles.buttonsView}>
-                <TouchableOpacity style={styles.button} onPress={() => setData(0, numOfRowsValue)}>
+                <TouchableOpacity style={styles.button} onPress={() => setData(1, numOfRowsValue)}>
                     <Ionicons name={'play-skip-forward'} style={styles.chevron} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => setData(skipValue - 1, numOfRowsValue)}>
+                <TouchableOpacity style={styles.button} onPress={() => setData(skipValue > 1 ? skipValue - 1 : skipValue, numOfRowsValue)}>
                     <Ionicons name={'play-forward'} style={styles.chevron} />
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.button]} onPress={() => setData(skipValue + 0, numOfRowsValue)}><Text style={[styles.number, styles.active]}>{skipValue + 0}</Text></TouchableOpacity>
@@ -54,7 +53,7 @@ const ReqGridController = ({ setData, skipValue, setskipValue, filtersEN, setFil
                     <Ionicons style={styles.filterButtonIcon} name={'funnel'} />
                 </TouchableOpacity>
             </View>
-            
+
         </View>
     );
 };
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
         color: colors.text,
     },
     button: {
-        paddingHorizontal: 5,
+        paddingHorizontal: 7,
         paddingTop: 5,
         paddingBottom: 0,
     },

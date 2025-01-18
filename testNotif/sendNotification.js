@@ -14,11 +14,11 @@ const sendNotification = async () => {
   const message = {
     token: deviceToken,
     notification: {
-      title: "Hello!",
-      body: "This is a test notification from Firebase Admin SDK."
+      title: "درخواست جدید",
+      body: "درخواست خرابی جدید - بانک ملت شعبه قرب"
     },
     data: {
-      customKey1: "value1",
+      requestId: "1234",
       customKey2: "value2"
     }
   };

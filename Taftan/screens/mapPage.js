@@ -24,6 +24,7 @@ import Geolocation from 'react-native-geolocation-service';
 import MapLibreGL from "@maplibre/maplibre-react-native";
 import { WebView } from 'react-native-webview';
 import { MAP_API_KEY } from '../config/consts';
+import { getDevicesOnMap } from '../services/device-get-on-map';
 
 MapLibreGL.setAccessToken(null);
 
@@ -34,19 +35,20 @@ const { width, height } = Dimensions.get('window');
 
 
 const MapPage = (props) => {
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState({ latitude: 30, longitude: 51 });
   const [menuVisible, setMenuVisible] = useState(false);
+  const [devicelist, setdevicelist] = useState([]);
   const [region, setRegion] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
-
   useEffect(() => {
     requestLocationPermission();
-  });
-
+    getCurrentLocation();
+    sendRequest();
+  }, []);
   const requestLocationPermission = async () => {
     if (Platform === 'android') {
       PermissionsAndroid.requestMultiple(
@@ -69,14 +71,12 @@ const MapPage = (props) => {
         });
     }
   };
-
   const getCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ latitude, longitude });
         shareLocation(latitude, longitude);
-        console.log([latitude, longitude]);
       },
       (error) => {
         console.warn(error.message);
@@ -89,7 +89,6 @@ const MapPage = (props) => {
       }
     );
   };
-
   const shareLocation = async () => {
     if (location) {
       try {
@@ -109,7 +108,16 @@ const MapPage = (props) => {
       }
     }
   };
-
+  const sendRequest = async () => {
+    var result = await getDevicesOnMap();
+    if (result.success) {
+      setdevicelist(result.data.Data);
+      console.log(result.data.Data);
+    }
+    else {
+      ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.SHORT);
+    }
+  }
   return (
     <View style={styles.container}>
       <NavBar
@@ -119,7 +127,6 @@ const MapPage = (props) => {
         leftIcon="arrow-back"
         rightIcon="menu"
       />
-
       <WebView
         source={{
           html: `
@@ -158,12 +165,12 @@ const MapPage = (props) => {
                   maptype: "neshan",
                   poi: true,
                   traffic: true,
-                  center: [35.699756, 51.338076],
-                  zoom: 14,
+                  center: [${location.latitude}, ${location.longitude}],
+                  zoom: 12,
               })
 
               // add marker to map
-              let marker = L.marker([35.699756, 51.338076]).addTo(neshanMap);
+              let marker = L.marker([${location.latitude}, ${location.longitude}]).addTo(neshanMap);
 
           </script>
           </body>
@@ -205,7 +212,6 @@ const MapPage = (props) => {
   )
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -237,7 +243,7 @@ const styles = StyleSheet.create({
     height: 400,
   },
   webviewmap: {
-    width: width ,
+    width: width,
     height: height * 0.5,
   },
 });

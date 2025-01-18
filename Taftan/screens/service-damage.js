@@ -29,7 +29,7 @@ const ServiceDamage = (props) => {
     var [isLoading, setIsLoading] = useState(true);
     var [serviceConnected, setServiceConnected] = useState(true);
     var [skipValue, setskipValue] = useState(1);
-    var [rowsValue, setrowsValue] = useState(10);
+    var [rowsValue, setrowsValue] = useState(50);
     var [searchEN, setsearchEN] = useState(false);
     var [filtersEN, setFiltersEN] = useState(false);
     var [filters, setFilters] = useState({ requestId: '', deviceName: '', insertedDate: '', endDate: '', deviceTerminal: '', deviceModelTitle: '', customerName: '', areaName: '', branchName: '', serviceName: '', currentUserName: '', customerInsertName: '', duplicateDamgeNumber: '', persianLastState: '', });
@@ -54,7 +54,7 @@ const ServiceDamage = (props) => {
         var result = await submitDamageRequest(skip, take);
         if (result.success) {
             setDamageRequests(result.data.Data);
-            console.log(result.data.Data);
+            // console.log(result.data.Data);
             setIsLoading(false);
             setServiceConnected(true);
         }
@@ -166,13 +166,13 @@ const ServiceDamage = (props) => {
                 currentPage={skipValue}
                 skipValue={skipValue}
                 setskipValue={setskipValue}
+                numOfRowsValue={rowsValue}
+                setnumOfRowsValue={setrowsValue}
                 setData={(skip, rows) => {
                     setskipValue(skip);
                     setrowsValue(rows);
                     sendRequest(skip, rows);
                 }}
-                filtersEN={filtersEN}
-                setFiltersEN={setFiltersEN}
                 toggleFiltersEN={toggleFiltersEN} />
             {filtersEN && <View style={styles.filterView}>
                 <View style={styles.filterRow}>

@@ -17,7 +17,7 @@ import NotConnected from '../components/no-connection';
 import getSLAColor from '../config/getSLAColor';
 import ReqGridController from '../components/req-grid-controller';
 
-const ServiceInstallation = (props) => {    
+const ServiceInstallation = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [installRequests, setInstallRequests] = useState([])
     const [isLoading, setIsLoading] = useState(true);
@@ -34,12 +34,12 @@ const ServiceInstallation = (props) => {
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
         var result = await submitInstallRequest(skip, take);
-        if(result.success){
+        if (result.success) {
             setInstallRequests(result.data.Data);
             setIsLoading(false);
             setServiceConnected(true);
         }
-        else{
+        else {
             ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.LONG);
             setIsLoading(false);
             setServiceConnected(false);
@@ -59,10 +59,10 @@ const ServiceInstallation = (props) => {
             <Text style={styles.deviceName}>{item.operationalAreaName} (<Text>{item.customerName}</Text>)</Text>
             <Text style={styles.damageTitle}>{item.serviceName}</Text>
             <Text style={styles.textTitle}>{item.requestId}</Text>
-            
+
             <View style={styles.stateView}>
                 <Text style={styles.state}>{item.persianLastState}</Text>
-                <View style={[styles.stateCircle, {backgroundColor: getSLAColor(item.SLAStyle)}]}/>
+                <View style={[styles.stateCircle, { backgroundColor: getSLAColor(item.SLAStyle) }]} />
             </View>
             <Text style={styles.date}>{item.persianStartDate}</Text>
         </TouchableOpacity>
@@ -70,30 +70,20 @@ const ServiceInstallation = (props) => {
 
     return (
         <View style={styles.container}>
-            <NavBar
-                rightCallback={toggleMenu} 
-                leftCallback={handleSearchPress} 
-                title="درخواست‌های نصب" 
-                leftIcon="search"
-                rightIcon="menu"
-            />
-            <ReqGridController 
-                currentPage={skipValue} 
+            <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سرویس‌های نصب" leftIcon="search" rightIcon="menu" />
+            <ReqGridController
+                currentPage={skipValue}
                 skipValue={skipValue}
                 setskipValue={setskipValue}
                 setData={(skip, rows) => {
                     setskipValue(skip);
                     setrowsValue(rows);
                     sendRequest(skip, rows);
-                }}/>
+                }} />
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
-            <FlatList
-                data={installRequests}
-                renderItem={renderItem}
-                keyExtractor={item => item.requestId}
-            />
+            <FlatList data={installRequests} renderItem={renderItem} keyExtractor={item => item.requestId} />
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
-            <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation}/>
+            <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
         </View>
     );
 }
@@ -146,8 +136,8 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         alignItems: 'center',
     },
-    stateCircle:{
-        width: 10, 
+    stateCircle: {
+        width: 10,
         height: 10,
         borderRadius: 5,
     },
