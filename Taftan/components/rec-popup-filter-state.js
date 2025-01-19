@@ -32,7 +32,7 @@ const StateFilterPopup = ({ modalEnable, setmodalEnable, setWorkflowFilter }) =>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>
                 {workflowFilterList.map((item, index) => (
                     <TouchableOpacity key={item.title} style={styles.checkBoxView} onPress={() => toggleCheckbox(index)}>
-                        <Ionicons name={'checkbox'} style={[styles.checkboxIcon, { color: item.checked ? colors.darkGreen : colors.text }]} />
+                        <Ionicons name={'checkbox'} style={[styles.checkboxIcon, { color: item.checked ? colors.darkGreen : colors.gray }]} />
                         <Text style={[styles.checkboxText, { color: item.checked ? colors.darkGreen : colors.text }]}>{item.label}</Text>
                     </TouchableOpacity>
                 ))}
@@ -118,18 +118,18 @@ const styles = StyleSheet.create({
     },
     checkBoxView: {
         flexDirection: 'row-reverse',
-        paddingVertical: 4,
+        paddingVertical: 10,
         width: '90%',
         marginHorizontal: 'auto',
     },
     checkboxIcon: {
-        fontSize: 12,
+        fontSize: 20,
         paddingLeft: 10,
-        paddingTop: 4,
     },
     checkboxText: {
-        fontSize: 13,
+        fontSize: 15,
         fontFamily: 'iransans',
+        textAlign: 'center',
     },
 });
 

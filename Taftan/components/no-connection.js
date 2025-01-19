@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     icon: {
         fontSize: 100,
         textAlign: 'center',
-        marginTop: 200,
+        marginTop: 150,
         color: colors.gray,
     },
     text: {

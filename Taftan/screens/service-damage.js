@@ -23,6 +23,7 @@ import { submitDamageRequestFilter } from '../services/ser-damage-filter';
 import PersianDatePicker from '../components/persian-date-picker';
 import { twoDigit } from '../config/consts';
 import StateFilterPopup from '../components/rec-popup-filter-state';
+import { getRequestDetail } from '../services/req-detail';
 
 const ServiceDamage = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -34,15 +35,16 @@ const ServiceDamage = (props) => {
     var [filtersEN, setFiltersEN] = useState(false);
     var [filters, setFilters] = useState({ requestId: '', deviceName: '', insertedDate: '', endDate: '', deviceTerminal: '', deviceModelTitle: '', customerName: '', areaName: '', branchName: '', serviceName: '', currentUserName: '', customerInsertName: '', duplicateDamgeNumber: '', persianLastState: '', });
     var [workflowFilter, setWorkflowFilter] = useState([]);
-    const [workflowPickerEN, setworkflowPickerEN] = useState(false);
-    const [datePickerVisibleStart, setdatePickerVisibleStart] = useState(false);
-    const [selectedDayStart, setselectedDayStart] = useState('1');
-    const [selectedMonthStart, setselectedMonthStart] = useState('1');
-    const [selectedYearStart, setselectedYearStart] = useState('1390');
-    const [datePickerVisibleEnd, setdatePickerVisibleEnd] = useState(false);
-    const [selectedDayEnd, setselectedDayEnd] = useState('1');
-    const [selectedMonthEnd, setselectedMonthEnd] = useState('1');
-    const [selectedYearEnd, setselectedYearEnd] = useState('1410');
+    var [workflowPickerEN, setworkflowPickerEN] = useState(false);
+    var [datePickerVisibleStart, setdatePickerVisibleStart] = useState(false);
+    var [selectedDayStart, setselectedDayStart] = useState('1');
+    var [selectedMonthStart, setselectedMonthStart] = useState('1');
+    var [selectedYearStart, setselectedYearStart] = useState('1390');
+    var [datePickerVisibleEnd, setdatePickerVisibleEnd] = useState(false);
+    var [selectedDayEnd, setselectedDayEnd] = useState('1');
+    var [selectedMonthEnd, setselectedMonthEnd] = useState('1');
+    var [selectedYearEnd, setselectedYearEnd] = useState('1410');
+    var [requestDetail, setRequestDetail] = useState(null);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -137,9 +139,25 @@ const ServiceDamage = (props) => {
             setServiceConnected(false);
         }
     }
+    const openRequestReport = async (item) => {
+        var result = await getRequestDetail(item.requestId);
+        if(result.success){
+            if (result.data != 'داده پیدا نشد'){
+                requestDetail = result.data;
+                setRequestDetail(requestDetail);
+                props.navigation.navigate('Report', {item, requestDetail})
+            }
+            else {
+                ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
+                props.navigation.goBack();
+                return;
+            }
+        }
+    }
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
+            <Text style={styles.damageTitle}>{item.areaName}</Text>
             <Text style={styles.damageTitle}>{item.serviceName}</Text>
             <Text style={styles.textTitle}>{item.requestId}</Text>
             <View style={styles.stateView}>
@@ -151,6 +169,10 @@ const ServiceDamage = (props) => {
                 )}
             </View>
             <Text style={styles.date}>{item.persianInsertedDate}</Text>
+            
+            <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
+                <Ionicons name={'document'} style={styles.callIcon} />
+            </TouchableOpacity>
         </TouchableOpacity>
     );
     var getWorkFlowListArray = (workflowFilter) => {
@@ -351,15 +373,15 @@ const styles = StyleSheet.create({
     },
     date: {
         position: 'absolute',
-        bottom: 15,
-        left: 15,
+        top: 35,
+        left: 20,
         fontFamily: 'iransans',
         fontSize: 12,
     },
     stateView: {
         position: 'absolute',
         top: 15,
-        left: 15,
+        left: 20,
         flexDirection: 'row-reverse',
         alignContent: 'center',
         alignItems: 'center',
@@ -484,6 +506,23 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         paddingRight: 10,
         justifyContent: 'center',
+    },
+    callButton: {
+        position: 'absolute',
+        zIndex: 10,
+        bottom: 10,
+        left: 15,
+        // backgroundColor: colors.darkBackground,
+        // width: 35,
+        // height: 35,
+        borderRadius: 35 / 2,
+        alignContent: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    callIcon: {
+        color: colors.pacificcyan,
+        fontSize: 30
     },
 });
 

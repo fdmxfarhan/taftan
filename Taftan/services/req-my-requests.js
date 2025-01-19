@@ -284,7 +284,13 @@ export const loadMyDamageRequestList = async (skip, take) => {
             ],
             "filter": {
                 "logic": "and",
-                "filters": []
+                "filters": [
+                    {
+                        "field": "lastState",
+                        "operator": "Eq",
+                        "value": "Acting"
+                    },
+                ]
             }
         });
         return { success: true, data: response.data };

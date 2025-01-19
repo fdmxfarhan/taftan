@@ -1,21 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Button,
-  Dimensions,
-  Image,
-  PermissionsAndroid,
-  Platform,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableHighlight,
-  TouchableOpacity,
-  useColorScheme,
-  View,
-} from 'react-native';
+import { Button, Dimensions, Image, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, ToastAndroid, TouchableHighlight, TouchableOpacity, useColorScheme, View } from 'react-native';
 import colors from '../components/colors';
 import NavBar from '../components/navbar';
 import SideMenu from '../components/SideMenu';
@@ -35,10 +19,12 @@ const { width, height } = Dimensions.get('window');
 
 
 const MapPage = (props) => {
-  const [location, setLocation] = useState({ latitude: 30, longitude: 51 });
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [devicelist, setdevicelist] = useState([]);
-  const [region, setRegion] = useState({
+  var [location, setLocation] = useState({ latitude: 35.7565096, longitude: 51.3995806 });
+  var [focusLocation, setfocusLocation] = useState({ latitude: 35.7565096, longitude: 51.3995806 });
+  var [menuVisible, setMenuVisible] = useState(false);
+  var [devicelist, setdevicelist] = useState([]);
+  var [deviceLocations, setdeviceLocations] = useState("");
+  var [region, setRegion] = useState({
     latitude: 37.78825,
     longitude: -122.4324,
     latitudeDelta: 0.0922,
@@ -50,26 +36,21 @@ const MapPage = (props) => {
     sendRequest();
   }, []);
   const requestLocationPermission = async () => {
-    if (Platform === 'android') {
-      PermissionsAndroid.requestMultiple(
-        [
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ],
-        {
-          title: 'Give Location Permission',
-          message: 'App needs location permission to find your position.',
-        }
-      )
-        .then((granted) => {
-          console.log(granted);
-          resolve();
-        })
-        .catch((err) => {
-          console.warn(err);
-          reject(err);
-        });
-    }
+    await PermissionsAndroid.requestMultiple(
+      [
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+      ],
+      {
+        title: 'Give Location Permission',
+        message: 'App needs location permission to find your position.',
+      }
+    );
+    // .then((granted) => {})
+    // .catch((err) => {
+    //   console.warn(err);
+    //   reject(err);
+    // });
   };
   const getCurrentLocation = async () => {
     Geolocation.getCurrentPosition(
@@ -83,7 +64,7 @@ const MapPage = (props) => {
         requestLocationPermission();
       },
       {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false,
         timeout: 15000,
         maximumAge: 10000,
       }
@@ -109,10 +90,23 @@ const MapPage = (props) => {
     }
   };
   const sendRequest = async () => {
-    var result = await getDevicesOnMap();
+    var result = await getDevicesOnMap(location.latitude, location.longitude);
     if (result.success) {
-      setdevicelist(result.data.Data);
-      console.log(result.data.Data);
+      devicelist = result.data.Data;
+      setdevicelist(devicelist);
+      var x = 0;
+      var y = 0;
+      deviceLocations = '';
+      for (let i = 0; i < devicelist.length; i++) {
+        deviceLocations += `var popup${i} = L.popup().setContent('<p style="text-align:center;">${devicelist[i].deviceName}<br/>${devicelist[i].deviceSerial}</p>');\n`
+        deviceLocations += `let marker${i} = L.marker([${devicelist[i].latitude}, ${devicelist[i].longitude}], { title: "توضیحات مد نظر شما" }).bindPopup(popup${i}).addTo(neshanMap);\n`
+        x += devicelist[i].latitude;
+        y += devicelist[i].longitude;
+      }
+      // setfocusLocation({ latitude: x/devicelist.length, longitude: y/devicelist.length });
+      setfocusLocation({ latitude: devicelist[0].latitude, longitude: devicelist[0].longitude });
+      console.log(deviceLocations);
+      setdeviceLocations(deviceLocations);
     }
     else {
       ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.SHORT);
@@ -134,44 +128,28 @@ const MapPage = (props) => {
           <html lang="fa">
           <head>
               <meta charset="UTF-8"/>
-              <meta name="viewport"
-                    content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
+              <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"/>
               <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
               <title>Neshan Leaflet Map</title>
-
               <link rel="stylesheet" href="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.css"/>
               <script src="https://static.neshan.org/sdk/leaflet/v1.9.4/neshan-sdk/v1.0.8/index.js"></script>
-
               <style>
-                  body {
-                      height: 100vh;
-                      width: 100vw;
-                      margin: 0;
-                  }
-
-                  #map {
-                      height: 100%;
-                      width: 100%;
-                  }
+                  body {height: 100vh; width: 100vw; margin: 0; }
+                  #map {height: 100%; width: 100%; }
               </style>
           </head>
           <body>
           <div id="map"></div>
           <script>
-
-              // Create a Leaflet map
               const neshanMap = new L.Map("map", {
                   key: "${MAP_API_KEY}",
                   maptype: "neshan",
                   poi: true,
                   traffic: true,
-                  center: [${location.latitude}, ${location.longitude}],
-                  zoom: 12,
+                  center: [${focusLocation.latitude}, ${focusLocation.longitude}],
+                  zoom: 10,
               })
-
-              // add marker to map
-              let marker = L.marker([${location.latitude}, ${location.longitude}]).addTo(neshanMap);
-
+              ${deviceLocations}
           </script>
           </body>
           </html>
@@ -179,30 +157,6 @@ const MapPage = (props) => {
         // onMessage={handleWebViewMessage}
         style={styles.webviewmap}
       />
-
-
-      {/* <MapLibreGL.MapView
-              style={styles.map}
-              styleURL="https://demotiles.maplibre.org/style.json" // Default MapLibre style
-              // styleURL="https://maps.tilehosting.com/styles/streets/style.json" // Default MapLibre style
-            >
-              <MapLibreGL.Camera
-                zoomLevel={2}
-                centerCoordinate={[12.4924, 41.8902]} // Longitude, Latitude for Rome, Italy
-              />
-              <MapLibreGL.MarkerView coordinate={[12.4924, 41.8902]}>
-                <View style={styles.markerContainer}>
-                  <View style={styles.marker} />
-                </View>
-              </MapLibreGL.MarkerView>
-            </MapLibreGL.MapView>
-            {location ? (
-              <View></View>
-             ) : (
-                <Text>Fetching location...</Text>
-            )}
-            <Button title="Share Location" onPress={getCurrentLocation} /> */}
-
       <SideMenu
         isVisible={menuVisible}
         onClose={() => { setMenuVisible(!menuVisible); }}

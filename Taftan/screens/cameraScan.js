@@ -81,11 +81,17 @@ const CameraScan = (props) => {
             <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
             {hasPermission && device && (<Camera
-                style={{ flex: 1, width: '100%' }}
+                style={{ flex: 1, width: '100%', marginTop: 0, zIndex: 1, }}
                 device={device}
                 isActive={true}
                 codeScanner={codeScanner}
             />)}
+
+            <View style={styles.boxinfo}>
+                <Text style={styles.boxText}>لطفا بارکد را در کادر زیر قرار دهید</Text>
+                <View style={styles.boxBorder} />
+                <Ionicons style={styles.boxIcon} name={'barcode-outline'} />
+            </View>
         </View>
     );
 }
@@ -95,6 +101,35 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 0,
         backgroundColor: colors.lightBackground,
+        position: 'relative',
+    },
+    boxinfo: {
+        position: 'absolute',
+        zIndex: 100,
+        top: 300,
+        width: '80%',
+        right: '10%',
+
+    },
+    boxBorder: {
+        backgroundColor: 'transparent',
+        borderColor: colors.white,
+        borderWidth: 1,
+        height: 150,
+        borderRadius: 5,
+    },
+    boxText: {
+        fontFamily: 'iransans',
+        fontSize: 14,
+        color: colors.white,
+        textAlign: 'center',
+        paddingBottom: 5,
+    },
+    boxIcon: {
+        color: colors.white,
+        fontSize: 40,
+        marginHorizontal: 'auto',
+        marginTop: 10
     },
 });
 

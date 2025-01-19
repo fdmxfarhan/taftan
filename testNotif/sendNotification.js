@@ -8,7 +8,8 @@ admin.initializeApp({
 
 const sendNotification = async () => {
   // The device token you want to send the notification to
-  const deviceToken = "edNIpEa0TpGJyIgtcuh7PN:APA91bGiTJ-8OBxRWBmPHXDS2pzPGMuAjEMLRM0ZVcovqbFOTwrRk4Ga9aTVi0cvATm3AkGGAs8rByBcOm1lgfajywLwhEW8HmCSdAcjhp4rNVP6CPhO9RM";
+  const deviceToken = "fTy0M0ZhSrWwNs-zzMu9-7:APA91bGTX6gWz2dWHRi2p3ov-5UhIR_W2vOjbT-LIh4pSsAczfYO-aYk-DnHH6XT5f0EEqStGa6d2b6mifV9erbEdKe9hwbqPoS0Sv-Kxw01qlKR2EcbWxw";
+  // const deviceToken = "edNIpEa0TpGJyIgtcuh7PN:APA91bGiTJ-8OBxRWBmPHXDS2pzPGMuAjEMLRM0ZVcovqbFOTwrRk4Ga9aTVi0cvATm3AkGGAs8rByBcOm1lgfajywLwhEW8HmCSdAcjhp4rNVP6CPhO9RM";
   
   // The message payload
   const message = {

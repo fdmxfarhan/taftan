@@ -12,7 +12,6 @@ const CheckBox = ({ onChange, value, text, checkboxstyle }) => {
     )
 }
 
-
 const styles = StyleSheet.create({
     checkboxView: {
         flexDirection: 'row-reverse',
