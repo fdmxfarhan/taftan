@@ -1,0 +1,11 @@
+import axios from 'axios';
+
+// url = "http://10.100.52.4:8020/Services/Authentication/api"; //local
+url = "http://10.55.5.13:8020/Services/Authentication/api"; //13
+
+api = axios.create({
+    baseURL: url,
+    timeout: 10000,
+});
+
+module.exports = api;

@@ -207,7 +207,6 @@ const DamageReqView = (props) => {
             console.log(result.data)
             setallowdActionList(result.data);
         }else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
-
         
         setIsLoading(false);
     }

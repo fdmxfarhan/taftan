@@ -1,35 +1,42 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    Image,
-    SafeAreaView,
-    ScrollView,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableHighlight,
-    TouchableOpacity,
-    useColorScheme,
-    View,
-    TextInput,
-    ToastAndroid,
-} from 'react-native';
+import { Image, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableHighlight, TouchableOpacity, useColorScheme, View, TextInput, ToastAndroid, } from 'react-native';
 import colors from '../components/colors';
 import { login } from '../services/auth';
+import LoadingView from '../components/loading';
+import CryptoJS from 'crypto-js';
+import storage from '../config/storage';
 
 const Login = (props) => {
     var [loginView, setLoginView] = useState('admin');
     var [username, setUsername] = useState('');
     var [password, setPassword] = useState('');
+    var [isLoading, setIsLoading] = useState(false);
+    const passwordInput = useRef(null);
 
     const handleLogin = async () => {
-        const result = await login(username, password);
+        setIsLoading(true);
+        const md5Hash = CryptoJS.MD5(password).toString();
+        const result = await login(username, md5Hash);
         if (result.success) {
-            console.log('Logged in!! ', result.user);
+            await storage.save({
+                key: 'auth',
+                data: {
+                    token: result.data.Token,
+                    username,
+                    password,
+                    hash: md5Hash,
+                    RefreshToken: result.data.RefreshToken,
+                },
+            });
             props.navigation.navigate('Home');
         }
         else {
-            ToastAndroid.show('به اینترنت متصل نیستید.', ToastAndroid.SHORT);
+            if(result.error.status == 400)
+                ToastAndroid.show('نام کاربری / کلمه عبور صحیح نمی باشد', ToastAndroid.SHORT);
+            else
+                ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
         }
+        setIsLoading(false);
     }
 
     return (
@@ -39,7 +46,7 @@ const Login = (props) => {
                 style={styles.logo}
             />
             <Text style={styles.title}>به سامانه تفتان خوش آمدید</Text>
-            
+
             {/* <View style={styles.viewSelector}>
                 <TouchableOpacity style={[styles.viewSelectorButton, {backgroundColor: loginView == 'admin'? colors.blue : 'transparent'}]} onPress={() => setLoginView('admin')}>
                     <Text style={styles.viewSelectorText}>کارشناس</Text>
@@ -54,32 +61,26 @@ const Login = (props) => {
                     style={[styles.textInput]}
                     placeholder={'کد پرسنلی'}
                     placeholderTextColor={colors.white}
-                    // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
-                    keyboardType={'number-pad'}
-                    onChange={(text) => {
-                        console.log('hello')
-                    }}
+                    keyboardType={'default'}
+                    onChange={(text) => { setUsername(text.nativeEvent.text) }}
+                    onSubmitEditing={() => passwordInput.current.focus()}
                 />
                 <TextInput
                     style={[styles.textInput]}
                     placeholder={'کلمه عبور'}
                     secureTextEntry={true}
                     placeholderTextColor={colors.white}
-                    // ref={passwordInput}
-                    keyboardType={'number-pad'}
-                // onSubmitEditing={checkLogin}
-                // onChange={(text) => {
-                //     setPassword(text.nativeEvent.text)
-                // }}
+                    ref={passwordInput}
+                    keyboardType={'default'}
+                    onSubmitEditing={() => { setIsLoading(true); handleLogin(); }}
+                    onChange={(text) => { setPassword(text.nativeEvent.text) }}
                 />
             </View>
-            <TouchableOpacity
-                style={styles.loginBtn}
-                onPress={handleLogin}
-            >
+            <TouchableOpacity style={styles.loginBtn} onPress={() => { setIsLoading(true); handleLogin(); }}>
                 <Text style={styles.loginText}>ورود</Text>
             </TouchableOpacity>
+            <LoadingView isLoading={isLoading} text={'در حال بررسی...'} />
         </View>
     )
 }

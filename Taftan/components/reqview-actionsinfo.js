@@ -3,10 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, ToastA
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
+import { loadReportDetail } from '../services/report-get-detail';
 
-const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, actionsHistory, setactionsHistory, navigation }) => {
+const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, requestDetail, actionsHistory, setactionsHistory, navigation }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
+    };
+    const navigateToReport = async (item) => {
+        result = await loadReportDetail(requestDetail.requestInfo.requestId, item.reportId, item.id);
+        if(result.success){
+            navigation.navigate('Report', {item, requestDetail, reportDetail: result.data});
+        }else ToastAndroid.show('جزئیات گزارش کار دریافت نشد.', ToastAndroid.SHORT);
+
     };
     return (
         <View style={styles.container}>
@@ -72,7 +80,7 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, item, requestDetail, ac
                                     <Text style={styles.actionMoreInfoText}>{item.workflow}</Text>
                                 </View> */}
                                 <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                                    <TouchableOpacity style={styles.submitButton} onPress={() => {navigation.navigate('Report', {item, requestDetail})}}>
+                                    <TouchableOpacity style={styles.submitButton} onPress={() => navigateToReport(item)}>
                                         <Ionicons style={styles.buttonIcon} name="file-tray" />
                                         <Text style={styles.buttonText}>مشاهده گزارش کار</Text>
                                     </TouchableOpacity>

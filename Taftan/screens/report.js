@@ -49,8 +49,6 @@ const Report = (props) => {
             setrecognitionExpertList(result.data);
             result = await GetJobTitleByReportTypeId(29);
             setJobTitleList(result.data);
-
-
             setIsLoading(false);
         }
         sendRequest();

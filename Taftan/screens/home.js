@@ -1,18 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-    Text,
-    StyleSheet,
-    View,
-    FlatList,
-    TouchableOpacity,
-    BackHandler,
-    ToastAndroid
-} from 'react-native';
+import { Text, StyleSheet, View, FlatList, TouchableOpacity, BackHandler, ToastAndroid } from 'react-native';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
 import NavBar from '../components/navbar';
-// import firebase from '@react-native-firebase/app';
 import TabLink from '../components/home-tabLinks';
 import GridView from '../components/home-gridView';
 import BottomNav from '../components/home-bootomNav';
@@ -23,14 +14,7 @@ import { loadMyMessageBoxList } from '../services/message-my-list';
 import MessageListView from '../components/home-message';
 import MyRequestsList from '../components/home-myrequests';
 import { loadMyDamageRequestList } from '../services/req-my-requests';
-
-// const firebaseConfig = {
-
-// };
-
-// if (!firebase.apps.length) {
-//     firebase.initializeApp(firebaseConfig);
-// }
+import { getAuthData } from '../services/auth';
 
 const Home = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -45,10 +29,11 @@ const Home = (props) => {
     };
     const handleSearchPress = () => {
         setsearchEN(true);
-        // props.navigation.navigate('Icons');
     };
     useEffect(() => {
         const sendRequest = async () => {
+            const authData = await getAuthData();
+            // console.log(authData.token)
             var result = await GetUnreadMessageCount();
             if (result.success) {
                 setunreadMessagesCount(result.data);
@@ -81,10 +66,10 @@ const Home = (props) => {
                 </View>
             )}
             {tabItem == 'requests' && (
-                <MyRequestsList myRequestsList={myRequestsList} setmyRequestsList={setmyRequestsList} navigation={props.navigation}/>
+                <MyRequestsList myRequestsList={myRequestsList} setmyRequestsList={setmyRequestsList} navigation={props.navigation} />
             )}
             {tabItem == 'archives' && (
-                <MessageListView myMessageList={myMessageList} setmyMessageList={setmyMessageList} navigation={props.navigation}/>
+                <MessageListView myMessageList={myMessageList} setmyMessageList={setmyMessageList} navigation={props.navigation} />
             )}
 
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
