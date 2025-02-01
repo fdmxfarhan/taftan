@@ -153,6 +153,7 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
                                 value={unsuccessfullCustomer}
                                 onChange={() => setunsuccessfullCustomer(!unsuccessfullCustomer)}
                                 checkboxstyle={styles.checkbox}
+                                enabled={true}
                             />
                             <TouchableOpacity style={styles.uploadPicker}>
                                 <Ionicons style={styles.uploadPickerIcon} name={'attach'} />

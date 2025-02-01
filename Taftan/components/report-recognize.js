@@ -7,12 +7,54 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 import DropDownObj from './dropdown-obj';
+import styles from '../styles/reqView';
 
-const ReportRecognition = ({damageReasonsList, damageReason, setdamageReason, recognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription  }) => {
-
+const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, recognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription }) => {
+    var reportRecognitionList = [
+        {
+            "serviceName": "مشکلات امنیتی",
+            "id": 161,
+            "serviceGroupTitle": "رفع خرابی",
+            "serviceId": 14,
+            "title": "اشکال در Anti Skimming / Anti Fraud",
+            "isActive": false,
+            "serviceGroupId": 1,
+            "description": "65656565"
+        },
+        {
+            "serviceName": "مشکلات امنیتی",
+            "id": 161,
+            "serviceGroupTitle": "رفع خرابی",
+            "serviceId": 14,
+            "title": "اشکال در Anti Skimming / Anti Fraud",
+            "isActive": false,
+            "serviceGroupId": 1,
+            "description": "65656565"
+        },
+        {
+            "serviceName": "مشکلات امنیتی",
+            "id": 161,
+            "serviceGroupTitle": "رفع خرابی",
+            "serviceId": 14,
+            "title": "اشکال در Anti Skimming / Anti Fraud",
+            "isActive": false,
+            "serviceGroupId": 1,
+            "description": "65656565"
+        },
+        {
+            "serviceName": "مشکلات امنیتی",
+            "id": 161,
+            "serviceGroupTitle": "رفع خرابی",
+            "serviceId": 14,
+            "title": "اشکال در Anti Skimming / Anti Fraud",
+            "isActive": false,
+            "serviceGroupId": 1,
+            "description": "65656565"
+        },
+    ]
     return (
-        <ScrollView style={styles.contents}>
-            {/* <Text style={styles.sectionTitle}>تشخیص کارشناس:</Text> */}
+        <ScrollView style={styleslocal.contents}>
+            {/* <Text style={styleslocal.sectionTitle}>تشخیص کارشناس:</Text> */}
             <Text style={styles.label}>نوع خرابی: </Text>
             <DropDownObj
                 list={damageReasonsList}
@@ -37,20 +79,36 @@ const ReportRecognition = ({damageReasonsList, damageReason, setdamageReason, re
             />
             <Text style={styles.label}>توضیحات: </Text>
             <TextInput
-                style={styles.textArea}
+                style={styles.description}
                 placeholder="توضیحات"
                 keyboardType={'default'}
                 value={description}
                 onChange={text => setdescription(text.nativeEvent.text)}
             />
-            <TouchableOpacity style={styles.submitButton} >
-                <Text style={styles.submitButtonText}>تایید و اضافه</Text>
+            <TouchableOpacity style={styleslocal.submitButton} >
+                <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>
+            <View style={styles.content}>
+                {reportRecognitionList.map((item, index) => (
+                    <View key={index} >
+                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                            <View style={styles.actionHistoryRight}>
+                                <Text style={styles.actionHistoryTitle}>{item.serviceName} ({item.serviceGroupTitle})</Text>
+                                <Text style={styles.actionHistoryTitle2}>{item.title}</Text>
+                                <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.description}</Text>
+                            </View>
+                        </View>
+                    </View>
+                ))}
+            </View>
+
+            <View style={{ height: 150, }} />
+
         </ScrollView>
     );
 };
 
-const styles = StyleSheet.create({
+const styleslocal = StyleSheet.create({
     content: {
         backgroundColor: colors.white,
         paddingVertical: 15,

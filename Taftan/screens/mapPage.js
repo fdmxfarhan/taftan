@@ -33,7 +33,6 @@ const MapPage = (props) => {
   useEffect(() => {
     requestLocationPermission();
     getCurrentLocation();
-    sendRequest();
   }, []);
   const requestLocationPermission = async () => {
     await PermissionsAndroid.requestMultiple(
@@ -45,28 +44,29 @@ const MapPage = (props) => {
         title: 'Give Location Permission',
         message: 'App needs location permission to find your position.',
       }
-    );
-    // .then((granted) => {})
-    // .catch((err) => {
-    //   console.warn(err);
-    //   reject(err);
-    // });
+    )
+      // .then((granted) => {
+      //   console.log('you have location permission');
+      // })
+      // .catch((err) => {
+      //   console.log(err);
+      // });
   };
   const getCurrentLocation = async () => {
-    Geolocation.getCurrentPosition(
+    await Geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         setLocation({ latitude, longitude });
-        shareLocation(latitude, longitude);
+        sendRequest();
+        // shareLocation(latitude, longitude);
       },
       (error) => {
-        console.warn(error.message);
-        requestLocationPermission();
+        ToastAndroid.show('عدم دسترسی به موقعیت جغرافیایی.', ToastAndroid.SHORT);
       },
       {
-        enableHighAccuracy: false,
-        timeout: 15000,
-        maximumAge: 10000,
+        enableHighAccuracy: true,
+        timeout: 30000,
+        maximumAge: 1000000,
       }
     );
   };
@@ -105,7 +105,7 @@ const MapPage = (props) => {
       }
       // setfocusLocation({ latitude: x/devicelist.length, longitude: y/devicelist.length });
       setfocusLocation({ latitude: devicelist[0].latitude, longitude: devicelist[0].longitude });
-      console.log(deviceLocations);
+      // console.log(deviceLocations);
       setdeviceLocations(deviceLocations);
     }
     else {

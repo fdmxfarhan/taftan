@@ -3,7 +3,7 @@ import { use_local_data } from '../config/consts';
 
 export const LoadAllowedRequestAction = async (requestId) => {
     try {
-        if (use_local_data) return {
+        if (!use_local_data) return {
             success: true,
             data: [
                 "InsertReport",

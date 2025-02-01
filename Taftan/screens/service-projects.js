@@ -16,6 +16,7 @@ import { submitProjectRequest } from '../services/ser-projects';
 import NotConnected from '../components/no-connection';
 import getSLAColor from '../config/getSLAColor';
 import ReqGridController from '../components/req-grid-controller';
+import styles from '../styles/requestList';
 
 const ServiceProjects = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
@@ -50,21 +51,33 @@ const ServiceProjects = (props) => {
     },[])
 
     const handleItemPress = (item) => {
-        ToastAndroid.show('این آپشن هنوز کار نمیکنه', ToastAndroid.SHORT);
+        props.navigation.navigate('DamageReqView', { item });
         // props.navigation.navigate('RequestView', { item }); // Navigate to 'Request' screen, passing the item as a prop
     };
 
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
-            <Text style={styles.damageTitle}>{item.projectTitle}</Text>
-            <Text style={styles.textTitle}>{item.requestId}</Text>
+            <Text style={styles.damageTitle}>منطقه: {item.areaName}</Text>
+            <Text style={styles.damageTitle}>عنوان: {item.projectTitle}</Text>
+            <Text style={styles.textTitle}>شماره کار: {item.requestId}</Text>
             
             <View style={styles.stateView}>
                 <Text style={styles.state}>{item.persianLastState}</Text>
                 <View style={[styles.stateCircle, {backgroundColor: getSLAColor(item.SLAStyle)}]}/>
             </View>
             <Text style={styles.date}>{item.persianInsertedDate}</Text>
+            <View style={styles.callbuttonsView}>
+                <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
+                    <Ionicons name={'document'} style={styles.callIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.callButton} onPress={() => {}}>
+                    <Ionicons name={'location'} style={styles.callIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.callButton} onPress={() => {}}>
+                    <Ionicons name={'call'} style={styles.callIcon} />
+                </TouchableOpacity>
+            </View>
         </TouchableOpacity>
     );
     return (
@@ -96,65 +109,5 @@ const ServiceProjects = (props) => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 0,
-    },
-    itemContainer: {
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        marginVertical: 0,
-        backgroundColor: colors.lightergray,
-        borderColor: colors.lightgray,
-        borderWidth: 1,
-        direction: 'rtl',
-    },
-    deviceName: {
-        fontSize: 14,
-        marginBottom: 2,
-        fontFamily: 'iransansbold',
-        textAlign: 'right',
-        color: colors.darkBackground,
-    },
-    damageTitle: {
-        fontSize: 12,
-        fontFamily: 'iransansbold',
-        color: colors.gray,
-    },
-    textTitle: {
-        fontSize: 12,
-        fontFamily: 'iransansbold',
-        color: colors.darkblue,
-        textAlign: 'right',
-        marginTop: 5,
-    },
-    date: {
-        position: 'absolute',
-        bottom: 15,
-        left: 15,
-        fontFamily: 'iransans',
-        fontSize: 12,
-    },
-    stateView: {
-        position: 'absolute',
-        top: 15,
-        left: 15,
-        flexDirection: 'row-reverse',
-        alignContent: 'center',
-        alignItems: 'center',
-    },
-    stateCircle:{
-        width: 10, 
-        height: 10,
-        borderRadius: 5,
-    },
-    state: {
-        fontFamily: 'iransans',
-        fontSize: 11,
-        paddingLeft: 10,
-    },
-});
 
 export default ServiceProjects;

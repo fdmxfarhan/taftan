@@ -18,7 +18,7 @@ const ReportTabLink = ({ tabItemVar, setTabItemCallback }) => {
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Recognition' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Recognition')}>
                 <Ionicons name={tabItemVar == 'Recognition' ? "headset" : "headset-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Recognition' ? styles.activeIcon : styles.deactive]} />
-                <Text style={[styles.tabLinkText, tabItemVar == 'Recognition' ? styles.activeText : styles.deactive]}>تشخیص کارشناس</Text>
+                <Text style={[styles.tabLinkText, tabItemVar == 'Recognition' ? styles.activeText : styles.deactive]}>تشخیص</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Actions' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Actions')}>
                 <Ionicons name={tabItemVar == 'Actions' ? "footsteps" : "footsteps-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Actions' ? styles.activeIcon : styles.deactive]} />
@@ -27,6 +27,10 @@ const ReportTabLink = ({ tabItemVar, setTabItemCallback }) => {
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Components' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Components')}>
                 <Ionicons name={tabItemVar == 'Components' ? "construct" : "construct-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Components' ? styles.activeIcon : styles.deactive]} />
                 <Text style={[styles.tabLinkText, tabItemVar == 'Components' ? styles.activeText : styles.deactive]}>قطعات</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Upload' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Upload')}>
+                <Ionicons name={tabItemVar == 'Upload' ? "cloud-upload" : "cloud-upload-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Upload' ? styles.activeIcon : styles.deactive]} />
+                <Text style={[styles.tabLinkText, tabItemVar == 'Upload' ? styles.activeText : styles.deactive]}>آپلود</Text>
             </TouchableOpacity>
         </View>
     );
@@ -40,7 +44,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
     },
     tabLinkItem: {
-        width: '25%',
+        flex: 1,
         textAlign: 'center',
         alignContent: 'center',
         alignItems: 'center',

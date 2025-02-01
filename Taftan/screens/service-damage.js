@@ -24,6 +24,8 @@ import PersianDatePicker from '../components/persian-date-picker';
 import { twoDigit } from '../config/consts';
 import StateFilterPopup from '../components/rec-popup-filter-state';
 import { getRequestDetail } from '../services/req-detail';
+import styles from '../styles/requestList';
+import { loadRequestReportActionList } from '../services/report-load-action-list';
 
 const ServiceDamage = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -45,6 +47,7 @@ const ServiceDamage = (props) => {
     var [selectedMonthEnd, setselectedMonthEnd] = useState('1');
     var [selectedYearEnd, setselectedYearEnd] = useState('1410');
     var [requestDetail, setRequestDetail] = useState(null);
+    var [reportInfo, setreportInfo] = useState(null);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -141,11 +144,18 @@ const ServiceDamage = (props) => {
     }
     const openRequestReport = async (item) => {
         var result = await getRequestDetail(item.requestId);
-        if(result.success){
-            if (result.data != 'داده پیدا نشد'){
+        if (result.success) {
+            if (result.data != 'داده پیدا نشد') {
                 requestDetail = result.data;
                 setRequestDetail(requestDetail);
-                props.navigation.navigate('Report', {item, requestDetail})
+                result = await loadRequestReportActionList(item.requestId);
+                if (result.success) {
+                    if(result.data.Data.length > 0){
+                        reportInfo = result.data.Data[0];
+                        setreportInfo(reportInfo);
+                        props.navigation.navigate('Report', { item, requestDetail, reportInfo })
+                    } else ToastAndroid.show('گزارشی وجود ندارد.', ToastAndroid.SHORT);
+                }
             }
             else {
                 ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
@@ -159,7 +169,7 @@ const ServiceDamage = (props) => {
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
             <Text style={styles.damageTitle}>{item.areaName}</Text>
             <Text style={styles.damageTitle}>{item.serviceName}</Text>
-            <Text style={styles.textTitle}>{item.requestId}</Text>
+            <Text style={styles.textTitle}>شماره کار: {item.requestId}</Text>
             <View style={styles.stateView}>
                 <Text style={styles.state}>{item.persianLastState}</Text>
                 {item.isPilot == 0 ? (
@@ -169,10 +179,18 @@ const ServiceDamage = (props) => {
                 )}
             </View>
             <Text style={styles.date}>{item.persianInsertedDate}</Text>
-            
-            <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
-                <Ionicons name={'document'} style={styles.callIcon} />
-            </TouchableOpacity>
+
+            <View style={styles.callbuttonsView}>
+                <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
+                    <Ionicons name={'document'} style={styles.callIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
+                    <Ionicons name={'location'} style={styles.callIcon} />
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
+                    <Ionicons name={'call'} style={styles.callIcon} />
+                </TouchableOpacity>
+            </View>
         </TouchableOpacity>
     );
     var getWorkFlowListArray = (workflowFilter) => {
@@ -335,195 +353,5 @@ const ServiceDamage = (props) => {
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 0,
-    },
-    itemContainer: {
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        marginVertical: 0,
-        backgroundColor: colors.white,
-        // backgroundColor: colors.lightergray,
-        borderColor: colors.lightgray,
-        borderWidth: 1,
-        direction: 'rtl',
-    },
-    deviceName: {
-        fontSize: 14,
-        marginBottom: 2,
-        fontFamily: 'iransansbold',
-        direction: 'rtl',
-        color: colors.darkBackground,
-        textAlign: 'right',
-    },
-    damageTitle: {
-        fontSize: 12,
-        fontFamily: 'iransansbold',
-        color: colors.gray,
-    },
-    textTitle: {
-        fontSize: 12,
-        fontFamily: 'iransansbold',
-        color: colors.darkblue,
-        textAlign: 'right',
-        marginTop: 5,
-    },
-    date: {
-        position: 'absolute',
-        top: 35,
-        left: 20,
-        fontFamily: 'iransans',
-        fontSize: 12,
-    },
-    stateView: {
-        position: 'absolute',
-        top: 15,
-        left: 20,
-        flexDirection: 'row-reverse',
-        alignContent: 'center',
-        alignItems: 'center',
-    },
-    stateCircle: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-    },
-    pilotIcon: {
-        color: colors.red3,
-        fontSize: 15,
-    },
-    state: {
-        fontFamily: 'iransans',
-        fontSize: 11,
-        paddingLeft: 10,
-    },
-    filterButton: {
-        // backgroundColor: colors.blue,
-        borderRadius: 7,
-        marginRight: 6,
-    },
-    filterButtonIcon: {
-        // color: colors.white,
-        color: colors.text,
-        fontSize: 16,
-        paddingVertical: 7,
-        paddingHorizontal: 10,
-    },
-    filterView: {
-        backgroundColor: colors.lightBackground,
-        paddingVertical: 10,
-    },
-    filterRow: {
-        flexDirection: 'row-reverse',
-        alignContent: 'center',
-        alignItems: 'center',
-        paddingVertical: 4,
-    },
-    label: {
-        padding: 0,
-        fontFamily: 'iransans',
-        fontSize: 12,
-        margin: 0,
-        width: '15%',
-        marginHorizontal: 5,
-        textAlign: 'center',
-        color: colors.text,
-    },
-    textInput4: {
-        padding: 0,
-        fontFamily: 'iransans',
-        fontSize: 12,
-        paddingVertical: 1,
-        borderRadius: 7,
-        margin: 0,
-        width: '30%',
-        marginHorizontal: 5,
-        textAlign: 'right',
-        paddingHorizontal: 10,
-        backgroundColor: colors.white,
-        color: colors.black,
-    },
-    dateInputButton: {
-        paddingVertical: 4,
-        marginTop: 5,
-        borderRadius: 7,
-        width: '30%',
-        marginHorizontal: 5,
-        paddingHorizontal: 10,
-        backgroundColor: colors.white,
-        flexDirection: 'row-reverse',
-    },
-    dateInputButtonText: {
-        fontFamily: 'iransans',
-        fontSize: 12,
-        borderRadius: 7,
-        margin: 0,
-        textAlign: 'right',
-        color: colors.black,
-    },
-    workflowFilter: {
-        paddingVertical: 4,
-        marginTop: 5,
-        borderRadius: 7,
-        width: '80%',
-        marginHorizontal: 5,
-        paddingHorizontal: 10,
-        backgroundColor: colors.white,
-        flexDirection: 'row-reverse',
-    },
-    workflowFilterText: {
-        fontFamily: 'iransans',
-        fontSize: 12,
-        borderRadius: 7,
-        margin: 0,
-        textAlign: 'right',
-        color: colors.black,
-    },
-    filterBtn: {
-        flexDirection: 'row-reverse',
-        justifyContent: 'center',
-        width: '40%',
-        marginHorizontal: '5%',
-        borderRadius: 7,
-        marginTop: 10,
-    },
-    filterBtnIcon: {
-        color: colors.white,
-        fontSize: 13,
-        paddingTop: 8,
-        paddingLeft: 10,
-    },
-    filterBtnText: {
-        fontFamily: 'iransans',
-        fontSize: 13,
-        color: colors.white,
-        paddingVertical: 5,
-    },
-    buttonsView: {
-        flexDirection: 'row-reverse',
-        paddingRight: 10,
-        justifyContent: 'center',
-    },
-    callButton: {
-        position: 'absolute',
-        zIndex: 10,
-        bottom: 10,
-        left: 15,
-        // backgroundColor: colors.darkBackground,
-        // width: 35,
-        // height: 35,
-        borderRadius: 35 / 2,
-        alignContent: 'center',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    callIcon: {
-        color: colors.pacificcyan,
-        fontSize: 30
-    },
-});
 
 export default ServiceDamage;

@@ -45,14 +45,23 @@ import { GetDeviceDetail } from '../services/device-detail';
 import { GetAreaDetail } from '../services/area-detail';
 import { LoadAllowedRequestAction } from '../services/req-allowed-actions';
 import { GetUnreadMessageCount } from '../services/msgbox-unread-count';
+import ReqInstallationView from '../components/reqview-installationInfo';
+import ReqSiteView from '../components/reqview-siteInfo';
+import ReqProjectView from '../components/reqview-projectInfo';
+import ReqPeriodicView from '../components/reqview-periodicInfo';
 
 const DamageReqView = (props) => {
     var { item } = props.route.params;
+    var reqInfo = props.route.params.item;
     var [requestDetail, setRequestDetail] = useState(null);
     var [isLoading, setIsLoading] = useState(true);
     var [isLoadingSave, setIsLoadingSave] = useState(false);
     var [reqinfoEN, setReqinfoEN] = useState(false);
     var [damageInfo, setDamageInfo] = useState(false);
+    var [installationInfo, setinstallationInfo] = useState(false);
+    var [projectInfo, setprojectInfo] = useState(false);
+    var [periodicInfo, setperiodicInfo] = useState(false);
+    var [siteInfo, setsiteInfo] = useState(false);
     var [deviceInfo, setDeviceInfo] = useState(false);
     var [workflow, setWorkflow] = useState(false);
     var [slaInfo, setslaInfo] = useState(false);
@@ -72,7 +81,7 @@ const DamageReqView = (props) => {
     var [deviceDetail, setdeviceDetail] = useState([]);
     var [areaDetail, setareaDetail] = useState({});
     var [allowdActionList, setallowdActionList] = useState([]);
-    
+
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
         UIManager.setLayoutAnimationEnabledExperimental(true);
     }
@@ -83,6 +92,22 @@ const DamageReqView = (props) => {
     const toggleDamageInfo = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         setDamageInfo(!damageInfo);
+    };
+    const togglesiteInfo = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setsiteInfo(!siteInfo);
+    };
+    const toggleinstallInfo = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setinstallationInfo(!installationInfo);
+    };
+    const toggleprojectInfo = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setprojectInfo(!projectInfo);
+    };
+    const toggleperiodicInfo = () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setperiodicInfo(!periodicInfo);
     };
     const toggleDeviceInfo = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -123,14 +148,14 @@ const DamageReqView = (props) => {
     };
     const updateActionList = async (setreqActionList) => {
         result = await loadRequestReportActionList(item.requestId);
-        if(result.success){
+        if (result.success) {
             setreqActionList(result.data.Data);
-        }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
+        } else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
     }
     const sendRequest = async () => {
         var result = await getRequestDetail(item.requestId);
-        if(result.success){
-            if (result.data != 'داده پیدا نشد'){
+        if (result.success) {
+            if (result.data != 'داده پیدا نشد') {
                 requestDetail = result.data;
                 setRequestDetail(requestDetail);
             }
@@ -139,75 +164,74 @@ const DamageReqView = (props) => {
                 props.navigation.goBack();
                 return;
             }
-        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
         result = await loadRequestExpertList(item.requestId);
-        if(result.success){
+        if (result.success) {
             setreqExpertList(result.data.Data);
-        }else ToastAndroid.show('لیست کارشناسان دریافت نشد', ToastAndroid.SHORT);
+        } else ToastAndroid.show('لیست کارشناسان دریافت نشد', ToastAndroid.SHORT);
 
         result = await getUserList(requestDetail.requestInfo.areaId, requestDetail.requestInfo.requestId);
-        if(result.success){
+        if (result.success) {
             setUserList(result.data);
-        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
         result = await getRefrenceCauseList();
-        if(result.success){
+        if (result.success) {
             setrefrenceCauseList(result.data);
-        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
         result = await getWorkCausesListTitle();
-        if(result.success){
+        if (result.success) {
             workCausesListTitle = result.data;
             setWorkCausesListTitle(workCausesListTitle);
             workCauseList = [];
-            for(var i=0; i < workCausesListTitle.length; i++) workCauseList.push({label: workCausesListTitle[i].description, value: workCausesListTitle[i].id});
+            for (var i = 0; i < workCausesListTitle.length; i++) workCauseList.push({ label: workCausesListTitle[i].description, value: workCausesListTitle[i].id });
             setworkCauseList(workCauseList);
-        }else ToastAndroid.show('لیست وضعیت سرویس بارگیری نشد.', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('لیست وضعیت سرویس بارگیری نشد.', ToastAndroid.SHORT);
+
         result = await loadDeviceRequestList(item.deviceId);
-        if(result.success){
+        if (result.success) {
             setLastRequestList(result.data.Data);
-        }else ToastAndroid.show('لیست درخواست‌های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('لیست درخواست‌های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+
         result = await loadRequestHistoryList(item.requestId);
-        if(result.success){
+        if (result.success) {
             setreqHistoryList(result.data.Data);
-        }else ToastAndroid.show('تاریخچه درخواست های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('تاریخچه درخواست های دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+
         result = await loadRequestReportActionList(item.requestId);
-        if(result.success){
+        if (result.success) {
             setreqActionList(result.data.Data);
-        }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
+
         result = await GetActionTypeList();
-        if(result.success){
+        if (result.success) {
             actionTypeList = []
-            for(var i=0; i < result.data.length; i++) actionTypeList.push({label: result.data[i].title, value: result.data[i].id});
+            for (var i = 0; i < result.data.length; i++) actionTypeList.push({ label: result.data[i].title, value: result.data[i].id });
             setactionTypeList(actionTypeList);
-        }else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
+
         result = await GetBranchDetail(requestDetail.requestInfo.branchId);
-        if(result.success){
+        if (result.success) {
             setbranchInfo(result.data);
-        }else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
-        
-        result = await GetDeviceDetail(requestDetail.damageInfo.deviceId);
-        if(result.success){
+        } else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
+
+        result = await GetDeviceDetail(requestDetail.requestInfo.deviceId);
+        if (result.success) {
             setdeviceDetail(result.data);
-        }else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+        } else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
 
         result = await GetAreaDetail(requestDetail.requestInfo.areaId);
-        if(result.success){
+        if (result.success) {
             setareaDetail(result.data);
-        }else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
+        } else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
 
         result = await LoadAllowedRequestAction(item.requestId);
-        if(result.success){
-            console.log(result.data)
+        if (result.success) {
             setallowdActionList(result.data);
-        }else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);
+
         setIsLoading(false);
     }
     useEffect(() => {
@@ -216,21 +240,39 @@ const DamageReqView = (props) => {
     return (
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
-            <NavBar rightCallback={saveEverything} leftCallback={handleSearchPress} title="درخواست‌های خرابی" leftIcon="arrow-back" rightIcon="save-outline" />
-            
+            <NavBar rightCallback={saveEverything} leftCallback={handleSearchPress} title="جزئیات درخواست" leftIcon="arrow-back" rightIcon="save-outline" />
+
             <ScrollView style={styles.contents} nestedScrollEnabled={false} keyboardShouldPersistTaps="handled">
-                <ReqInfoView toggleReqinfoEN={toggleReqinfoEN} reqinfoEN={reqinfoEN} item={item} requestDetail={requestDetail} branchInfo={branchInfo} /> 
-                <ReqDamageView toggleDamageInfo={toggleDamageInfo} damageInfo={damageInfo} item={item} requestDetail={requestDetail}/> 
-                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} reqInfo={item} requestDetail={requestDetail} lastRequestList={lastRequestList} deviceDetail={deviceDetail} navigation={props.navigation}/> 
-                <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} reqInfo={item} requestDetail={requestDetail} reqHistoryList={reqHistoryList} areaDetail={areaDetail} /> 
-                <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} item={item} requestDetail={requestDetail}/> 
-                <ReqServiceStateInfo toggleserviceStateInfo={toggleserviceStateInfo} serviceStateInfo={serviceStateInfo} item={item} requestDetail={requestDetail}/> 
-                <ReqActionInfo toggleactionsInfo={toggleactionsInfo} actionsInfo={actionsInfo} item={item} requestDetail={requestDetail} actionsHistory={reqActionList} setactionsHistory={setreqActionList} navigation={props.navigation} /> 
-                <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} item={item} requestDetail={requestDetail} reqExpertList={reqExpertList}/> 
+                <ReqInfoView toggleReqinfoEN={toggleReqinfoEN} reqinfoEN={reqinfoEN} item={item} requestDetail={requestDetail} branchInfo={branchInfo} />
+                {requestDetail && (requestDetail.requestInfo.serviceGroup == 1 || requestDetail.requestInfo.serviceGroup == 8) && (
+                    <ReqDamageView toggleDamageInfo={toggleDamageInfo} damageInfo={damageInfo} item={item} requestDetail={requestDetail} />
+                )}
+                {requestDetail && (requestDetail.requestInfo.serviceGroup == 3) && (
+                    <ReqInstallationView toggleinstallInfo={toggleinstallInfo} installInfo={installationInfo} item={item} requestDetail={requestDetail} />
+                )}
+                {requestDetail && (
+                    requestDetail.requestInfo.serviceGroup == 6 || 
+                    requestDetail.requestInfo.serviceGroup == 9 || 
+                    requestDetail.requestInfo.serviceGroup == 10 || 
+                    requestDetail.requestInfo.serviceGroup == 11) && (
+                    <ReqSiteView togglesiteInfo={togglesiteInfo} siteInfo={siteInfo} item={item} requestDetail={requestDetail} />
+                )}
+                {requestDetail && (requestDetail.requestInfo.serviceGroup == 7) && (
+                    <ReqProjectView toggleprojectInfo={toggleprojectInfo} projectInfo={projectInfo} item={item} requestDetail={requestDetail} />
+                )}
+                {requestDetail && (requestDetail.requestInfo.serviceGroup == 2) && (
+                    <ReqPeriodicView toggleperiodicInfo={toggleperiodicInfo} periodicInfo={periodicInfo} item={item} requestDetail={requestDetail} />
+                )}
+                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} reqInfo={item} requestDetail={requestDetail} lastRequestList={lastRequestList} deviceDetail={deviceDetail} navigation={props.navigation} />
+                <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} reqInfo={item} requestDetail={requestDetail} reqHistoryList={reqHistoryList} areaDetail={areaDetail} />
+                <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} item={item} requestDetail={requestDetail} />
+                <ReqServiceStateInfo toggleserviceStateInfo={toggleserviceStateInfo} serviceStateInfo={serviceStateInfo} item={item} requestDetail={requestDetail} />
+                <ReqActionInfo toggleactionsInfo={toggleactionsInfo} actionsInfo={actionsInfo} item={item} requestDetail={requestDetail} actionsHistory={reqActionList} setactionsHistory={setreqActionList} navigation={props.navigation} />
+                <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} item={item} requestDetail={requestDetail} reqExpertList={reqExpertList} />
             </ScrollView>
 
-            <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList}  workCauseList={workCauseList} setworkCauseList={setworkCauseList} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} allowdActionList={allowdActionList} updateActionList={updateActionList} setreqActionList={setreqActionList} navigation={props.navigation}/>
-            <LoadingView isLoading={isLoadingSave} text={'در حال ذخیره اطلاعات...'}/>
+            <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList} workCauseList={workCauseList} setworkCauseList={setworkCauseList} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} allowdActionList={allowdActionList} updateActionList={updateActionList} setreqActionList={setreqActionList} navigation={props.navigation} />
+            <LoadingView isLoading={isLoadingSave} text={'در حال ذخیره اطلاعات...'} />
         </View>
     )
 }

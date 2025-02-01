@@ -77,3 +77,67 @@ export const getRequestDetail = async (requestId) => {
 };
 
 
+
+// var a =
+// {
+//     "damageInfo": {
+//         "description": "بالا نمی آید",
+//         "deviceId": 21527,
+//         "deviceName": "شعبه بازار ارومیه",
+//         "deviceSerial": "37945171",
+//         "deviceTerminal": "1819",
+//         "failureCauseAfterPMRequestTitle": null,
+//         "id": 3,
+//         "insertDamageCauseAfterPM": 0,
+//         "insertRepeaCause": 0,
+//         "isPilot": 0,
+//         "modelTitle": "NCR 5886",
+//         "phone": "05138403751",
+//         "repeatCauseTitle": null,
+//         "serviceName": "خرابی نرم‌افزاری",
+//         "userApplicator": "زارع"
+//     },
+//     "installInfo": null,
+//     "pmInfo": null,
+//     "projectInfo": null,
+//     "requestInfo": {
+//         "action": "ثبت اقدام",
+//         "areaId": 6,
+//         "areaName": "مدیریت امور عملیات",
+//         "branchCode": null,
+//         "branchId": 36235,
+//         "branchName": null,
+//         "cancelReason": null,
+//         "contractId": null,
+//         "contractName": null,
+//         "contractNum": null,
+//         "customerId": 20038,
+//         "customerInsertName": "لیلا شاپوری",
+//         "customerName": "بانک ملت",
+//         "delayReasonIds": [],
+//         "description": " ثبت اقدام سرویس ",
+//         "deviceBrandKey": "c59ff5c8-866a-4617-8843-7e3d2a165096",
+//         "deviceId": 21527,
+//         "deviceModelKey": "e4560eef-320d-4e66-933c-f0107aa69a6b",
+//         "deviceStatus": 1,
+//         "deviceTypeKey": "454c3f79-fea0-445e-b293-38610649db72",
+//         "expertName": "لیلا شاپوری",
+//         "insertdelayCause": 1,
+//         "insertedDate": 13961106100622,
+//         "lastState": "در حال اقدام",
+//         "persianCurrentDate": "1403/10/02 13:17:20",
+//         "persianEndDate": "1396/11/06 13:00:00",
+//         "persianInsertedDate": "1396/11/06 10:06:22",
+//         "persianRequestDeadLine": "1396/11/06 16:06:00",
+//         "persianStartDate": "1396/11/06 10:06:22",
+//         "reportHasFile": 1,
+//         "reportTypeId": 8,
+//         "requestActingTime": "00:02:54",
+//         "requestDeadLineTime": "00:06:00",
+//         "requestId": 364041,
+//         "requestStatusList": [],
+//         "serviceGroup": 1,
+//         "startDate": 13961106100622
+//     },
+//     "siteInfo": null
+// }

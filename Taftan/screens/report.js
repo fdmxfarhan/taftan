@@ -17,9 +17,13 @@ import { GetJobTitleByReportTypeId } from '../services/get-job-title-list';
 import ReportInfo from '../components/report-info';
 import ReportRecognition from '../components/report-recognize';
 import ReportActions from '../components/report-Actions';
+import { loadReportDetail } from '../services/report-get-detail';
+import ReportQuestionsView from '../components/report-components';
+import ReportUploadView from '../components/report-upload';
 
 const Report = (props) => {
     var reqInfo = props.route.params.item;
+    var reportInfo = props.route.params.reportInfo;
     var requestDetail = props.route.params.requestDetail;
     var [isLoading, setIsLoading] = useState(true);
     var [damageReason, setdamageReason] = useState('نوع خرابی');
@@ -28,8 +32,7 @@ const Report = (props) => {
     var [descriptionAction, setdescriptionAction] = useState(0);
     var [tabItem, setTabItem] = useState('Info');
     var [jobTitle, setjobTitle] = useState('نوع خرابی');
-    var [garantieConflict, setgarantieConflict] = useState(true);
-
+    var [reportDetail, setreportDetail] = useState(null);
 
     var [damageReasonsList, setdamageReasonsList] = useState([]);
     var [recognitionExpertList, setrecognitionExpertList] = useState([]);
@@ -41,76 +44,114 @@ const Report = (props) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
+    const getServiceID = (detail) => {
+        if (detail.requestInfo.serviceGroup == 1) return detail.damageInfo.id;
+        if (detail.requestInfo.serviceGroup == 2) return detail.pmInfo.id;
+        if (detail.requestInfo.serviceGroup == 3) return detail.installInfo.id;
+        if (detail.requestInfo.serviceGroup == 6) return detail.siteInfo.id;
+        if (detail.requestInfo.serviceGroup == 7) return detail.projectInfo.id;
+        if (detail.requestInfo.serviceGroup == 8) return detail.damageInfo.id;
+        if (detail.requestInfo.serviceGroup == 9) return detail.siteInfo.id;
+        if (detail.requestInfo.serviceGroup == 10) return detail.siteInfo.id;
+        if (detail.requestInfo.serviceGroup == 11) return detail.siteInfo.id;
+    }
+    const sendRequest = async () => {
+        var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id);
+        if (result.success) setreportDetail(result.data);
+        else ToastAndroid.show('جزئیات لود نشد', ToastAndroid.SHORT);
+
+        result = await GetServiceTitleListByGrupId_DeviceType(requestDetail.requestInfo.deviceId, requestDetail.requestInfo.serviceGroup);
+        if (result.success) setdamageReasonsList(result.data);
+        else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
+        result = await GetRecognitionExpertByDeviceTypeId(requestDetail.requestInfo.deviceTypeKey, getServiceID(requestDetail));
+        if (result.success) setrecognitionExpertList(result.data);
+        else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
+        result = await GetJobTitleByReportTypeId(requestDetail.requestInfo.reportTypeId);
+        if (result.success) setJobTitleList(result.data);
+        else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
+        setIsLoading(false);
+    }
     useEffect(() => {
-        const sendRequest = async () => {
-            var result = await GetServiceTitleListByGrupId_DeviceType(29, 1);
-            setdamageReasonsList(result.data);
-            result = await GetRecognitionExpertByDeviceTypeId(29, 64);
-            setrecognitionExpertList(result.data);
-            result = await GetJobTitleByReportTypeId(29);
-            setJobTitleList(result.data);
-            setIsLoading(false);
-        }
         sendRequest();
     }, [])
     return (
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
-            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} />
+            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} />
             {tabItem == 'Info' && (
-                <View style={{flex: 1,}}>
+                <View style={{ flex: 1, }}>
                     <ReportInfo />
-                    <View>
+                    <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
-                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon}/>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
             {tabItem == 'Recognition' && (
-                <View style={{flex: 1,}}>
-                    <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription}  />
-                    <View>
+                <View style={{ flex: 1, }}>
+                    <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} />
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Info')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Actions')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
-                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon}/>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
             {tabItem == 'Actions' && (
-                <View style={{flex: 1,}}>
+                <View style={{ flex: 1, }}>
                     <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} />
-                    <View>
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Components')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
-                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon}/>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
             {tabItem == 'Components' && (
-                <ScrollView style={styles.contents}>
-                    <Text style={styles.sectionTitle}>اطلاعات قطعات:</Text>
-                    <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
-                        <Text style={styles.checkboxText}>سرویس شامل نقض گارانتی است</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
-                        <Text style={styles.checkboxText}>عملیات نرم افزاری</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
-                        <Text style={styles.checkboxText}>سرویس و تعمیر</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.checkboxView} onPress={() => setgarantieConflict(!garantieConflict)}>
-                        <Ionicons style={[styles.checkboxIcon, { color: garantieConflict ? colors.blue : colors.gray }]} name={garantieConflict ? 'checkbox' : 'checkbox-outline'} />
-                        <Text style={styles.checkboxText}>تعویض ماژول</Text>
-                    </TouchableOpacity>
-                </ScrollView>
+                <View style={{ flex: 1, }}>
+                    <ReportQuestionsView />
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Actions')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Upload')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+            {tabItem == 'Upload' && (
+                <View style={{ flex: 1, }}>
+                    <ReportUploadView />
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Components')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.nextTabButton, { backgroundColor: colors.emerald }]} onPress={() => notWorking()}>
+                            <Text style={styles.nextTabButtonText}>تایید و ثبت گزارش کار</Text>
+                            {/* <Ionicons name={'checkmark'} style={styles.nextTabButtonIcon} /> */}
+                        </TouchableOpacity>
+                    </View>
+                </View>
             )}
         </View >
     )
@@ -121,7 +162,8 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 0,
-        backgroundColor: colors.lightBackground,
+        backgroundColor: colors.white,
+        // backgroundColor: colors.lightBackground,
         paddingBottom: 5,
     },
     contents: {
@@ -233,11 +275,15 @@ const styles = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 13,
     },
+    buttonsControlView: {
+        flexDirection: 'row-reverse',
+        paddingHorizontal: 10,
+    },
     nextTabButton: {
         backgroundColor: colors.blue,
-        width: '90%',
+        flex: 1,
+        marginHorizontal: '2%',
         marginBottom: 10,
-        marginHorizontal: 'auto',
         borderRadius: 7,
         paddingVertical: 10,
         flexDirection: 'row-reverse',
