@@ -10,14 +10,14 @@ import Home from './screens/home';
 import Login from './screens/login';
 import Splash from './screens/splash';
 import MapPage from './screens/mapPage';
-import DamageReqView from './screens/request-view-damage';
+import DamageReqView from './screens/request-view';
 import Profile from './screens/profile';
 import ServiceDamage from './screens/service-damage';
 import ServiceInstallation from './screens/service-installations';
 import ServiceSite from './screens/service-site';
 import ServiceProjects from './screens/service-projects';
 import ServicePeriodic from './screens/service-periodic';
-import InstallationReqView from './screens/request-view-installation';
+// import InstallationReqView from './screens/request-view-installation';
 import Icons from './screens/icons';
 import AddRequest from './screens/request-add';
 import Report from './screens/report';
@@ -72,11 +72,11 @@ const App = (props) => {
           component={DamageReqView}
           options={({ route }) => ({ headerShown: false })}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name="InstallationReqView"
           component={InstallationReqView}
           options={({ route }) => ({ headerShown: false })}
-        />
+        /> */}
         <Stack.Screen
           name="MapPage"
           component={MapPage}

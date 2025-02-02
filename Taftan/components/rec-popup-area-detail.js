@@ -12,27 +12,28 @@ const AreaDetailPopup = ({ modalEnable, setmodalEnable, areaDetail }) => {
         <View>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>
                 <ScrollView style={styles.scroll}>
-                    <Text style={styles.label}>استان: </Text>
-                    <TextInput style={styles.textInput} placeholder="استان" value={areaDetail.provinceName} keyboardType={'default'} />
-                    
-                    <Text style={styles.label}>شهر: </Text>
-                    <TextInput style={styles.textInput} placeholder="شهر" value={areaDetail.cityName} keyboardType={'default'} />
-                    
-                    <Text style={styles.label}>بخش: </Text>
-                    <TextInput style={styles.textInput} placeholder="بخش" value={areaDetail.zoneName} keyboardType={'default'} />
-                    
-                    <Text style={styles.label}>شماره تلفن: </Text>
-                    <TextInput style={styles.textInput} placeholder="شماره تلفن" value={areaDetail.phoneNumber} keyboardType={'default'} />
-                    
-                    <Text style={styles.label}>طول جغرافیایی: </Text>
-                    <TextInput style={styles.textInput} placeholder="طول جغرافیایی" value={areaDetail.strLatitude} keyboardType={'default'} />
-                    
-                    <Text style={styles.label}>عرض جغرافیایی: </Text>
-                    <TextInput style={styles.textInput} placeholder="عرض جغرافیایی" value={areaDetail.strLongitude} keyboardType={'default'} />
-                    
-                    <Text style={styles.label}>آدرس: </Text>
-                    <TextInput style={styles.textInput} placeholder="آدرس" value={areaDetail.address} keyboardType={'default'} />
-                    
+                    {areaDetail != null && (<View>
+                        <Text style={styles.label}>استان: </Text>
+                        <TextInput style={styles.textInput} placeholder="استان" value={areaDetail.provinceName} keyboardType={'default'} />
+
+                        <Text style={styles.label}>شهر: </Text>
+                        <TextInput style={styles.textInput} placeholder="شهر" value={areaDetail.cityName} keyboardType={'default'} />
+
+                        <Text style={styles.label}>بخش: </Text>
+                        <TextInput style={styles.textInput} placeholder="بخش" value={areaDetail.zoneName} keyboardType={'default'} />
+
+                        <Text style={styles.label}>شماره تلفن: </Text>
+                        <TextInput style={styles.textInput} placeholder="شماره تلفن" value={areaDetail.phoneNumber} keyboardType={'default'} />
+
+                        <Text style={styles.label}>طول جغرافیایی: </Text>
+                        <TextInput style={styles.textInput} placeholder="طول جغرافیایی" value={areaDetail.strLatitude} keyboardType={'default'} />
+
+                        <Text style={styles.label}>عرض جغرافیایی: </Text>
+                        <TextInput style={styles.textInput} placeholder="عرض جغرافیایی" value={areaDetail.strLongitude} keyboardType={'default'} />
+
+                        <Text style={styles.label}>آدرس: </Text>
+                        <TextInput style={styles.textInput} placeholder="آدرس" value={areaDetail.address} keyboardType={'default'} />
+                    </View>)}
                 </ScrollView>
                 <TouchableOpacity style={styles.closeButton} onPress={() => setmodalEnable(false)}>
                     <Ionicons style={styles.closeIcon} name={"close"} size={30} color={colors.white} />

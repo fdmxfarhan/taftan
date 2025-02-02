@@ -17,7 +17,7 @@ const ReqExpertsInfo = ({ togglesupervisorInfo, supervisorInfo, item, requestDet
             </TouchableOpacity>
             {supervisorInfo && (<View style={styles.content}>
                 {reqExpertList.map((item, index) => (
-                    <View key={item.id} style={styles.supervisorItem}>
+                    <View key={item.Id} style={styles.supervisorItem}>
                         <Text style={styles.supervisorName}>{item.currentUserName}</Text>
                         <Text style={styles.supervisorType}>{item.expertType_String}</Text>
                     </View>

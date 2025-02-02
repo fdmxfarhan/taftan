@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatList } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
@@ -7,7 +7,7 @@ const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, b
     const [numOfRowsOpen, setnumOfRowsOpen] = useState(false);
 
     const renderListItem = ({ item }) => (
-        <TouchableOpacity key={getLabel(item)} onPress={() => {
+        <TouchableOpacity key={getValue(item)} onPress={() => {
             setnumOfRowsOpen(false);
             // setValue(getValue(item));
             setValue(item);
@@ -16,7 +16,6 @@ const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, b
             <Text style={styles.itemText}>{getLabel(item)}</Text>
         </TouchableOpacity>
     )
-
     return (
         <View style={containerStyle}>
             <TouchableOpacity style={[buttonStyle, styles.placeHolderButton]} onPress={() => {if(!disabled) setnumOfRowsOpen(!numOfRowsOpen)}}>
@@ -30,14 +29,6 @@ const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, b
                     <ScrollView nestedScrollEnabled={true}>
                         {list.map((item) => renderListItem({item}))}
                     </ScrollView>
-                    {/* <FlatList
-                        // decelerationRate="fast"
-                        // showsVerticalScrollIndicator={false}
-                        nestedScrollEnabled={true}
-                        data={list}
-                        keyExtractor={item => getLabel(item)}
-                        renderItem={renderListItem}
-                    /> */}
                 </View>
             }
         </View>

@@ -8,211 +8,122 @@ import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
+import AreaDetailPopup from './rec-popup-area-detail';
+import { GetAreaDetail } from '../services/area-detail';
 
-const ReportInfo = ({ }) => {
+const ReportInfoView = ({ reportDetail }) => {
     var [testVal, setTestVal] = useState('-');
     var testList = [{ title: 'label1' }, { title: 'label2' }, { title: 'label3' }, { title: 'label4' }, { title: 'label5' }, { title: 'label6' }, { title: 'label7' }, { title: 'label8' }, { title: 'label9' }, { title: 'label10' },]
+    var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
+    var [areaDetail, setareaDetail] = useState(null);
 
-
+    useEffect(() => {
+        console.log(reportDetail)
+    }, [reportDetail])
+    var serviceObject = (detail) => {
+        if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 2) return detail.pmReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 3) return detail.installReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 6) return detail.siteReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 7) return detail.projectReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 8) return detail.damageReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 9) return detail.siteReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 10) return detail.siteReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 11) return detail.siteReportInfo;
+    }
+    var openAreaPopup = async () => {
+        result = await GetAreaDetail(reportDetail.requestReportInfo.areaId);
+        if (result.success) {
+            areaDetail = result.data;
+            setareaDetail(areaDetail);
+            setareaDetailModalEN(true);
+        } else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
+    }
     return (
-        <ScrollView style={styles.contents}>
-            <View style={styles.dualInputView}>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>شماره کار</Text>
-                    <TextInput style={styles.textInput} placeholder="شماره کار" value={testVal} />
-                    {/* <DropDownObj disabled={true} list={testList} getLabel={(item) => item.title} setValue={(item) => { }} value={testVal} buttonStyle={styles.dropdown} buttonTextStyle={styles.dropdownText} /> */}
-                </View>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>مشتری</Text>
-                    <TextInput style={styles.textInput} placeholder="مشتری" value={testVal} />
-                </View>
-            </View>
-            <View style={styles.dualInputView}>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>سرویس</Text>
-                    <TextInput style={styles.textInput} placeholder="سرویس" value={testVal} />
-                </View>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>تاریخ ثبت درخواست</Text>
-                    <TextInput style={styles.textInput} placeholder="تاریخ ثبت درخواست" value={testVal} />
-                </View>
-            </View>
-            <View style={styles.dualInputView}>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>دفتر عملیاتی</Text>
-                    <View style={styles.inputWithActionView}>
-                        <TextInput style={[styles.inputWithActionInput, {width: '64%'}]} placeholder="دفتر عملیاتی" value={testVal} />
-                        <TouchableOpacity style={[styles.inputWithActionButton, {width: '20%'}]} onPress={() => { }}>
-                            <Ionicons style={styles.inputWithActionIcon} name={'information-circle'} />
-                        </TouchableOpacity>
+        <View>
+            <ScrollView style={styles.contents}>
+                {reportDetail != null && (<View>
+                    <View style={[styles.dualInputView, {paddingHorizontal: 0}]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>شماره کار</Text>
+                            <TextInput style={styles.textInput} placeholder="شماره کار" value={reportDetail.requestReportInfo.requestId.toString()} />
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>مشتری</Text>
+                            <TextInput style={styles.textInput} placeholder="مشتری" value={reportDetail.requestReportInfo.customerName} />
+                        </View>
                     </View>
-                </View>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>گروه سرویس</Text>
-                    <TextInput style={styles.textInput} placeholder="گروه سرویس" value={testVal} />
-                </View>
-            </View>
-            <View style={styles.dualInputView}>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>نام دستگاه</Text>
-                    <TextInput style={styles.textInput} placeholder="نام دستگاه" value={testVal} />
-                </View>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>سریال دستگاه</Text>
-                    <TextInput style={styles.textInput} placeholder="سریال دستگاه" value={testVal} />
-                </View>
-            </View>
-            <View style={styles.dualInputView}>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>ترمینال دستگاه</Text>
-                    <View style={styles.inputWithActionView}>
-                        <TextInput style={[styles.inputWithActionInput, { width: '64%' }]} placeholder="ترمینال دستگاه" value={testVal} />
-                        <TouchableOpacity style={[styles.inputWithActionButton, {width: '20%'}]} onPress={() => { }}>
-                            <Ionicons style={styles.inputWithActionIcon} name={'information-circle'} />
-                        </TouchableOpacity>
+                    <View style={[styles.dualInputView, {paddingHorizontal: 0}]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>سرویس</Text>
+                            <TextInput style={styles.textInput} placeholder="سرویس" value={serviceObject(reportDetail).serviceName} />
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>تاریخ ثبت درخواست</Text>
+                            <TextInput style={styles.textInput} placeholder="تاریخ ثبت درخواست" value={reportDetail.requestReportInfo.insertedDateTime} />
+                        </View>
                     </View>
-                </View>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>نام واحد سازمانی</Text>
-                    <TextInput style={styles.textInput} placeholder="نام واحد سازمانی" value={testVal} />
-                </View>
-            </View>
-            <View style={styles.dualInputView}>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>کد واحد سازمانی</Text>
-                    <View style={styles.inputWithActionView}>
-                        <TextInput style={[styles.inputWithActionInput, { width: '64%' }]} placeholder="کد واحد سازمانی" value={testVal} />
-                        <TouchableOpacity style={[styles.inputWithActionButton, {width: '20%'}]} onPress={() => { }}>
-                            <Ionicons style={styles.inputWithActionIcon} name={'information-circle'} />
-                        </TouchableOpacity>
+                    <View style={[styles.dualInputView, {paddingHorizontal: 0}]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>دفتر عملیاتی</Text>
+                            <View style={styles.inputWithActionView}>
+                                <TextInput style={[styles.inputWithActionInput, { width: '64%' }]} placeholder="دفتر عملیاتی" value={reportDetail.requestReportInfo.areaName} />
+                                <TouchableOpacity style={[styles.inputWithActionButton, { width: '20%' }]} onPress={() => { openAreaPopup()}}>
+                                    <Ionicons style={styles.inputWithActionIcon} name={'information-circle'} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>گروه سرویس</Text>
+                            <TextInput style={styles.textInput} placeholder="گروه سرویس" value={reportDetail.requestReportInfo.serviceGroupName} />
+                        </View>
                     </View>
-                </View>
-                <View style={styles.dualInputPart}>
-                    <Text style={styles.label}>مدل دستگاه</Text>
-                    <TextInput style={styles.textInput} placeholder="مدل دستگاه" value={testVal} />
-                </View>
-            </View>
-        </ScrollView>
+                    <View style={[styles.dualInputView, {paddingHorizontal: 0}]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>نام دستگاه</Text>
+                            <TextInput style={styles.textInput} placeholder="نام دستگاه" value={reportDetail.requestReportInfo.deviceName} />
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>سریال دستگاه</Text>
+                            <TextInput style={styles.textInput} placeholder="سریال دستگاه" value={reportDetail.requestReportInfo.deviceSerial} />
+                        </View>
+                    </View>
+                    <View style={[styles.dualInputView, {paddingHorizontal: 0}]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>ترمینال دستگاه</Text>
+                            <View style={styles.inputWithActionView}>
+                                <TextInput style={[styles.inputWithActionInput, { width: '64%' }]} placeholder="ترمینال دستگاه" value={reportDetail.requestReportInfo.deviceTerminal} />
+                                <TouchableOpacity style={[styles.inputWithActionButton, { width: '20%' }]} onPress={() => { }}>
+                                    <Ionicons style={styles.inputWithActionIcon} name={'information-circle'} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>نام واحد سازمانی</Text>
+                            <TextInput style={styles.textInput} placeholder="نام واحد سازمانی" value={reportDetail.requestReportInfo.branchName} />
+                        </View>
+                    </View>
+                    <View style={[styles.dualInputView, {paddingHorizontal: 0}]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>کد واحد سازمانی</Text>
+                            <View style={styles.inputWithActionView}>
+                                <TextInput style={[styles.inputWithActionInput, { width: '64%' }]} placeholder="کد واحد سازمانی" value={reportDetail.requestReportInfo.branchCode} />
+                                <TouchableOpacity style={[styles.inputWithActionButton, { width: '20%' }]} onPress={() => { }}>
+                                    <Ionicons style={styles.inputWithActionIcon} name={'information-circle'} />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>مدل دستگاه</Text>
+                            <TextInput style={styles.textInput} placeholder="مدل دستگاه" value={reportDetail.requestReportInfo.deviceModelName} />
+                        </View>
+                    </View>
+                </View>)}
+            </ScrollView>
+            <AreaDetailPopup modalEnable={areaDetailModalEN} setmodalEnable={setareaDetailModalEN} areaDetail={areaDetail} />
+        </View>
     );
 };
 
-// const styles = StyleSheet.create({
-//     contents: {
-//         marginTop: 10,
-//     },
-//     dualInputView: {
-//         flexDirection: 'row-reverse',
-//         marginBottom: 10,
-//     },
-//     singleColView: {
-//         width: '95%',
-//         marginHorizontal: 'auto',
-//         paddingBottom: 10,
-//     },
-//     dualInputPart: {
-//         width: '46%',
-//         marginRight: '3%',
-//     },
-//     label: {
-//         fontFamily: 'iransans',
-//         fontSize: 12,
-//         color: colors.text,
-//     },
-//     content: {
-//         flex: 1,
-//         width: '100%',
-//     },
-//     dropdown: {
-//         backgroundColor: colors.antiflashWhite,
-//         borderWidth: 1,
-//         borderColor: colors.timberwolf,
-//         borderRadius: 7,
-//         width: '100%',
-//         marginHorizontal: 0,
-//         alignContent: 'center',
-//         alignItems: 'center',
-//         paddingHorizontal: 10,
-//     },
-//     dropdownText: {
-//         paddingVertical: 5,
-//         width: '100%',
-//         fontFamily: 'iransans',
-//         fontSize: 12,
-//         color: colors.text,
-//         textAlign: 'right',
-//         direction: 'rtl',
-//     },
-//     textInput: {
-//         borderColor: colors.antiflashWhite,
-//         borderWidth: 1,
-//         width: '100%',
-//         margin: 'auto',
-//         fontFamily: 'iransans',
-//         fontSize: 13,
-//         backgroundColor: colors.timberwolf,
-//         borderRadius: 8,
-//         textAlign: 'right',
-//         direction: 'rtl',
-//         paddingVertical: 2,
-//         paddingHorizontal: 15,
-//         color: colors.text,
-//     },
-//     textArea: {
-//         borderColor: colors.lightgray,
-//         borderWidth: 1,
-//         width: '100%',
-//         margin: 'auto',
-//         fontFamily: 'iransans',
-//         fontSize: 13,
-//         backgroundColor: colors.white,
-//         borderRadius: 8,
-//         textAlign: 'right',
-//         direction: 'rtl',
-//         paddingVertical: 4,
-//         paddingHorizontal: 15,
-//     },
-//     breakline: {
-//         backgroundColor: colors.lightgray,
-//         width: '100%',
-//         marginHorizontal: 'auto',
-//         height: 5,
-//         // borderRadius: 4,
-//         marginBottom: 20,
-//         marginTop: 10,
-//     },
-//     detailedInputView: {
-//         flexDirection: 'row-reverse',
-//         width: '100%',
-//     },
-//     dateVal: {
-//         fontFamily: 'iransans',
-//         fontSize: 12,
-//         width: '78%',
-//         backgroundColor: colors.white,
-//         borderColor: colors.lightgray,
-//         borderWidth: 1,
-//         minHeight: 35,
-//         borderRadius: 8,
-//         alignContent: 'center',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         textAlign: 'center',
-//         paddingVertical: 6,
-//     },
-//     dateButton: {
-//         backgroundColor: colors.blue,
-//         paddingHorizontal: 9,
-//         borderRadius: 7,
-//         marginRight: 7,
-//         alignContent: 'center',
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//         marginVertical: 1,
-//     },
-//     dateButtonIcon: {
-//         color: colors.white,
-//         fontSize: 18,
-//     },
-// });
 
-export default ReportInfo;
+export default ReportInfoView;

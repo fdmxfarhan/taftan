@@ -4,18 +4,31 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { DoneExpertRequest } from '../services/done-expert-request';
+import { getAuthData } from '../services/auth';
 
-const CloseCasePopup = ({ popupEN, setPopupEN, reqInfo }) => {
+const CloseCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
+    const doneRequest = async () => {
+        const authData = await getAuthData();
+        console.log(requestDetail)
+        var result = await DoneExpertRequest(requestDetail.requestInfo.requestId);
+        if (result.success) {
+            ToastAndroid.show(result.data, ToastAndroid.SHORT);
+            setPopupEN(false);
+            reloadPage();
+        }
+        else ToastAndroid.show(result.error, ToastAndroid.SHORT);
+    }
     return (
         <View>
             <Popup modalVisible={popupEN} setModalVisible={setPopupEN}>
                 <Text style={styles.centerlabel}>آیا از بستن کار اطمینان دارید؟</Text>
-                
+
                 <View style={styles.submitButtonsView}>
-                    <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
+                    <TouchableOpacity style={styles.submitButton} onPress={() => doneRequest()}>
                         <Text style={styles.submitButtonText}>تایید</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.cancleButton} onPress={() => setPopupEN(false)}>
@@ -137,7 +150,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: colors.white,
     },
-    grayline:{
+    grayline: {
         width: '100%',
         height: 1,
         backgroundColor: colors.gray,

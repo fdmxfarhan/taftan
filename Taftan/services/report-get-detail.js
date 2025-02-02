@@ -9024,8 +9024,8 @@ export const loadReportDetail = async (requestId, reportId, requestActionId) => 
                 "pmReportInfo": null
             }
         };
-        console.log(requestId, reportId, requestActionId)
-        response = await api.get(`/ReportController/loadReportDetail/${requestId}/${reportId}?requestActionId=${requestActionId}`);
+        // console.log(requestId, reportId, requestActionId)
+        response = await api.get(`/ReportController/loadReportDetail/${requestId}/${reportId == null ? 0 : reportId}?requestActionId=${requestActionId}`);
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submiting /ReportController/loadReportDetail request:', error);

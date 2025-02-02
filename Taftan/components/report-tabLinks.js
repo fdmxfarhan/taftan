@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
-import {
-    Text,
-    StyleSheet,
-    View,
-    FlatList,
-    TouchableOpacity
-} from 'react-native';
+import { Text, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
-const ReportTabLink = ({ tabItemVar, setTabItemCallback }) => {    
+const ReportTabLink = ({ tabItemVar, setTabItemCallback }) => {
     return (
         <View style={styles.tabLinksView}>
             <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Info' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Info')}>

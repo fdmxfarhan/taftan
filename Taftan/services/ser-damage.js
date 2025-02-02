@@ -188,7 +188,7 @@ export const submitDamageRequest = async (skip, take) => {
                         "serviceName": "خرابی چاپگر رسید مشتری",
                         "lastState": "SendToOffice",
                         "deviceId": 39290,
-                        "reportHasFile": 0,
+                        "reportHasFile": 1,
                         "persianLastState": "ارجاع به دفتر",
                         "insertedDate": 14030809094737,
                         "persianInsertedDate": "1403/08/09",

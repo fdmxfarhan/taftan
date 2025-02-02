@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { Image, PermissionsAndroid, SafeAreaView, ScrollView, StatusBar, StyleSheet, Text, TouchableHighlight, TouchableOpacity, useColorScheme, View, TextInput, LayoutAnimation, UIManager, ActivityIndicator, ToastAndroid } from 'react-native';
+import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, TextInput, ToastAndroid } from 'react-native';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import NavBar from '../components/navbar';
 import LoadingView from '../components/loading';
-import { GetCurrentDate } from '../services/config-get-date';
-import { GetCustomersTitleList } from '../services/customer-get-titles-list';
-import DropDownObj from '../components/dropdown-obj';
-import { GetBranchListByCustomerId } from '../services/get-branch-list-by-customer-id';
-import { getDeviceListForInsertRequest } from '../services/get-device-list-for-insert-req';
-import { loadAreaForSLList } from '../services/load-area-for-SLList';
 import { GetServiceTitleListByGrupId_DeviceType } from '../services/get-service-title-list';
 import { GetRecognitionExpertByDeviceTypeId } from '../services/get-recognition-expert';
 import ReportTabLink from '../components/report-tabLinks';
 import { GetJobTitleByReportTypeId } from '../services/get-job-title-list';
-import ReportInfo from '../components/report-info';
 import ReportRecognition from '../components/report-recognize';
 import ReportActions from '../components/report-Actions';
 import { loadReportDetail } from '../services/report-get-detail';
 import ReportQuestionsView from '../components/report-components';
 import ReportUploadView from '../components/report-upload';
+import ReportInfoView from '../components/report-info';
 
 const Report = (props) => {
-    var reqInfo = props.route.params.item;
     var reportInfo = props.route.params.reportInfo;
     var requestDetail = props.route.params.requestDetail;
     var [isLoading, setIsLoading] = useState(true);
@@ -60,17 +53,17 @@ const Report = (props) => {
         if (result.success) setreportDetail(result.data);
         else ToastAndroid.show('جزئیات لود نشد', ToastAndroid.SHORT);
 
-        result = await GetServiceTitleListByGrupId_DeviceType(requestDetail.requestInfo.deviceId, requestDetail.requestInfo.serviceGroup);
-        if (result.success) setdamageReasonsList(result.data);
-        else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        // result = await GetServiceTitleListByGrupId_DeviceType(requestDetail.requestInfo.deviceId, requestDetail.requestInfo.serviceGroup);
+        // if (result.success) setdamageReasonsList(result.data);
+        // else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
-        result = await GetRecognitionExpertByDeviceTypeId(requestDetail.requestInfo.deviceTypeKey, getServiceID(requestDetail));
-        if (result.success) setrecognitionExpertList(result.data);
-        else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        // result = await GetRecognitionExpertByDeviceTypeId(requestDetail.requestInfo.deviceTypeKey, getServiceID(requestDetail));
+        // if (result.success) setrecognitionExpertList(result.data);
+        // else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
-        result = await GetJobTitleByReportTypeId(requestDetail.requestInfo.reportTypeId);
-        if (result.success) setJobTitleList(result.data);
-        else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        // result = await GetJobTitleByReportTypeId(requestDetail.requestInfo.reportTypeId);
+        // if (result.success) setJobTitleList(result.data);
+        // else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
         setIsLoading(false);
     }
@@ -84,7 +77,7 @@ const Report = (props) => {
             <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} />
             {tabItem == 'Info' && (
                 <View style={{ flex: 1, }}>
-                    <ReportInfo />
+                    <ReportInfoView reportDetail={reportDetail} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
@@ -278,6 +271,8 @@ const styles = StyleSheet.create({
     buttonsControlView: {
         flexDirection: 'row-reverse',
         paddingHorizontal: 10,
+        paddingTop: 10,
+        height: '10%',
     },
     nextTabButton: {
         backgroundColor: colors.blue,

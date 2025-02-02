@@ -4,28 +4,48 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import DropDownPicker from 'react-native-dropdown-picker';
+import DropDownObj from './dropdown-obj';
+import { SaveRequestStatus } from '../services/state-save-request';
+import { getAuthData } from '../services/auth';
 
-const StatusPopup = ({ popupEN, setPopupEN, reqInfo, workCauseList, setworkCauseList }) => {
-    var [workCauseOpen, setworkCauseOpen] = useState(false);
-    var [workCauseValue, setworkCauseValue] = useState('1');
+const StatusPopup = ({ popupEN, setPopupEN, reqInfo, workCauseList, reloadPage }) => {
+    var [workCauseValue, setworkCauseValue] = useState({label: 'انتخاب کنید', value: -1});
     var [Description, setDescription] = useState('');
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
+    const saveState = async () => {
+        const authData = await getAuthData();
+        options = {
+            "id": 0,
+            "userId": authData.token,
+            "dealyReasonId": workCauseValue.value,
+            "requestId": reqInfo.requestId,
+            "description": Description,
+            "moduleGroupId": 0,
+            "modeuleModelId": 0
+        }
+        var result = await SaveRequestStatus(options);
+        if (result.success) {
+            ToastAndroid.show(result.data, ToastAndroid.SHORT);
+            setPopupEN(false);
+            reloadPage();
+        }
+        else ToastAndroid.show(result.error, ToastAndroid.SHORT);
+    }
     return (
         <View>
             <Popup modalVisible={popupEN} setModalVisible={setPopupEN}>
                 <Text style={styles.label}>عنوان وضعیت سرویس: </Text>
-                <DropDownPicker
-                    open={workCauseOpen}
-                    value={workCauseValue}
-                    items={workCauseList}
-                    setOpen={setworkCauseOpen}
-                    setValue={setworkCauseValue}
-                    setItems={setworkCauseList}
-                    placeholder="عنوان وضعیت سرویس"
-                    style={styles.dropdown}
-                    dropDownContainerStyle={styles.dropdownContainer}
+                <DropDownObj
+                    list={workCauseList}
+                    getLabel={(item) => item.label}
+                    getValue={(item) => item.value}
+                    setValue={(item) => { setworkCauseValue(item) }}
+                    value={workCauseValue.label}
+                    buttonStyle={styles.dropdown}
+                    buttonTextStyle={styles.dropdownText}
+                    onSubmit={(val) => { }}
                 />
                 <Text style={styles.label}>وضعیت سرویس: </Text>
                 <TextInput
@@ -35,10 +55,10 @@ const StatusPopup = ({ popupEN, setPopupEN, reqInfo, workCauseList, setworkCause
                     numberOfLines={5}
                     value={Description}
                     keyboardType={'default'}
-                    onChange={(text) => {setDescription(text.nativeEvent.text)}}
+                    onChange={(text) => { setDescription(text.nativeEvent.text) }}
                 />
                 <View style={styles.submitButtonsView}>
-                    <TouchableOpacity style={styles.submitButton} onPress={notWorking}>
+                    <TouchableOpacity style={styles.submitButton} onPress={() => saveState()}>
                         <Text style={styles.submitButtonText}>تایید</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.cancleButton} onPress={() => setPopupEN(false)}>
@@ -60,59 +80,45 @@ const styles = StyleSheet.create({
         margin: 'auto',
         fontFamily: 'iransansbold',
     },
+    // dropdown: {
+    //     borderColor: colors.gray,
+    //     borderWidth: 1,
+    //     width: '100%',
+    //     borderRadius: 10,
+    // },
+    // dropdownContainer: {
+    //     fontFamily: 'iransans',
+    //     color: colors.text,
+    //     width: '100%',
+    //     paddingVertical: 7,
+    //     paddingHorizontal: 10,
+    // },
     dropdown: {
-        borderColor: colors.gray,
+        backgroundColor: colors.antiflashWhite,
         borderWidth: 1,
+        borderColor: colors.timberwolf,
+        borderRadius: 7,
         width: '100%',
-        borderRadius: 10,
+        marginHorizontal: '7.5%',
+        alignContent: 'center',
+        alignItems: 'center',
     },
-    dropdownContainer: {
-        fontFamily: 'iransans',
-        color: colors.text,
+    dropdownText: {
+        paddingVertical: 5,
+        paddingHorizontal: 5,
+        textAlign: 'center',
         width: '100%',
-        paddingVertical: 7,
-        paddingHorizontal: 10,
-    },
-    dateInputButton: {
-        width: '100%',
-        borderWidth: 1,
-        borderColor: colors.gray,
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-    },
-    dateInputButtonText: {
-        textAlign: 'right',
-        color: colors.text,
         fontFamily: 'iransans',
         fontSize: 14,
     },
-    timeInputView: {
-        flexDirection: 'row-reverse',
-        width: '100%',
-    },
-    timeInputViewItem: {
-        width: '50%',
-    },
-    timeInputButton: {
-        borderWidth: 1,
-        borderColor: colors.gray,
-        borderRadius: 10,
-        paddingVertical: 4,
-    },
-    timeInputButtonText: {
-        fontFamily: 'iransans',
-        fontSize: 18,
-        textAlign: 'center',
-    },
     textArea: {
-        borderColor: colors.gray,
+        borderColor: colors.timberwolf,
         borderWidth: 1,
         width: '100%',
         margin: 'auto',
         fontFamily: 'iransans',
         fontSize: 13,
-        backgroundColor: colors.white,
+        backgroundColor: colors.antiflashWhite,
         borderRadius: 8,
         textAlign: 'right',
         direction: 'rtl',
@@ -150,7 +156,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         color: colors.white,
     },
-    grayline:{
+    grayline: {
         width: '100%',
         height: 1,
         backgroundColor: colors.gray,

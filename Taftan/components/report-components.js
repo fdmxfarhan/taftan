@@ -53,7 +53,7 @@ const ReportQuestionsView = ({ }) => {
             </View>)}
             <CheckBox text={'قطعات مصرفی'} value={usedComponents} onChange={() => { setusedComponents(!usedComponents) }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {usedComponents && (<View>
-                <View style={styles.dualInputView}>
+                <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>ماژول: </Text>
                         <DropDownObj
@@ -82,7 +82,7 @@ const ReportQuestionsView = ({ }) => {
                     </View>
                 </View>
                 {(componentAction == 'تعویض' || componentAction == 'اضافه') && (<View>
-                    <View style={styles.dualInputView}>
+                    <View style={[styles.dualInputView]}>
                         <View style={styles.dualInputPart}>
                             <Text style={styles.label}>مدل ماژول جدید: </Text>
                             <DropDownObj
@@ -116,7 +116,7 @@ const ReportQuestionsView = ({ }) => {
                     </View>
                 </View>)}
                 {(componentAction == 'تعویض' || componentAction == 'حذف') && (<View>
-                    <View style={styles.dualInputView}>
+                    <View style={[styles.dualInputView]}>
                         <View style={styles.dualInputPart}>
                             <Text style={styles.label}>مدل ماژول قدیم: </Text>
                             <DropDownObj
@@ -232,7 +232,7 @@ const ReportQuestionsView = ({ }) => {
             </View>)}
             <CheckBox text={'خرابی قبل از بهره برداری'} value={damageBeforeUse} onChange={() => { setdamageBeforeUse(!damageBeforeUse) }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {damageBeforeUse && (<View>
-                <View style={styles.dualInputView}>
+                <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>ماژول: </Text>
                         <DropDownObj
@@ -260,7 +260,7 @@ const ReportQuestionsView = ({ }) => {
                         />
                     </View>
                 </View>
-                <View style={styles.dualInputView}>
+                <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>سریال: </Text>
                         <TextInput

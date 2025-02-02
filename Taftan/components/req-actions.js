@@ -10,7 +10,7 @@ import ReturnPopup from './rec-popup-return';
 import StatusPopup from './rec-popup-status';
 import CloseCasePopup from './rec-popup-close';
 
-const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, workCauseList, setworkCauseList, actionTypeList, setactionTypeList, allowdActionList, updateActionList, setreqActionList, navigation }) => {
+const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, workCauseList, setworkCauseList, actionTypeList, setactionTypeList, allowdActionList, updateActionList, setreqActionList, navigation, reloadPage, reqExpertList }) => {
     var [actionPopupEN, setActionPopupEN] = useState(false);
     var [assignPopupEN, setAssignPopupEN] = useState(false);
     var [returnPopupEN, setReturnPopupEN] = useState(false);
@@ -22,45 +22,44 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
     return (
         <View style={styles.buttonsView}>
             <NewActionPopup popupEN={actionPopupEN} setPopupEN={setActionPopupEN} requestItem={item} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} updateActionList={updateActionList} setreqActionList={setreqActionList} navigation={navigation} requestDetail={requestDetail} />
-            <AssignPopup popupEN={assignPopupEN} setPopupEN={setAssignPopupEN} reqInfo={requestDetail} userList={userList} />
+            <AssignPopup popupEN={assignPopupEN} setPopupEN={setAssignPopupEN} requestDetail={requestDetail} userList={userList} reloadPage={reloadPage} reqExpertList={reqExpertList}/>
             <ReturnPopup popupEN={returnPopupEN} setPopupEN={setReturnPopupEN} refrenceCauseList={refrenceCauseList} />
-            <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCauseList={workCauseList} setworkCauseList={setworkCauseList} />
-            <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} />
-
+            <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCauseList={workCauseList} setworkCauseList={setworkCauseList} reqInfo={item} reloadPage={reloadPage} />
+            <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} requestDetail={requestDetail} reloadPage={reloadPage} />
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
-                {allowdActionList.includes('SendToExpert') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => setAssignPopupEN(true)}>
+                {allowdActionList.includes('SendToExpert') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.darkcyan }]} onPress={() => setAssignPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="chatbubbles" />
                     <Text style={styles.buttonText}>ارجاع کار/تخصیص کارشناس</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('SendToOffice') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.darkcyan}]} onPress={() => notWorking()}>
+                {allowdActionList.includes('SendToOffice') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.darkcyan }]} onPress={() => notWorking()}>
                     <Ionicons style={styles.buttonIcon} name="chatbubbles" />
                     <Text style={styles.buttonText}>ارجاع به دفتر</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('InsertReport') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setActionPopupEN(true)}>
+                {allowdActionList.includes('InsertReport') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.blue }]} onPress={() => setActionPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="newspaper" />
                     <Text style={styles.buttonText}>ثبت اقدام</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('RequestStatus') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.blue}]} onPress={() => setStatusPopupEN(true)}>
+                {allowdActionList.includes('RequestStatus') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.blue }]} onPress={() => setStatusPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="stats-chart" />
                     <Text style={styles.buttonText}>وضعیت سرویس</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('Closed') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => setClosePopupEN(true)}>
+                {allowdActionList.includes('Closed') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.emerald }]} onPress={() => setClosePopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="person-remove" />
                     <Text style={styles.buttonText}>بستن کار توسط کارشناس</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('OfficerApprove') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => notWorking()}>
+                {allowdActionList.includes('OfficerApprove') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.emerald }]} onPress={() => notWorking()}>
                     <Ionicons style={styles.buttonIcon} name="checkmark-done" />
                     <Text style={styles.buttonText}>تایید مدیر</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('adminApprove') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.emerald}]} onPress={() => notWorking()}>
+                {allowdActionList.includes('adminApprove') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.emerald }]} onPress={() => notWorking()}>
                     <Ionicons style={styles.buttonIcon} name="checkmark-done" />
                     <Text style={styles.buttonText}>تایید راهبر</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('Cancel') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.red3}]} onPress={() => notWorking()}>
+                {allowdActionList.includes('Cancel') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.red3 }]} onPress={() => notWorking()}>
                     <Ionicons style={styles.buttonIcon} name="close" />
                     <Text style={styles.buttonText}>کنسل کار توسط کارشناس</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('Return') && (<TouchableOpacity style={[styles.submitButton, {backgroundColor: colors.orangepeel}]} onPress={() => setReturnPopupEN(true)}>
+                {allowdActionList.includes('Return') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.orangepeel }]} onPress={() => setReturnPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="shuffle" />
                     <Text style={styles.buttonText}>بازگشت کار</Text>
                 </TouchableOpacity>)}
@@ -76,7 +75,6 @@ const styles = StyleSheet.create({
         margin: 'auto',
     },
     submitButton: {
-        // backgroundColor: colors.blue,
         paddingHorizontal: 20,
         paddingVertical: 13,
         marginHorizontal: 5,

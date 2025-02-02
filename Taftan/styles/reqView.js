@@ -2,6 +2,10 @@ import { StyleSheet } from "react-native";
 import colors from "../components/colors";
 
 module.exports = StyleSheet.create({
+    contents: {
+        height: '90%',
+
+    },
     content: {
         backgroundColor: colors.white,
         paddingVertical: 15,
@@ -158,20 +162,21 @@ module.exports = StyleSheet.create({
         textAlign: 'right',
     },
     stateItemView: {
-        width: '90%',
+        width: '95%',
         margin: 'auto',
-        marginBottom: 10,
-        backgroundColor: colors.skyblue,
+        marginBottom: 2,
+        backgroundColor: colors.uranianBlue,
         paddingVertical: 10,
         paddingHorizontal: 10,
-        borderRadius: 8,
+        borderRadius: 4,
     },
     stateItemTitle: {
         fontFamily: 'iransans',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         position: 'relative',
-        color: colors.black
+        color: colors.black,
+        textAlign: 'right',
     },
     stateDateView: {
         flexDirection: 'row-reverse',
@@ -184,30 +189,31 @@ module.exports = StyleSheet.create({
         paddingTop: 3,
         paddingLeft: 5,
         paddingRight: 10,
-        color: colors.gray,
+        color: colors.paynesGray,
     },
     stateDateText: {
         fontFamily: 'iransans',
         fontSize: 12,
-        color: colors.gray,
+        color: colors.paynesGray,
     },
     clockIcon: {
         fontSize: 12,
         paddingTop: 3,
         paddingLeft: 5,
         paddingRight: 10,
-        color: colors.gray,
+        color: colors.paynesGray,
     },
     stateClockText: {
         fontFamily: 'iransans',
         fontSize: 12,
-        color: colors.gray,
+        color: colors.paynesGray,
     },
     stateDescText: {
         fontFamily: 'iransans',
         fontSize: 14,
-        color: colors.lightDark,
+        color: colors.text,
         paddingTop: 3,
+        textAlign: 'right',
     },
     actionHistoryItem: {
         backgroundColor: colors.uranianBlue,

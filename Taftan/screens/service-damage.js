@@ -1,14 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-    Text,
-    StyleSheet,
-    View,
-    FlatList,
-    TouchableOpacity,
-    ToastAndroid,
-    TextInput,
-    LayoutAnimation
-} from 'react-native';
+import { Text, StyleSheet, View, FlatList, TouchableOpacity, ToastAndroid, TextInput, LayoutAnimation, Linking } from 'react-native';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
@@ -26,6 +17,9 @@ import StateFilterPopup from '../components/rec-popup-filter-state';
 import { getRequestDetail } from '../services/req-detail';
 import styles from '../styles/requestList';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
+import ReportListPopup from '../components/rec-popup-report-list';
+import { GetDeviceDetail } from '../services/device-detail';
+import { GetBranchDetail } from '../services/branch-get-detail';
 
 const ServiceDamage = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -43,10 +37,14 @@ const ServiceDamage = (props) => {
     var [selectedMonthStart, setselectedMonthStart] = useState('1');
     var [selectedYearStart, setselectedYearStart] = useState('1390');
     var [datePickerVisibleEnd, setdatePickerVisibleEnd] = useState(false);
+    var [reportlistpopupEN, setreportlistPopupEN] = useState(false);
+    var [reportList, setreportList] = useState([]);
     var [selectedDayEnd, setselectedDayEnd] = useState('1');
     var [selectedMonthEnd, setselectedMonthEnd] = useState('1');
     var [selectedYearEnd, setselectedYearEnd] = useState('1410');
     var [requestDetail, setRequestDetail] = useState(null);
+    var [deviceDetail, setdeviceDetail] = useState([]);
+    var [branchInfo, setbranchInfo] = useState([]);
     var [reportInfo, setreportInfo] = useState(null);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -149,12 +147,19 @@ const ServiceDamage = (props) => {
                 requestDetail = result.data;
                 setRequestDetail(requestDetail);
                 result = await loadRequestReportActionList(item.requestId);
+                setIsLoading(false);
                 if (result.success) {
-                    if(result.data.Data.length > 0){
+                    if (result.data.Data.length == 0) ToastAndroid.show('گزارشی وجود ندارد.', ToastAndroid.SHORT);
+                    else if (result.data.Data.length == 1) {
                         reportInfo = result.data.Data[0];
                         setreportInfo(reportInfo);
-                        props.navigation.navigate('Report', { item, requestDetail, reportInfo })
-                    } else ToastAndroid.show('گزارشی وجود ندارد.', ToastAndroid.SHORT);
+                        props.navigation.navigate('Report', { requestDetail, reportInfo })
+                    }
+                    else {
+                        reportList = result.data.Data;
+                        setreportList(reportList);
+                        setreportlistPopupEN(true);
+                    }
                 }
             }
             else {
@@ -163,6 +168,47 @@ const ServiceDamage = (props) => {
                 return;
             }
         }
+    }
+    const openMapDirection = async (item) => {
+        result = await GetDeviceDetail(item.deviceId);
+        if (result.success) {
+            deviceDetail = result.data;
+            setdeviceDetail(deviceDetail);
+            const url = `https://www.google.com/maps/dir/?api=1&destination=${deviceDetail.strLatitude},${deviceDetail.strLongitude}`;
+            Linking.openURL(url).catch((err) => {
+                console.log(err);
+            })
+        } else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+        setIsLoading(false);
+    }
+    const openPhoneCall = async (item) => {
+        var result = await getRequestDetail(item.requestId);
+        if (result.success) {
+            if (result.data != 'داده پیدا نشد') {
+                requestDetail = result.data;
+                setRequestDetail(requestDetail);
+                result = await GetBranchDetail(requestDetail.requestInfo.branchId);
+                if (result.success) {
+                    branchInfo = result.data;
+                    setbranchInfo(branchInfo);
+                    if (branchInfo.Phone == null) ToastAndroid.show('شماره تماس ثبت نشده', ToastAndroid.SHORT);
+                    else {
+                        const url = `tel:${branchInfo.Phone}`;
+                        Linking.canOpenURL(url)
+                            .then((supported) => {
+                                if (!supported) ToastAndroid.show('تماس تلفنی پشتیبانی نمیشود.', ToastAndroid.SHORT);
+                                else return Linking.openURL(url);
+                            })
+                            .catch((err) => console.error('Error opening phone dialer', err));
+                    }
+                } else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
+            } else {
+                ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
+                props.navigation.goBack();
+                return;
+            }
+        }
+        setIsLoading(false);
     }
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
@@ -181,13 +227,19 @@ const ServiceDamage = (props) => {
             <Text style={styles.date}>{item.persianInsertedDate}</Text>
 
             <View style={styles.callbuttonsView}>
-                <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
-                    <Ionicons name={'document'} style={styles.callIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
+                {item.reportHasFile == 1 ? (
+                    <TouchableOpacity style={styles.callButton} onPress={() => { setIsLoading(true); openRequestReport(item); }}>
+                        <Ionicons name={'document'} style={styles.callIcon} />
+                    </TouchableOpacity>
+                ) : (
+                    <View style={styles.callButton} >
+                        <Ionicons name={'document'} style={[styles.callIcon, { color: colors.lightgray }]} />
+                    </View>
+                )}
+                <TouchableOpacity style={styles.callButton} onPress={() => { setIsLoading(true); openMapDirection(item); }}>
                     <Ionicons name={'location'} style={styles.callIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
+                <TouchableOpacity style={styles.callButton} onPress={() => { setIsLoading(true); openPhoneCall(item); }}>
                     <Ionicons name={'call'} style={styles.callIcon} />
                 </TouchableOpacity>
             </View>
@@ -346,6 +398,7 @@ const ServiceDamage = (props) => {
                 <PersianDatePicker visible={datePickerVisibleEnd} setDay={setselectedDayEnd} setMonth={setselectedMonthEnd} setYear={setselectedYearEnd} onsubmit={() => setdatePickerVisibleEnd(false)} />
                 <StateFilterPopup modalEnable={workflowPickerEN} setmodalEnable={setworkflowPickerEN} setWorkflowFilter={setWorkflowFilter} />
             </View>}
+            <ReportListPopup popupEN={reportlistpopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={props.navigation} />
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList data={damageRequests} renderItem={renderItem} keyExtractor={item => item.requestId} />
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
