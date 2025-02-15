@@ -1,7 +1,7 @@
 // components/NavBar.js
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, ToastAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import DropDownObj from './dropdown-obj';
@@ -16,7 +16,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
         result = await GetRecognitionExpertByDeviceTypeId(reportDetail.requestReportInfo.deviceTypeKey, resaon.Id);
         if (result.success) {
             setrecognitionExpertList(result.data);
-        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
     }
     return (
         <ScrollView style={styleslocal.contents}>
@@ -52,15 +52,19 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                 onChange={text => setdescription(text.nativeEvent.text)}
             />
             <TouchableOpacity style={styleslocal.submitButton} onPress={() => {
-                setNewRecognitionList(prevList => [
-                    ...prevList,
-                    {
-                        description: description, 
-                        serviceName: damageReason.Title,
-                        serviceGroupTitle: reportDetail.requestReportInfo.serviceGroupName,
-                        title: recognitionExpert.title,
-                    }
-                ]);
+                if (damageReason.Title == 'نوع خرابی' || recognitionExpert.title == 'تشخیص سطح دوم') {
+                    ToastAndroid.show('لطفا موارد خواسته شده را تکمیل کنید.', ToastAndroid.SHORT);
+                } else {
+                    setNewRecognitionList(prevList => [
+                        ...prevList,
+                        {
+                            description: description,
+                            serviceName: damageReason.Title,
+                            serviceGroupTitle: reportDetail.requestReportInfo.serviceGroupName,
+                            title: recognitionExpert.title,
+                        }
+                    ]);
+                }
             }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>
@@ -77,7 +81,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                         <TouchableOpacity style={styles.deleteItemButton} onPress={() => {
                             setNewRecognitionList(prevList => prevList.filter((_, i) => i !== index));
                         }}>
-                            <Ionicons name={'trash'} style={styles.deleteItemIcon}/>
+                            <Ionicons name={'trash'} style={styles.deleteItemIcon} />
                         </TouchableOpacity>
                     </View>
                 ))}

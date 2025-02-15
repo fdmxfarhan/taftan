@@ -342,7 +342,6 @@ module.exports = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 14,
     },
-    
     deleteItemButton: {
         position: 'absolute',
         left: 10,
