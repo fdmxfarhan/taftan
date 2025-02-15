@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { ScrollView, StatusBar, StyleSheet, Text, TouchableOpacity, View, TextInput, ToastAndroid } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, ToastAndroid } from 'react-native';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import NavBar from '../components/navbar';
 import LoadingView from '../components/loading';
-import { GetServiceTitleListByGrupId_DeviceType } from '../services/get-service-title-list';
-import { GetRecognitionExpertByDeviceTypeId } from '../services/get-recognition-expert';
 import ReportTabLink from '../components/report-tabLinks';
 import { GetJobTitleByReportTypeId } from '../services/get-job-title-list';
 import ReportRecognition from '../components/report-recognize';
@@ -14,22 +12,23 @@ import { loadReportDetail } from '../services/report-get-detail';
 import ReportQuestionsView from '../components/report-components';
 import ReportUploadView from '../components/report-upload';
 import ReportInfoView from '../components/report-info';
+import { GetServiceTitleListByDeviceId } from '../services/get-service-title-list2';
 
 const Report = (props) => {
     var reportInfo = props.route.params.reportInfo;
     var requestDetail = props.route.params.requestDetail;
     var [isLoading, setIsLoading] = useState(true);
-    var [damageReason, setdamageReason] = useState('نوع خرابی');
-    var [recognitionExpert, setrecognitionExpert] = useState('تشخیص سطح دوم');
+    var [damageReason, setdamageReason] = useState({Title: 'نوع خرابی'});
+    var [recognitionExpert, setrecognitionExpert] = useState({title: 'تشخیص سطح دوم'});
     var [description, setdescription] = useState(0);
     var [descriptionAction, setdescriptionAction] = useState(0);
     var [tabItem, setTabItem] = useState('Info');
-    var [jobTitle, setjobTitle] = useState('نوع خرابی');
+    var [jobTitle, setjobTitle] = useState({title: 'نوع خرابی'});
     var [reportDetail, setreportDetail] = useState(null);
-
     var [damageReasonsList, setdamageReasonsList] = useState([]);
     var [recognitionExpertList, setrecognitionExpertList] = useState([]);
     var [JobTitleList, setJobTitleList] = useState([]);
+    var [newRecognitionList, setNewRecognitionList] = useState([]);
 
     const handleSearchPress = () => {
         props.navigation.goBack();
@@ -50,20 +49,21 @@ const Report = (props) => {
     }
     const sendRequest = async () => {
         var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id);
-        if (result.success) setreportDetail(result.data);
+        if (result.success) {
+            reportDetail = result.data;
+            setreportDetail(result.data);
+        }
         else ToastAndroid.show('جزئیات لود نشد', ToastAndroid.SHORT);
 
-        // result = await GetServiceTitleListByGrupId_DeviceType(requestDetail.requestInfo.deviceId, requestDetail.requestInfo.serviceGroup);
-        // if (result.success) setdamageReasonsList(result.data);
-        // else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-
-        // result = await GetRecognitionExpertByDeviceTypeId(requestDetail.requestInfo.deviceTypeKey, getServiceID(requestDetail));
-        // if (result.success) setrecognitionExpertList(result.data);
-        // else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-
-        // result = await GetJobTitleByReportTypeId(requestDetail.requestInfo.reportTypeId);
-        // if (result.success) setJobTitleList(result.data);
-        // else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        result = await GetServiceTitleListByDeviceId(reportDetail.requestReportInfo.deviceId, reportDetail.requestReportInfo.serviceGroupId);
+        if (result.success) {
+            setdamageReasonsList(result.data);
+        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        
+        result = await GetJobTitleByReportTypeId(requestDetail.requestInfo.reportTypeId);
+        if (result.success) {
+            setJobTitleList(result.data);
+        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
         setIsLoading(false);
     }
@@ -88,7 +88,7 @@ const Report = (props) => {
             )}
             {tabItem == 'Recognition' && (
                 <View style={{ flex: 1, }}>
-                    <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} />
+                    <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} setrecognitionExpertList={setrecognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} reportDetail={reportDetail} newRecognitionList={newRecognitionList} setNewRecognitionList={setNewRecognitionList} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Info')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
@@ -103,7 +103,7 @@ const Report = (props) => {
             )}
             {tabItem == 'Actions' && (
                 <View style={{ flex: 1, }}>
-                    <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} />
+                    <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} reportDetail={reportDetail} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         paddingHorizontal: 10,
         paddingTop: 10,
-        height: '10%',
+        height: '9%',
     },
     nextTabButton: {
         backgroundColor: colors.blue,

@@ -15,7 +15,6 @@ export const saveRequestActionReport = async (options) => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error saveRequestActionReport:', error);
-        console.log(response);
         return { success: false, error: 'Failed to submit damage request' };
     }
 };

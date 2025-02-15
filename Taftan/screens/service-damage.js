@@ -57,7 +57,6 @@ const ServiceDamage = (props) => {
         var result = await submitDamageRequest(skip, take);
         if (result.success) {
             setDamageRequests(result.data.Data);
-            // console.log(result.data.Data);
             setIsLoading(false);
             setServiceConnected(true);
         }

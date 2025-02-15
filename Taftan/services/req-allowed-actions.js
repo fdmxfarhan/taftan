@@ -18,7 +18,6 @@ export const LoadAllowedRequestAction = async (requestId, token) => {
             ]
         };
         const response = await api.get(`/RequestController/LoadAllowedRequestAction?requestId=${requestId}`);
-        console.log(response.data);
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /RequestController/LoadAllowedRequestAction request:', error);

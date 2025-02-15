@@ -4,12 +4,10 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
-import Popup from './popup';
-import { loadDeviceConfigList } from '../services/device-load-config-list';
 import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
 
-const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction }) => {
+const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail }) => {
     var reportJobTitleList = [
         {
             "id": 1576901,
@@ -55,8 +53,8 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
                 list={JobTitleList}
                 getLabel={(item) => item.title}
                 getValue={(item) => item.title}
-                setValue={(item) => { setjobTitle(item.id) }}
-                value={jobTitle}
+                setValue={(item) => { setjobTitle(item) }}
+                value={jobTitle.title}
                 buttonStyle={styles.dropdown}
                 buttonTextStyle={styles.dropdownText}
                 onSubmit={(val) => { }}
@@ -75,7 +73,7 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
 
 
             <View style={styles.content}>
-                {reportJobTitleList.map((item, index) => (
+                {reportDetail.damageReportInfo.reportJobTitleList.map((item, index) => (
                     <View key={index} >
                         <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
                             <View style={styles.actionHistoryRight}>

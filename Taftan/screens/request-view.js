@@ -44,7 +44,6 @@ import { GetBranchDetail } from '../services/branch-get-detail';
 import { GetDeviceDetail } from '../services/device-detail';
 import { GetAreaDetail } from '../services/area-detail';
 import { LoadAllowedRequestAction } from '../services/req-allowed-actions';
-import { GetUnreadMessageCount } from '../services/msgbox-unread-count';
 import ReqInstallationView from '../components/reqview-installationInfo';
 import ReqSiteView from '../components/reqview-siteInfo';
 import ReqProjectView from '../components/reqview-projectInfo';

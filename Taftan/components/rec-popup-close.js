@@ -13,7 +13,6 @@ const CloseCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => {
     };
     const doneRequest = async () => {
         const authData = await getAuthData();
-        console.log(requestDetail)
         var result = await DoneExpertRequest(requestDetail.requestInfo.requestId);
         if (result.success) {
             ToastAndroid.show(result.data, ToastAndroid.SHORT);

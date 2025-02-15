@@ -4,54 +4,20 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
-import Popup from './popup';
-import { loadDeviceConfigList } from '../services/device-load-config-list';
 import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
+import { GetRecognitionExpertByDeviceTypeId } from '../services/get-recognition-expert';
 
-const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, recognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription }) => {
-    var reportRecognitionList = [
-        {
-            "serviceName": "مشکلات امنیتی",
-            "id": 161,
-            "serviceGroupTitle": "رفع خرابی",
-            "serviceId": 14,
-            "title": "اشکال در Anti Skimming / Anti Fraud",
-            "isActive": false,
-            "serviceGroupId": 1,
-            "description": "65656565"
-        },
-        {
-            "serviceName": "مشکلات امنیتی",
-            "id": 161,
-            "serviceGroupTitle": "رفع خرابی",
-            "serviceId": 14,
-            "title": "اشکال در Anti Skimming / Anti Fraud",
-            "isActive": false,
-            "serviceGroupId": 1,
-            "description": "65656565"
-        },
-        {
-            "serviceName": "مشکلات امنیتی",
-            "id": 161,
-            "serviceGroupTitle": "رفع خرابی",
-            "serviceId": 14,
-            "title": "اشکال در Anti Skimming / Anti Fraud",
-            "isActive": false,
-            "serviceGroupId": 1,
-            "description": "65656565"
-        },
-        {
-            "serviceName": "مشکلات امنیتی",
-            "id": 161,
-            "serviceGroupTitle": "رفع خرابی",
-            "serviceId": 14,
-            "title": "اشکال در Anti Skimming / Anti Fraud",
-            "isActive": false,
-            "serviceGroupId": 1,
-            "description": "65656565"
-        },
-    ]
+const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, recognitionExpertList, setrecognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription, reportDetail, newRecognitionList, setNewRecognitionList }) => {
+    useEffect(() => {
+
+    }, [newRecognitionList]);
+    var updateRecognitionExpertList = async (resaon) => {
+        result = await GetRecognitionExpertByDeviceTypeId(reportDetail.requestReportInfo.deviceTypeKey, resaon.Id);
+        if (result.success) {
+            setrecognitionExpertList(result.data);
+        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+    }
     return (
         <ScrollView style={styleslocal.contents}>
             {/* <Text style={styleslocal.sectionTitle}>تشخیص کارشناس:</Text> */}
@@ -60,8 +26,8 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                 list={damageReasonsList}
                 getLabel={(item) => item.Title}
                 getValue={(item) => item.Title}
-                setValue={(item) => { setdamageReason(item.id) }}
-                value={damageReason}
+                setValue={(item) => { setdamageReason(item); updateRecognitionExpertList(item); }}
+                value={damageReason.Title}
                 buttonStyle={styles.dropdown}
                 buttonTextStyle={styles.dropdownText}
                 onSubmit={(val) => { }}
@@ -71,8 +37,8 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                 list={recognitionExpertList}
                 getLabel={(item) => item.title}
                 getValue={(item) => item.title}
-                setValue={(item) => { setrecognitionExpert(item.id) }}
-                value={recognitionExpert}
+                setValue={(item) => { setrecognitionExpert(item) }}
+                value={recognitionExpert.title}
                 buttonStyle={styles.dropdown}
                 buttonTextStyle={styles.dropdownText}
                 onSubmit={(val) => { }}
@@ -85,11 +51,37 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                 value={description}
                 onChange={text => setdescription(text.nativeEvent.text)}
             />
-            <TouchableOpacity style={styleslocal.submitButton} >
+            <TouchableOpacity style={styleslocal.submitButton} onPress={() => {
+                setNewRecognitionList(prevList => [
+                    ...prevList,
+                    {
+                        description: description, 
+                        serviceName: damageReason.Title,
+                        serviceGroupTitle: reportDetail.requestReportInfo.serviceGroupName,
+                        title: recognitionExpert.title,
+                    }
+                ]);
+            }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>
             <View style={styles.content}>
-                {reportRecognitionList.map((item, index) => (
+                {newRecognitionList.map((item, index) => (
+                    <View key={index} >
+                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                            <View style={styles.actionHistoryRight}>
+                                <Text style={styles.actionHistoryTitle}>{item.serviceName} ({item.serviceGroupTitle})</Text>
+                                <Text style={styles.actionHistoryTitle2}>{item.title}</Text>
+                                <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.description}</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.deleteItemButton} onPress={() => {
+                            setNewRecognitionList(prevList => prevList.filter((_, i) => i !== index));
+                        }}>
+                            <Ionicons name={'trash'} style={styles.deleteItemIcon}/>
+                        </TouchableOpacity>
+                    </View>
+                ))}
+                {reportDetail.damageReportInfo.reportRecognitionList.map((item, index) => (
                     <View key={index} >
                         <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
                             <View style={styles.actionHistoryRight}>

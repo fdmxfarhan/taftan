@@ -93,6 +93,8 @@ const ServiceProjects = (props) => {
                 currentPage={skipValue} 
                 skipValue={skipValue}
                 setskipValue={setskipValue}
+                numOfRowsValue={rowsValue}
+                setnumOfRowsValue={setrowsValue}
                 setData={(skip, rows) => {
                     setskipValue(skip);
                     setrowsValue(rows);

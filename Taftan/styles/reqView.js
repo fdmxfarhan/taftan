@@ -222,6 +222,7 @@ module.exports = StyleSheet.create({
         borderRadius: 4,
         marginBottom: 2,
         flexDirection: 'row-reverse',
+        position: 'relative',
     },
     actionHistoryRight: {
         flex: 1,
@@ -340,5 +341,16 @@ module.exports = StyleSheet.create({
         width: '100%',
         fontFamily: 'iransans',
         fontSize: 14,
+    },
+    
+    deleteItemButton: {
+        position: 'absolute',
+        left: 10,
+        top: 0,
+        padding: 10,
+    },
+    deleteItemIcon: {
+        color: colors.red2,
+        fontSize: 15,
     },
 });

@@ -18,7 +18,6 @@ const ReportInfoView = ({ reportDetail }) => {
     var [areaDetail, setareaDetail] = useState(null);
 
     useEffect(() => {
-        console.log(reportDetail)
     }, [reportDetail])
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;

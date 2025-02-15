@@ -11,11 +11,9 @@ const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo, r
     const [configuration, setConfiguration] = useState([]);
     useEffect(() => {
         const sendRequest = async () => {
-            console.log(reqInfo.deviceId)
             var result = await loadDeviceConfigList(requestDetail.requestInfo.deviceId);
             if (result.success) {
                 setConfiguration(result.data.Data);
-                console.log(result.data.Data)
             } else ToastAndroid.show('کانفیگ دستگاه دریافت نشد', ToastAndroid.SHORT);
         }
         if(lastConfModalEnable) sendRequest();
