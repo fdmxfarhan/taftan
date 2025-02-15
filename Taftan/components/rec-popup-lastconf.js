@@ -7,17 +7,19 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 
-const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo }) => {
+const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo, requestDetail }) => {
     const [configuration, setConfiguration] = useState([]);
     useEffect(() => {
         const sendRequest = async () => {
-            var result = await loadDeviceConfigList(reqInfo.deviceId);
+            console.log(reqInfo.deviceId)
+            var result = await loadDeviceConfigList(requestDetail.requestInfo.deviceId);
             if (result.success) {
                 setConfiguration(result.data.Data);
-            } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+                console.log(result.data.Data)
+            } else ToastAndroid.show('کانفیگ دستگاه دریافت نشد', ToastAndroid.SHORT);
         }
-        sendRequest();
-    }, [])
+        if(lastConfModalEnable) sendRequest();
+    }, [lastConfModalEnable])
     return (
         <View>
             <Popup modalVisible={lastConfModalEnable} setModalVisible={setlastConfModalEnable}>
@@ -31,8 +33,8 @@ const LastConfPopup = ({ lastConfModalEnable, setlastConfModalEnable, reqInfo })
                     {configuration.length > 0 ?
                         configuration.map((item, index) => (
                             <View key={item.id} style={styles.itemContainer}>
-                                <Text style={styles.deviceName}>مدل ماژول: {item.deviceModuleModel}</Text>
-                                <Text style={styles.damageTitle}>کد انبار: {item.code}</Text>
+                                <Text style={styles.deviceName}>مدل ماژول: {item.ModuleTitle}</Text>
+                                <Text style={styles.damageTitle}>کد انبار: {item.Code}</Text>
                                 <Text style={styles.damageTitle}>ماژول: {item.deviceHWTitle}</Text>
                                 <Text style={styles.date}>سریال: {item.serial}</Text>
                                 {/* <View style={styles.stateView}>

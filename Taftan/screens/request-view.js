@@ -170,7 +170,7 @@ const DamageReqView = (props) => {
                 props.navigation.goBack();
                 return;
             }
-        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('جزئیات درخواست دریافت نشد', ToastAndroid.SHORT);
 
         result = await loadRequestExpertList(reqInfo.requestId);
         if (result.success) {
@@ -180,12 +180,12 @@ const DamageReqView = (props) => {
         result = await getUserList(requestDetail.requestInfo.areaId, requestDetail.requestInfo.requestId);
         if (result.success) {
             setUserList(result.data);
-        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('لیست کاربران دریافت نشد', ToastAndroid.SHORT);
 
         result = await getRefrenceCauseList();
         if (result.success) {
             setrefrenceCauseList(result.data);
-        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('لیست علت خرابی دریافت نشد', ToastAndroid.SHORT);
 
         result = await getWorkCausesListTitle();
         if (result.success) {
@@ -196,7 +196,7 @@ const DamageReqView = (props) => {
             setworkCauseList(workCauseList);
         } else ToastAndroid.show('لیست وضعیت سرویس بارگیری نشد.', ToastAndroid.SHORT);
 
-        result = await loadDeviceRequestList(reqInfo.deviceId);
+        result = await loadDeviceRequestList(requestDetail.requestInfo.deviceId);
         if (result.success) {
             setLastRequestList(result.data.Data);
         } else ToastAndroid.show('لیست درخواست‌های دستگاه بارگیری نشد.', ToastAndroid.SHORT);

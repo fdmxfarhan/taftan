@@ -17,7 +17,7 @@ const ReqDeviceInfo = ({ toggleDeviceInfo, deviceInfo, reqInfo, requestDetail, l
     };
     return (
         <View style={styles.container}>
-            <LastConfPopup lastConfModalEnable={lastConfModalEnable} setlastConfModalEnable={setlastConfModalEnable} reqInfo={reqInfo} />
+            <LastConfPopup lastConfModalEnable={lastConfModalEnable} setlastConfModalEnable={setlastConfModalEnable} reqInfo={reqInfo} requestDetail={requestDetail} />
             <LastReqPopup lastRequestList={lastRequestList} modalEnable={lastReqModalEnable} setmodalEnable={setlastReqModalEnable} reqInfo={reqInfo} navigation={navigation} />
             <DeviceNameInfoPopup modalEnable={DeviceNameInfoModalEnable} setmodalEnable={setDeviceNameInfoModalEnable} deviceDetail={deviceDetail} />
             <TouchableOpacity style={styles.titleView} onPress={toggleDeviceInfo}>
