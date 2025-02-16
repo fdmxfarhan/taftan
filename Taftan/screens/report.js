@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row-reverse',
         paddingHorizontal: 10,
         paddingTop: 10,
-        height: '9%',
+        height: 60,
     },
     nextTabButton: {
         backgroundColor: colors.blue,
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
         marginHorizontal: '2%',
         marginBottom: 10,
         borderRadius: 7,
-        paddingVertical: 10,
+        paddingVertical: 7,
         flexDirection: 'row-reverse',
         justifyContent: 'center',
     },

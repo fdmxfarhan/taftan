@@ -51,36 +51,37 @@ const ServiceInstallation = (props) => {
     }, []);
     const handleItemPress = (item) => {
         props.navigation.navigate('DamageReqView', { item });
-        // ToastAndroid.show('این آپشن هنوز کار نمیکنه', ToastAndroid.SHORT);
     };
-    const renderItem = ({ item, index }) => (<View>
-        {index == 0 ? (<Text style={styles.sectionSplitter}>{item.preInstallTitle}</Text>) : installRequests[index].preInstallationId != installRequests[index-1].preInstallationId ? (
-            <Text style={styles.sectionSplitter}>{item.preInstallTitle}</Text>
-        ) : (<View></View>)}
-        <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
-            <Text style={styles.deviceName}>{item.operationalAreaName} (<Text>{item.customerName}</Text>)</Text>
-            <Text style={styles.damageTitle}>سرویس: {item.serviceName}</Text>
-            <Text style={styles.damageTitle}>عنوان: {item.installationServiceName}</Text>
-            <Text style={styles.textTitle}>شماره کار: {item.requestId}</Text>
+    const renderItem = ({ item, index }) => (
+        <View>
+            {index == 0 ? (<Text style={styles.sectionSplitter}>{item.preInstallTitle}</Text>) : installRequests[index].preInstallationId != installRequests[index - 1].preInstallationId ? (
+                <Text style={styles.sectionSplitter}>{item.preInstallTitle}</Text>
+            ) : (<View></View>)}
+            <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
+                <Text style={styles.deviceName}>{item.operationalAreaName} (<Text>{item.customerName}</Text>)</Text>
+                <Text style={styles.damageTitle}>سرویس: {item.serviceName}</Text>
+                <Text style={styles.damageTitle}>عنوان: {item.installationServiceName}</Text>
+                <Text style={styles.textTitle}>شماره کار: {item.requestId}</Text>
 
-            <View style={styles.stateView}>
-                <Text style={styles.state}>{item.persianLastState}</Text>
-                <View style={[styles.stateCircle, { backgroundColor: getSLAColor(item.SLAStyle) }]} />
-            </View>
-            <Text style={styles.date}>{item.persianStartDate}</Text>
-            <View style={styles.callbuttonsView}>
-                <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
-                    <Ionicons name={'document'} style={styles.callIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.callButton} onPress={() => { console.log(index) }}>
-                    <Ionicons name={'location'} style={styles.callIcon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
-                    <Ionicons name={'call'} style={styles.callIcon} />
-                </TouchableOpacity>
-            </View>
-        </TouchableOpacity>
-    </View>);
+                <View style={styles.stateView}>
+                    <Text style={styles.state}>{item.persianLastState}</Text>
+                    <View style={[styles.stateCircle, { backgroundColor: getSLAColor(item.SLAStyle) }]} />
+                </View>
+                <Text style={styles.date}>{item.persianStartDate}</Text>
+                <View style={styles.callbuttonsView}>
+                    <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
+                        <Ionicons name={'document'} style={styles.callIcon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.callButton} onPress={() => { console.log(index) }}>
+                        <Ionicons name={'location'} style={styles.callIcon} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.callButton} onPress={() => { }}>
+                        <Ionicons name={'call'} style={styles.callIcon} />
+                    </TouchableOpacity>
+                </View>
+            </TouchableOpacity>
+        </View>
+    );
 
     return (
         <View style={styles.container}>

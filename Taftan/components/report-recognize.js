@@ -22,8 +22,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
         <ScrollView style={styleslocal.contents}>
             {/* <Text style={styleslocal.sectionTitle}>تشخیص کارشناس:</Text> */}
             <Text style={styles.label}>نوع خرابی: </Text>
-            <DropDownObj
-                list={damageReasonsList}
+            <DropDownObj list={damageReasonsList}
                 getLabel={(item) => item.Title}
                 getValue={(item) => item.Title}
                 setValue={(item) => { setdamageReason(item); updateRecognitionExpertList(item); }}
@@ -33,8 +32,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                 onSubmit={(val) => { }}
             />
             <Text style={styles.label}>تشخیص سطح دوم: </Text>
-            <DropDownObj
-                list={recognitionExpertList}
+            <DropDownObj list={recognitionExpertList}
                 getLabel={(item) => item.title}
                 getValue={(item) => item.title}
                 setValue={(item) => { setrecognitionExpert(item) }}
@@ -44,8 +42,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                 onSubmit={(val) => { }}
             />
             <Text style={styles.label}>توضیحات: </Text>
-            <TextInput
-                style={styles.description}
+            <TextInput style={styles.description}
                 placeholder="توضیحات"
                 keyboardType={'default'}
                 value={description}
@@ -97,9 +94,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                     </View>
                 ))}
             </View>
-
             <View style={{ height: 150, }} />
-
         </ScrollView>
     );
 };

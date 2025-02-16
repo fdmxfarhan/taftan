@@ -193,10 +193,11 @@ module.exports = StyleSheet.create({
     },
     sectionSplitter: {
         textAlign: 'center',
-        fontFamily: 'iransans',
-        fontSize: 11,
+        fontFamily: 'iransansbold',
+        fontSize: 13,
         paddingVertical: 1,
         margin: 0,
+        // fontWeight: 'bold',
     },
     
 });

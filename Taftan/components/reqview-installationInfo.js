@@ -8,7 +8,7 @@ const ReqInstallationView = ({ toggleinstallInfo, installInfo, item, requestDeta
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.titleView} onPress={toggleinstallInfo}>
-                <Text style={styles.title}>اطلاعات سرویس نصب</Text>
+                <Text style={styles.title}>اطلاعات سرویس نصب ({requestDetail.installInfo.sourceRequest})</Text>
                 <Ionicons style={styles.chevron} name={installInfo == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />
             </TouchableOpacity>
             {installInfo && (<View style={styles.content}>
@@ -164,7 +164,7 @@ const ReqInstallationView = ({ toggleinstallInfo, installInfo, item, requestDeta
                 //     console.log('hello')
                 // }}
                 />
-                <Text style={styles.installLabel}>مبدا درخواست: </Text>
+                {/* <Text style={styles.installLabel}>مبدا درخواست: </Text>
                 <TextInput
                     style={[styles.textInput]}
                     placeholder={'مبدا درخواست'}
@@ -178,7 +178,7 @@ const ReqInstallationView = ({ toggleinstallInfo, installInfo, item, requestDeta
                 // onChange={(text) => {
                 //     console.log('hello')
                 // }}
-                />
+                /> */}
             </View>)}
         </View>
     );

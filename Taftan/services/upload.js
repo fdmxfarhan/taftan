@@ -1,4 +1,5 @@
-import api from './api';
+import api from '../config/apiUpload';
+import { use_local_data } from '../config/consts';
 
 /**
  * Upload a file to the server.
@@ -9,21 +10,19 @@ import api from './api';
  */
 
 export const uploadFile = async (endpoint, file, onUploadProgress) => {
-    const formData = new FormData();
-    formData.append('file', {
-        uri: file.uri,
-        type: file.type,
-        name: file.fileName,
-    });
-
     try {
-        const response = await api.post(endpoint, formData, {
+        const response = await fetch(file.uri);
+        const blob = await response.blob();
+
+        // Upload the binary file directly as the request body
+        const uploadResponse = await api.post(endpoint, file, {
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': file.type || 'application/octet-stream', // Use the file's MIME type or fallback to binary
             },
             onUploadProgress,
         });
-        return response.data;
+
+        return uploadResponse.data;
     } catch (error) {
         console.error('File upload failed:', error);
         throw error;

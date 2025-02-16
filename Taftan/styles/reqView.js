@@ -345,11 +345,11 @@ module.exports = StyleSheet.create({
     deleteItemButton: {
         position: 'absolute',
         left: 10,
-        top: 0,
+        top: 20,
         padding: 10,
     },
     deleteItemIcon: {
         color: colors.red2,
-        fontSize: 15,
+        fontSize: 20,
     },
 });
