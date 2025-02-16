@@ -14,9 +14,7 @@ const ReportInfoView = ({ reportDetail }) => {
     var testList = [{ title: 'label1' }, { title: 'label2' }, { title: 'label3' }, { title: 'label4' }, { title: 'label5' }, { title: 'label6' }, { title: 'label7' }, { title: 'label8' }, { title: 'label9' }, { title: 'label10' },]
     var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
     var [areaDetail, setareaDetail] = useState(null);
-    useEffect(() => {
-
-    }, [reportDetail])
+    useEffect(() => {  }, [reportDetail])
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;
         if (detail.requestReportInfo.serviceGroupId == 2) return detail.pmReportInfo;
