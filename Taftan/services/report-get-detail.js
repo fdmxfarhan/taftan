@@ -8911,7 +8911,7 @@ export const loadReportDetail = async (requestId, reportId, requestActionId) => 
                     "fileName": null,
                     "reportDescription": null,
                     "reportExpertDescription": null,
-                    "isSecondReport": 0,
+                    "isSecondReport": 1,
                     "showSaveButton": true
                 },
                 "damageReportInfo": {

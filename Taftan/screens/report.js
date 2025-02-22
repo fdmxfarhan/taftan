@@ -13,6 +13,7 @@ import ReportQuestionsView from '../components/report-components';
 import ReportUploadView from '../components/report-upload';
 import ReportInfoView from '../components/report-info';
 import { GetServiceTitleListByDeviceId } from '../services/get-service-title-list2';
+import ReportInstallation from '../components/report-installation';
 
 const Report = (props) => {
     var reportInfo = props.route.params.reportInfo;
@@ -22,14 +23,14 @@ const Report = (props) => {
     var [recognitionExpert, setrecognitionExpert] = useState({title: 'تشخیص سطح دوم'});
     var [description, setdescription] = useState(0);
     var [descriptionAction, setdescriptionAction] = useState(0);
-    var [tabItem, setTabItem] = useState('Info');
+    var [tabItem, setTabItem] = useState('tab1');
     var [jobTitle, setjobTitle] = useState({title: 'نوع خرابی'});
     var [reportDetail, setreportDetail] = useState(null);
     var [damageReasonsList, setdamageReasonsList] = useState([]);
     var [recognitionExpertList, setrecognitionExpertList] = useState([]);
     var [JobTitleList, setJobTitleList] = useState([]);
     var [newRecognitionList, setNewRecognitionList] = useState([]);
-
+    var [secondReportReason, setsecondReportReason] = useState({title: 'انتخاب کنید'});
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -74,68 +75,73 @@ const Report = (props) => {
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
-            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} />
-            {tabItem == 'Info' && (
+            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} reportDetail={reportDetail}/>
+            {tabItem == 'tab1' && (
                 <View style={{ flex: 1, }}>
-                    <ReportInfoView reportDetail={reportDetail} />
+                    <ReportInfoView reportDetail={reportDetail} isLoading={isLoading} secondReportReason={secondReportReason} setsecondReportReason={setsecondReportReason}/>
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab2')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
-            {tabItem == 'Recognition' && (
+            {tabItem == 'tab2' && (
                 <View style={{ flex: 1, }}>
-                    <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} setrecognitionExpertList={setrecognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} reportDetail={reportDetail} newRecognitionList={newRecognitionList} setNewRecognitionList={setNewRecognitionList} />
+                    {reportDetail.requestReportInfo.serviceGroupId == 1 && (
+                        <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} setrecognitionExpertList={setrecognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} reportDetail={reportDetail} newRecognitionList={newRecognitionList} setNewRecognitionList={setNewRecognitionList} />
+                    )}
+                    {reportDetail.requestReportInfo.serviceGroupId == 3 && (
+                        <ReportInstallation reportDetail={reportDetail} />
+                    )}
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Info')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab1')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Actions')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
-            {tabItem == 'Actions' && (
+            {tabItem == 'tab3' && (
                 <View style={{ flex: 1, }}>
                     <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} reportDetail={reportDetail} />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Recognition')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab2')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Components')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
-            {tabItem == 'Components' && (
+            {tabItem == 'tab4' && (
                 <View style={{ flex: 1, }}>
                     <ReportQuestionsView />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Actions')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Upload')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
-            {tabItem == 'Upload' && (
+            {tabItem == 'tab5' && (
                 <View style={{ flex: 1, }}>
                     <ReportUploadView />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('Components')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>

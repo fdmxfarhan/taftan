@@ -397,6 +397,7 @@ const ServiceDamage = (props) => {
                 <PersianDatePicker visible={datePickerVisibleEnd} setDay={setselectedDayEnd} setMonth={setselectedMonthEnd} setYear={setselectedYearEnd} onsubmit={() => setdatePickerVisibleEnd(false)} />
                 <StateFilterPopup modalEnable={workflowPickerEN} setmodalEnable={setworkflowPickerEN} setWorkflowFilter={setWorkflowFilter} />
             </View>}
+            
             <ReportListPopup popupEN={reportlistpopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={props.navigation} />
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList data={damageRequests} renderItem={renderItem} keyExtractor={item => item.requestId} />

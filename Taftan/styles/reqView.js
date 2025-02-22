@@ -53,7 +53,10 @@ module.exports = StyleSheet.create({
         borderBottomWidth: 2,
     },
     textInput: {
-        borderColor: colors.timberwolf,
+        borderRightColor: colors.timberwolf,
+        borderLeftColor: colors.timberwolf,
+        borderTopColor: colors.timberwolf,
+        borderBottomColor: colors.timberwolf,
         borderWidth: 1,
         width: '85%',
         margin: 'auto',
@@ -324,10 +327,17 @@ module.exports = StyleSheet.create({
     dualInputPart: {
         flex: 1,
     },
+    requiredBorder: {
+        borderRightWidth: 5,
+        borderRightColor: colors.red2,
+    },
     dropdown: {
         backgroundColor: colors.antiflashWhite,
         borderWidth: 1,
-        borderColor: colors.timberwolf,
+        borderRightColor: colors.timberwolf,
+        borderLeftColor: colors.timberwolf,
+        borderTopColor: colors.timberwolf,
+        borderBottomColor: colors.timberwolf,
         borderRadius: 7,
         width: '85%',
         marginHorizontal: '7.5%',
@@ -351,5 +361,13 @@ module.exports = StyleSheet.create({
     deleteItemIcon: {
         color: colors.red2,
         fontSize: 20,
+    },
+    breakline: {
+        backgroundColor: colors.timberwolf,
+        width: '100%',
+        marginHorizontal: 'auto',
+        height: 1,
+        marginBottom: 10,
+        marginTop: 20,
     },
 });

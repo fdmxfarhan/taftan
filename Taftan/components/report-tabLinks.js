@@ -3,28 +3,38 @@ import { Text, StyleSheet, View, TouchableOpacity } from 'react-native';
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
-const ReportTabLink = ({ tabItemVar, setTabItemCallback }) => {
+const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail }) => {
     return (
         <View style={styles.tabLinksView}>
-            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Info' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Info')}>
-                <Ionicons name={tabItemVar == 'Info' ? "information" : "information-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Info' ? styles.activeIcon : styles.deactive]} />
-                <Text style={[styles.tabLinkText, tabItemVar == 'Info' ? styles.activeText : styles.deactive]}>اطلاعات</Text>
+            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab1' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab1')}>
+                <Ionicons name={tabItemVar == 'tab1' ? "information" : "information-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab1' ? styles.activeIcon : styles.deactive]} />
+                <Text style={[styles.tabLinkText, tabItemVar == 'tab1' ? styles.activeText : styles.deactive]}>اطلاعات</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Recognition' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Recognition')}>
-                <Ionicons name={tabItemVar == 'Recognition' ? "headset" : "headset-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Recognition' ? styles.activeIcon : styles.deactive]} />
-                <Text style={[styles.tabLinkText, tabItemVar == 'Recognition' ? styles.activeText : styles.deactive]}>تشخیص</Text>
+            {reportDetail && reportDetail.requestReportInfo.serviceGroupId == 1 && (
+                <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab2' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab2')}>
+                    <Ionicons name={tabItemVar == 'tab2' ? "headset" : "headset-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab2' ? styles.activeIcon : styles.deactive]} />
+                    <Text style={[styles.tabLinkText, tabItemVar == 'tab2' ? styles.activeText : styles.deactive]}>تشخیص</Text>
+                </TouchableOpacity>
+            )}
+            {reportDetail && reportDetail.requestReportInfo.serviceGroupId == 3 && (
+                <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab2' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab2')}>
+                    <Ionicons name={tabItemVar == 'tab2' ? "settings" : "settings-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab2' ? styles.activeIcon : styles.deactive]} />
+                    <Text style={[styles.tabLinkText, tabItemVar == 'tab2' ? styles.activeText : styles.deactive]}>نصب</Text>
+                </TouchableOpacity>
+            )}
+            {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 2 && (
+                <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab3' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab3')}>
+                    <Ionicons name={tabItemVar == 'tab3' ? "footsteps" : "footsteps-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab3' ? styles.activeIcon : styles.deactive]} />
+                    <Text style={[styles.tabLinkText, tabItemVar == 'tab3' ? styles.activeText : styles.deactive]}>اقدامات</Text>
+                </TouchableOpacity>
+            )}
+            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab4' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab4')}>
+                <Ionicons name={tabItemVar == 'tab4' ? "construct" : "construct-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab4' ? styles.activeIcon : styles.deactive]} />
+                <Text style={[styles.tabLinkText, tabItemVar == 'tab4' ? styles.activeText : styles.deactive]}>قطعات</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Actions' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Actions')}>
-                <Ionicons name={tabItemVar == 'Actions' ? "footsteps" : "footsteps-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Actions' ? styles.activeIcon : styles.deactive]} />
-                <Text style={[styles.tabLinkText, tabItemVar == 'Actions' ? styles.activeText : styles.deactive]}>اقدامات</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Components' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Components')}>
-                <Ionicons name={tabItemVar == 'Components' ? "construct" : "construct-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Components' ? styles.activeIcon : styles.deactive]} />
-                <Text style={[styles.tabLinkText, tabItemVar == 'Components' ? styles.activeText : styles.deactive]}>قطعات</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'Upload' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('Upload')}>
-                <Ionicons name={tabItemVar == 'Upload' ? "cloud-upload" : "cloud-upload-outline"} style={[styles.tabLinkIcon, tabItemVar == 'Upload' ? styles.activeIcon : styles.deactive]} />
-                <Text style={[styles.tabLinkText, tabItemVar == 'Upload' ? styles.activeText : styles.deactive]}>آپلود</Text>
+            <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab5' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab5')}>
+                <Ionicons name={tabItemVar == 'tab5' ? "cloud-upload" : "cloud-upload-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab5' ? styles.activeIcon : styles.deactive]} />
+                <Text style={[styles.tabLinkText, tabItemVar == 'tab5' ? styles.activeText : styles.deactive]}>آپلود</Text>
             </TouchableOpacity>
         </View>
     );
