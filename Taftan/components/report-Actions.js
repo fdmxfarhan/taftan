@@ -8,43 +8,17 @@ import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
 
 const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail }) => {
-    var reportJobTitleList = [
-        {
-            "id": 1576901,
-            "title": "تعویض Optical Indicator",
-            "jobTitleId": 79,
-            "description": "656565",
-            "jobCode": "179"
-        },
-        {
-            "id": 1576901,
-            "title": "تعویض Optical Indicator",
-            "jobTitleId": 79,
-            "description": "656565",
-            "jobCode": "179"
-        },
-        {
-            "id": 1576901,
-            "title": "تعویض Optical Indicator",
-            "jobTitleId": 79,
-            "description": "656565",
-            "jobCode": "179"
-        },
-        {
-            "id": 1576901,
-            "title": "تعویض Optical Indicator",
-            "jobTitleId": 79,
-            "description": "656565",
-            "jobCode": "179"
-        },
-        {
-            "id": 1576901,
-            "title": "تعویض Optical Indicator",
-            "jobTitleId": 79,
-            "description": "656565",
-            "jobCode": "179"
-        },
-    ];
+    var serviceObject = (detail) => {
+        if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 2) return detail.pmReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 3) return detail.installReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 6) return detail.siteReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 7) return detail.projectReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 8) return detail.damageReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 9) return detail.siteReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 10) return detail.siteReportInfo;
+        if (detail.requestReportInfo.serviceGroupId == 11) return detail.siteReportInfo;
+    }
     return (
         <ScrollView style={styleslocal.contents}>
             {/* <Text style={styleslocal.sectionTitle}>اقدامات انجام شده:</Text> */}
@@ -73,7 +47,7 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
 
 
             <View style={styles.content}>
-                {reportDetail.damageReportInfo.reportJobTitleList.map((item, index) => (
+                {reportDetail && serviceObject(reportDetail).reportJobTitleList.map((item, index) => (
                     <View key={index} >
                         <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
                             <View style={styles.actionHistoryRight}>

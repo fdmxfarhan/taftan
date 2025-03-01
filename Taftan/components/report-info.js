@@ -27,7 +27,6 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
     useEffect(() => {
         if (reportDetail) {
             if (reportDetail.reportInfo.isSecondReport) sendRequest();
-            else console.log('report is not the second!!')
         }
     }, [reportDetail, isLoading])
     var serviceObject = (detail) => {

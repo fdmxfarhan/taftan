@@ -19,18 +19,21 @@ const Report = (props) => {
     var reportInfo = props.route.params.reportInfo;
     var requestDetail = props.route.params.requestDetail;
     var [isLoading, setIsLoading] = useState(true);
-    var [damageReason, setdamageReason] = useState({Title: 'نوع خرابی'});
-    var [recognitionExpert, setrecognitionExpert] = useState({title: 'تشخیص سطح دوم'});
+    var [damageReason, setdamageReason] = useState({ Title: 'نوع خرابی' });
+    var [recognitionExpert, setrecognitionExpert] = useState({ title: 'تشخیص سطح دوم' });
     var [description, setdescription] = useState(0);
     var [descriptionAction, setdescriptionAction] = useState(0);
     var [tabItem, setTabItem] = useState('tab1');
-    var [jobTitle, setjobTitle] = useState({title: 'نوع خرابی'});
+    var [jobTitle, setjobTitle] = useState({ title: 'نوع خرابی' });
     var [reportDetail, setreportDetail] = useState(null);
     var [damageReasonsList, setdamageReasonsList] = useState([]);
     var [recognitionExpertList, setrecognitionExpertList] = useState([]);
     var [JobTitleList, setJobTitleList] = useState([]);
     var [newRecognitionList, setNewRecognitionList] = useState([]);
-    var [secondReportReason, setsecondReportReason] = useState({title: 'انتخاب کنید'});
+    var [secondReportReason, setsecondReportReason] = useState({ title: 'انتخاب کنید' });
+    var [provinceName, setprovinceName] = useState({ "id": 8, "provinceName": "تهران", "isActive": true, "coordinateId": 1 });
+    var [cityName, setcityName] = useState({ "id": 10528, "cityName": "تهران", "provinceId": 8, "isActive": true });
+    var [zoneName, setzoneName] = useState({"id": 36,"title": "منطقه 1-آجودانیه","cityId": 0,"isActive": true});
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -59,12 +62,12 @@ const Report = (props) => {
         result = await GetServiceTitleListByDeviceId(reportDetail.requestReportInfo.deviceId, reportDetail.requestReportInfo.serviceGroupId);
         if (result.success) {
             setdamageReasonsList(result.data);
-        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
-        
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
         result = await GetJobTitleByReportTypeId(requestDetail.requestInfo.reportTypeId);
         if (result.success) {
             setJobTitleList(result.data);
-        }else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
         setIsLoading(false);
     }
@@ -75,10 +78,10 @@ const Report = (props) => {
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
-            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} reportDetail={reportDetail}/>
+            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} reportDetail={reportDetail} />
             {tabItem == 'tab1' && (
                 <View style={{ flex: 1, }}>
-                    <ReportInfoView reportDetail={reportDetail} isLoading={isLoading} secondReportReason={secondReportReason} setsecondReportReason={setsecondReportReason}/>
+                    <ReportInfoView reportDetail={reportDetail} isLoading={isLoading} secondReportReason={secondReportReason} setsecondReportReason={setsecondReportReason} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab2')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
@@ -93,7 +96,7 @@ const Report = (props) => {
                         <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} setrecognitionExpertList={setrecognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} reportDetail={reportDetail} newRecognitionList={newRecognitionList} setNewRecognitionList={setNewRecognitionList} />
                     )}
                     {reportDetail.requestReportInfo.serviceGroupId == 3 && (
-                        <ReportInstallation reportDetail={reportDetail} />
+                        <ReportInstallation reportDetail={reportDetail} provinceName={provinceName} setprovinceName={setprovinceName} cityName={cityName} setcityName={setcityName}  zoneName={zoneName} setzoneName={setzoneName} />
                     )}
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab1')}>
