@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const loadMyMessageBoxList = async (skip, take) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true, data: {
@@ -153,6 +155,10 @@ export const loadMyMessageBoxList = async (skip, take) => {
             "filter": {
                 "logic": "and",
                 "filters": []
+            }
+        }, {
+            headers: {
+                authorization: authData.token,
             }
         });
         return { success: true, data: response.data };

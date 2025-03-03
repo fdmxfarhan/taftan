@@ -1,4 +1,4 @@
-import api from '../config/apiUpload';
+import api from '../config/api-upload';
 import { use_local_data } from '../config/consts';
 
 /**

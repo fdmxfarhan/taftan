@@ -13,6 +13,8 @@ import colors from '../components/colors';
 import { request, PERMISSIONS } from 'react-native-permissions';
 import { getAuthData } from '../services/auth';
 import messaging from '@react-native-firebase/messaging';
+import { GetUserConstraintTitleList } from '../services/constraint-get-user-constraint-title-list';
+import storage from '../config/storage';
 
 const requestReadStoragePermission = async () => {
     try {
@@ -27,7 +29,6 @@ const requestReadStoragePermission = async () => {
         console.warn(err);
     }
 };
-
 const requestWriteStoragePermission = async () => {
     try {
         const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
@@ -40,7 +41,6 @@ const requestWriteStoragePermission = async () => {
         console.warn(err);
     }
 };
-
 const requestLocationPermission = async () => {
     if (Platform.OS === 'android') {
         try {
@@ -74,20 +74,49 @@ async function requestUserPermission() {
         // console.log('Authorization status:', authStatus);
     }
 }
-
 messaging().onMessage(async (remoteMessage) => {
     console.log('Foreground message received!', remoteMessage);
     // Display a custom notification or alert here.
 });
-
 const Splash = (props) => {
-    const [location, setLocation] = useState(null);
+    var [location, setLocation] = useState(null);
+    var [userAuthData, setuserAuthData] = useState(null);
 
     const getToken = async () => {
         const token = await messaging().getToken();
         console.log(token);
     }
+    const sendRequests = async () => {
+        var result = await GetUserConstraintTitleList(userAuthData.token);
+        if(result.success){
+            constraintid = result.data[0].Id;
+            await storage.save({
+                key: 'auth',
+                data: {
+                    token: userAuthData.token,
+                    username: userAuthData.username,
+                    password: userAuthData.password,
+                    hash: userAuthData.hash,
+                    RefreshToken: userAuthData.RefreshToken,
+                    Constraintid: constraintid,
+                },
+            });
+        }
+    }
 
+    const checkLogin = async () => {
+        const authData = await getAuthData();
+        if (authData) {
+            // console.log('Login User: ', authData);
+            userAuthData = authData;
+            setuserAuthData(authData);
+            sendRequests();
+            props.navigation.navigate('Home');
+        }
+        else {
+            props.navigation.navigate('Login');
+        }
+    }
     useEffect(() => {
         requestReadStoragePermission();
         requestWriteStoragePermission();
@@ -97,17 +126,8 @@ const Splash = (props) => {
         // getToken();
 
         // ca7kxuyUQ0KxAYs8mxYser:APA91bG_zmUxcjDqhpRig7_0xF-wamr607GqYuAxu9i_75KnAwu8OBlDPxWa413lvqoojmNMTvIob2Juwoi2n8bzPAbJKfcY24bRzaS252rpea-ItJP2ns8
-        const checkLogin = async () => {
-            const authData = await getAuthData();
-            if (authData) {
-                // console.log('Login User: ', authData);
-                props.navigation.navigate('Home');
-            }
-            else {
-                props.navigation.navigate('Login');
-            }
-        }
         checkLogin();
+
     })
     return (
         <View style={styles.container}>

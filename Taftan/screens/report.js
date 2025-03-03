@@ -9,11 +9,13 @@ import { GetJobTitleByReportTypeId } from '../services/get-job-title-list';
 import ReportRecognition from '../components/report-recognize';
 import ReportActions from '../components/report-Actions';
 import { loadReportDetail } from '../services/report-get-detail';
-import ReportQuestionsView from '../components/report-components';
 import ReportUploadView from '../components/report-upload';
 import ReportInfoView from '../components/report-info';
 import { GetServiceTitleListByDeviceId } from '../services/get-service-title-list2';
 import ReportInstallation from '../components/report-installation';
+import ReportcomponentsView from '../components/report-components';
+import ReportGarantiView from '../components/report-garanti';
+import ReportDamageBeforeUseView from '../components/report-damageBeforeUse';
 
 const Report = (props) => {
     var reportInfo = props.route.params.reportInfo;
@@ -127,7 +129,7 @@ const Report = (props) => {
             )}
             {tabItem == 'tab4' && (
                 <View style={{ flex: 1, }}>
-                    <ReportQuestionsView />
+                    <ReportGarantiView />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
@@ -142,9 +144,39 @@ const Report = (props) => {
             )}
             {tabItem == 'tab5' && (
                 <View style={{ flex: 1, }}>
-                    <ReportUploadView />
+                    <ReportcomponentsView reportDetail={reportDetail}  />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab6')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+            {tabItem == 'tab6' && (
+                <View style={{ flex: 1, }}>
+                    <ReportDamageBeforeUseView />
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab7')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+            {tabItem == 'tab7' && (
+                <View style={{ flex: 1, }}>
+                    <ReportUploadView />
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab6')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
