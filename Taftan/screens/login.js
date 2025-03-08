@@ -19,13 +19,11 @@ const Login = (props) => {
         
     }
 
-
     const handleLogin = async () => {
         setIsLoading(true);
         const md5Hash = CryptoJS.MD5(password).toString();
         const result = await login(username, md5Hash);
         if (result.success) {
-            console.log(result.data.to)
             var result2 = await GetUserConstraintTitleList(result.data.Token);
             if(result2.success){
                 constraintid = result2.data[0].Id;
