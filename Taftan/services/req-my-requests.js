@@ -297,6 +297,8 @@ export const loadMyDamageRequestList = async (skip, take) => {
         }, {
             headers: {
                 authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

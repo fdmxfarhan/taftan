@@ -157,7 +157,9 @@ export const submitPeriodicRequest = async (skip, take) => {
         }
         const response = await api.post('/RequestPMController/loadAllPMRequestList', { "skip": skip, "take": take, "sort": [{ "field": "id", "dir": "desc" }], "filter": { "logic": "and", "filters": [{ "field": "IsArchived", "operator": "Eq", "value": 0 }] } }, {
             headers: {
-                authorization: authData.token,
+                Authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

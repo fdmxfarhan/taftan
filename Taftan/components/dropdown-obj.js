@@ -3,31 +3,51 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatLi
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 
-const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, buttonTextStyle, onSubmit, disabled, containerStyle }) => {
-    const [numOfRowsOpen, setnumOfRowsOpen] = useState(false);
-
-    const renderListItem = ({ item }) => (
-        <TouchableOpacity key={getValue(item)} onPress={() => {
-            setnumOfRowsOpen(false);
-            // setValue(getValue(item));
-            setValue(item);
-            // onSubmit(getValue(item));
-        }}>
+const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, buttonTextStyle, onSubmit, disabled, containerStyle, searchEN }) => {
+    var [numOfRowsOpen, setnumOfRowsOpen] = useState(false);
+    var [searchText, setSearchText] = useState('');
+    var [filterItems, setFilterItems] = useState([]);
+    useEffect(() => {
+        filterItems = [];
+        for (let i = 0; i < list.length; i++) {
+            filterItems.push(true);
+        }
+        setFilterItems(filterItems);
+    }, [list]);
+    const filterSearch = (text) => {
+        for (let i = 0; i < list.length; i++) {
+            if(getLabel(list[i]).toLowerCase().includes(text.toLowerCase())) filterItems[i] = true;
+            else filterItems[i] = false;
+        }
+    }
+    const renderListItem = ({ item, index }) => filterItems[index] && (
+        <TouchableOpacity key={getValue(item)} onPress={() => { setnumOfRowsOpen(false); setValue(item); }}>
             <Text style={styles.itemText}>{getLabel(item)}</Text>
         </TouchableOpacity>
     )
     return (
         <View style={containerStyle}>
-            <TouchableOpacity style={[buttonStyle, styles.placeHolderButton]} onPress={() => {if(!disabled) setnumOfRowsOpen(!numOfRowsOpen)}}>
-                <Text style={buttonTextStyle}>
-                    {value}
-                </Text>
+            <TouchableOpacity style={[buttonStyle, styles.placeHolderButton]} onPress={() => { if (!disabled) setnumOfRowsOpen(!numOfRowsOpen) }}>
+                <Text style={buttonTextStyle}>{value}</Text>
                 <Ionicons name={'chevron-down'} style={styles.chevron} />
             </TouchableOpacity>
             {numOfRowsOpen &&
                 <View style={styles.listContainer}>
+                    {searchEN && (<View style={styles.searchView}>
+                        <TextInput
+                            style={[styles.searchTextInput]}
+                            placeholder={'جستجو...'}
+                            placeholderTextColor={colors.text}
+                            returnKeyType={'send'}
+                            keyboardType={'default'}
+                            value={searchText}
+                            onChange={(text) => { setSearchText(text.nativeEvent.text); filterSearch(text.nativeEvent.text); }}
+                        // onSubmitEditing={()=>passwordInput.current.focus()}
+                        />
+                        <Ionicons name={'search'} style={styles.searchIcon} />
+                    </View>)}
                     <ScrollView nestedScrollEnabled={true}>
-                        {list.map((item) => renderListItem({item}))}
+                        {list.map((item, index) => renderListItem({ item, index }))}
                     </ScrollView>
                 </View>
             }
@@ -49,6 +69,9 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5,
         zIndex: 20,
         maxHeight: 200,
+        borderColor: colors.timberwolf,
+        borderRadius: 7,
+        borderWidth: 1,
     },
     itemText: {
         textAlign: 'center',
@@ -62,7 +85,28 @@ const styles = StyleSheet.create({
         left: 0,
         paddingHorizontal: 10,
         fontSize: 10,
-        
+    },
+    searchView: {
+        flexDirection: 'row-reverse',
+        borderColor: colors.timberwolf,
+        borderWidth: 1,
+        marginVertical: 5,
+        marginHorizontal: 3,
+        borderRadius: 7,
+    },
+    searchIcon: {
+        width: '20%',
+        textAlign: 'center',
+        alignSelf: 'center'
+    },
+    searchTextInput: {
+        width: '80%',
+        margin: 0,
+        padding: 3,
+        paddingHorizontal: 10,
+        fontFamily: 'iransans',
+        fontSize: 12,
+        textAlign: 'right',
     },
 });
 

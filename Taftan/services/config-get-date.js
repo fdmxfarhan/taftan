@@ -1,13 +1,21 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const GetCurrentDate = async () => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true,
             data: "1403/10/01"
         };
-        const response = await api.get(`/Configuration/GetCurrentDate?api_key=date`);
+        const response = await api.get(`/Configuration/GetCurrentDate?api_key=date`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /Configuration/GetCurrentDate request:', error);

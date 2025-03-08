@@ -269,7 +269,9 @@ export const submitDamageRequest = async (skip, take) => {
             }
         }, {
             headers: {
-                authorization: authData.token,
+                Authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

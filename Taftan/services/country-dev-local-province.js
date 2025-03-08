@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const LoadProvinceList = async () => {
+    const authData = await getAuthData();
     var response = null;
     try {
         if (use_local_data) return {
@@ -194,7 +196,13 @@ export const LoadProvinceList = async () => {
                 }
             ]
         };
-        response = await api.get(`/CountryDivisions/LoadProvinceList`);
+        response = await api.get(`/CountryDivisions/LoadProvinceList`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submiting /CountryDivisions/LoadProvinceList request:', error);

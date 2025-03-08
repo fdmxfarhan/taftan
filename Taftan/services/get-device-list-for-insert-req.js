@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const getDeviceListForInsertRequest = async (customerId, branchId) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true,
@@ -83,7 +85,13 @@ export const getDeviceListForInsertRequest = async (customerId, branchId) => {
                 }
             ]
         };
-        const response = await api.get(`/RequestDamageController/getDeviceListForInsertRequest/${customerId}/${branchId}`);
+        const response = await api.get(`/RequestDamageController/getDeviceListForInsertRequest/${customerId}/${branchId}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /RequestDamageController/getDeviceListForInsertRequest request:', error);

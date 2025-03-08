@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const GetRecognitionExpertByDeviceTypeId = async (deviceTypeKey, serviceId) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true,
@@ -38,7 +40,13 @@ export const GetRecognitionExpertByDeviceTypeId = async (deviceTypeKey, serviceI
                 }
             ]
         };
-        const response = await api.get(`/DeviceTypeRecognitionExpert/GetRecognitionExpertByDeviceTypeId/${deviceTypeKey}/${serviceId}`);
+        const response = await api.get(`/DeviceTypeRecognitionExpert/GetRecognitionExpertByDeviceTypeId/${deviceTypeKey}/${serviceId}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /DeviceTypeRecognitionExpert/GetRecognitionExpertByDeviceTypeId request:', error);

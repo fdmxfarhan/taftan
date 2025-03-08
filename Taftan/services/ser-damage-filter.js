@@ -256,6 +256,8 @@ export const submitDamageRequestFilter = async (options) => {
         const response = await api.post('/RequestDamageController/loadAllDamageRequestList', options, {
             headers: {
                 authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

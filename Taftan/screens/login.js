@@ -5,30 +5,54 @@ import { login } from '../services/auth';
 import LoadingView from '../components/loading';
 import CryptoJS from 'crypto-js';
 import storage from '../config/storage';
+import { GetUserConstraintTitleList } from '../services/constraint-get-user-constraint-title-list';
 
 const Login = (props) => {
     var [loginView, setLoginView] = useState('admin');
     var [username, setUsername] = useState('');
     var [password, setPassword] = useState('');
     var [isLoading, setIsLoading] = useState(false);
+    var [userAuthData, setuserAuthData] = useState(null);
     const passwordInput = useRef(null);
+
+    const sendRequests = async () => {
+        
+    }
+
 
     const handleLogin = async () => {
         setIsLoading(true);
         const md5Hash = CryptoJS.MD5(password).toString();
         const result = await login(username, md5Hash);
         if (result.success) {
-            await storage.save({
-                key: 'auth',
-                data: {
-                    token: result.data.Token,
-                    username,
-                    password,
-                    hash: md5Hash,
-                    RefreshToken: result.data.RefreshToken,
-                },
-            });
-            props.navigation.navigate('Home');
+            console.log(result.data.to)
+            var result2 = await GetUserConstraintTitleList(result.data.Token);
+            if(result2.success){
+                constraintid = result2.data[0].Id;
+                await storage.save({
+                    key: 'auth',
+                    data: {
+                        token: result.data.Token,
+                        username,
+                        password,
+                        hash: md5Hash,
+                        RefreshToken: result.data.RefreshToken,
+                        Constraintid: constraintid,
+                    },
+                });
+                props.navigation.navigate('Home');
+            }
+            else ToastAndroid.show('اطلاعات کاربر یافت نشد', ToastAndroid.SHORT);
+            // await storage.save({
+            //     key: 'auth',
+            //     data: {
+            //         token: result.data.Token,
+            //         username,
+            //         password,
+            //         hash: md5Hash,
+            //         RefreshToken: result.data.RefreshToken,
+            //     },
+            // });
         }
         else {
             if(result.error.status == 400)

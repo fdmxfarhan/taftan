@@ -36,6 +36,15 @@ const Report = (props) => {
     var [provinceName, setprovinceName] = useState({ "id": 8, "provinceName": "تهران", "isActive": true, "coordinateId": 1 });
     var [cityName, setcityName] = useState({ "id": 10528, "cityName": "تهران", "provinceId": 8, "isActive": true });
     var [zoneName, setzoneName] = useState({"id": 36,"title": "منطقه 1-آجودانیه","cityId": 0,"isActive": true});
+    var [moduleGroup, setModuleGroup] = useState({Title: 'انتخاب کنید'});
+    var [selectedNewModule, setselectedNewModule] = useState({Title: 'انتخاب کنید'});
+    var [selectedPreviousModule, setselectedPreviousModule] = useState({Title: 'انتخاب کنید'});
+    var [officeKey, setOfficeKey] = useState('00000000-0000-0000-0000-000000000000');
+    var [moduleGroupKey, setmoduleGroupKey] = useState('00000000-0000-0000-0000-000000000000');
+    var [moduleListBrand, setmoduleListBrand] = useState([]);
+    var [moduleInUserStoreList, setmoduleInUserStoreList] = useState([]);
+    var [usedComponents, setusedComponents] = useState(false);
+    
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -144,7 +153,7 @@ const Report = (props) => {
             )}
             {tabItem == 'tab5' && (
                 <View style={{ flex: 1, }}>
-                    <ReportcomponentsView reportDetail={reportDetail}  />
+                    <ReportcomponentsView reportDetail={reportDetail} moduleGroup={moduleGroup} setModuleGroup={setModuleGroup} officeKey={officeKey} setOfficeKey={setOfficeKey} moduleGroupKey={moduleGroupKey} moduleListBrand={moduleListBrand} setmoduleListBrand={setmoduleListBrand} selectedNewModule={selectedNewModule} setselectedNewModule={setselectedNewModule} selectedPreviousModule={selectedPreviousModule} setselectedPreviousModule={setselectedPreviousModule} moduleInUserStoreList={moduleInUserStoreList} setmoduleInUserStoreList={setmoduleInUserStoreList} usedComponents={usedComponents} setusedComponents={setusedComponents} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>

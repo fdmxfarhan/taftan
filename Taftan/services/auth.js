@@ -1,4 +1,4 @@
-import api from '../config/authAPI'
+import api from '../config/api-auth'
 import { use_local_data } from '../config/consts';
 import storage from '../config/storage';
 

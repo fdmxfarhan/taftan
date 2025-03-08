@@ -14,7 +14,7 @@ export const GetUserConstraintTitleList = async (userToken) => {
         return { success: true, data: response.data };
 
     } catch (error) {
-        console.log('Error submitting GetUserConstraintTitleList request:', error.response);
+        console.log('Error submitting GetUserConstraintTitleList request:', error);
         return { success: false, error: 'Failed to submit GetUserConstraintTitleList request' };
     }
 };

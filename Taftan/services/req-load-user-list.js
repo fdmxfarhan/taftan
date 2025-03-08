@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const getUserList = async (areaId, requestId) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true, data: [
@@ -48,7 +50,13 @@ export const getUserList = async (areaId, requestId) => {
             ]
         };
 
-        const response = await api.get(`/User/LoadUserListByAreaIdAndRequestId?AreaId=${areaId}&RequestId=${requestId}`);
+        const response = await api.get(`/User/LoadUserListByAreaIdAndRequestId?AreaId=${areaId}&RequestId=${requestId}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting LoadUserListByAreaIdAndRequestId request:', error);

@@ -110,7 +110,7 @@ const Splash = (props) => {
             // console.log('Login User: ', authData);
             userAuthData = authData;
             setuserAuthData(authData);
-            sendRequests();
+            // sendRequests();
             props.navigation.navigate('Home');
         }
         else {

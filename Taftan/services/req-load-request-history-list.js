@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const loadRequestHistoryList = async (requestId) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true,
@@ -180,6 +182,12 @@ export const loadRequestHistoryList = async (requestId) => {
                         "value": requestId
                     }
                 ]
+            }
+        }, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

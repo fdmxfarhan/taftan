@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const getRefrenceCauseList = async () => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true, data: [{
@@ -55,7 +57,13 @@ export const getRefrenceCauseList = async () => {
             ]
         };
 
-        const response = await api.get(`/RefrenceCauses/GetRefrenceCausesTitleList?isActive=${true}`);
+        const response = await api.get(`/RefrenceCauses/GetRefrenceCausesTitleList?isActive=${true}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
 
     } catch (error) {

@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const GetDeviceDetail = async (deviceId) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true,
@@ -55,7 +57,13 @@ export const GetDeviceDetail = async (deviceId) => {
                 "persianPmEndDate": "1402/07/10"
             }
         };
-        const response = await api.get(`/Device/GetDeviceDetail/${deviceId}`);
+        const response = await api.get(`/Device/GetDeviceDetail/${deviceId}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /Device/GetDeviceDetail request:', error);

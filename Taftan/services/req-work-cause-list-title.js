@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const getWorkCausesListTitle = async () => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true, data: [
@@ -98,7 +100,13 @@ export const getWorkCausesListTitle = async () => {
             ]
         };
         
-        const response = await api.get(`/WorkCauses/WorkCausesListTitle?isActive=true&api_key=getExpertList`);
+        const response = await api.get(`/WorkCauses/WorkCausesListTitle?isActive=true&api_key=getExpertList`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
 
     } catch (error) {

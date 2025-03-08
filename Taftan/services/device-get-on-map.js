@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const getDevicesOnMap = async (latitude, longitude) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true, data: {
@@ -121,6 +123,12 @@ export const getDevicesOnMap = async (latitude, longitude) => {
                         "value": longitude+0.3
                     },
                 ]
+            }
+        }, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

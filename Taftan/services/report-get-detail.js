@@ -1,37 +1,39 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const loadReportDetail = async (requestId, reportId, requestActionId) => {
+    const authData = await getAuthData();
     var response = null;
     try {
         if (use_local_data) return {
             success: true, data: {
                 "requestReportInfo": {
-                    "requestId": 1051473,
-                    "customerName": "دی",
-                    "insertedDateTime_long": 14031011155552,
-                    "insertedDateTime": "1403/10/11 15:55:52",
-                    "areaName": "دفتر غرب تهران",
-                    "areaId": 26,
+                    "requestId": 364040,
+                    "customerName": "بانک ملت",
+                    "insertedDateTime_long": 13961106090339,
+                    "insertedDateTime": "1396/11/06 09:03:39",
+                    "areaName": "مدیریت امور عملیات",
+                    "areaId": 6,
                     "serviceGroupName": "رفع خرابی",
                     "serviceGroupId": 1,
-                    "deviceTypeId": 29,
-                    "deviceId": 16377,
-                    "deviceBrandId": 3,
-                    "deviceModelId": 15,
-                    "deviceName": "باجه تجاری مهرسان",
-                    "deviceSerial": "5300507080",
-                    "deviceTerminal": "1308",
-                    "branchName": "شعبه مجازی",
-                    "branchCode": "5555",
-                    "branchId": 54172,
-                    "deviceModelName": "Wincor 1500 Xe USB",
-                    "expertName": "حسین صبوری",
+                    "deviceTypeKey": "454c3f79-fea0-445e-b293-38610649db72",
+                    "deviceId": 19508,
+                    "deviceBrandKey": "c59ff5c8-866a-4617-8843-7e3d2a165096",
+                    "deviceModelKey": "e4560eef-320d-4e66-933c-f0107aa69a6b",
+                    "deviceName": "شعبه میدان مبارزان اردبیل",
+                    "deviceSerial": "38508059",
+                    "deviceTerminal": "1448",
+                    "branchName": "پاسارگاد",
+                    "branchCode": null,
+                    "branchId": 36235,
+                    "deviceModelName": "NCR 5886",
+                    "expertName": "لیلا شاپوری",
                     "userAssignList": [
                         {
-                            "id": 40249,
-                            "requestId": 0,
-                            "currentUserName": "حسین صبوری",
+                            "userKey": "8ed21c2e-2733-4622-9e30-cc69ef8a3098",
+                            "Id": 0,
+                            "currentUserName": "لیلا شاپوری",
                             "expertType_String": "اصلی",
                             "expertType": 0
                         }
@@ -39,136 +41,36 @@ export const loadReportDetail = async (requestId, reportId, requestActionId) => 
                     "openRequestCount": 0
                 },
                 "reportInfo": {
-                    "id": 1150239,
-                    "requestId": 1051473,
-                    "startDate_long": 140310111110,
-                    "endDate_long": 140310111122,
+                    "id": 0,
+                    "requestId": 364040,
+                    "startDate_long": 140301010000,
+                    "endDate_long": 140301011000,
                     "SecondReportCausesId": 0,
                     "SecondReportCausesTitle": "",
-                    "startDate": "1403/10/11",
-                    "endDate": "1403/10/11",
-                    "startTime": "11:10",
-                    "endTime": "11:22",
+                    "startDate": "1403/01/01",
+                    "endDate": "1403/01/01",
+                    "startTime": "00:00",
+                    "endTime": "10:00",
                     "QuestionAnswers": [],
-                    "imageFileName": "http://10.55.5.13/AdminService/content//ReportFile/202412/20241231155758/Capture2.JPG",
-                    "fileName": "http://10.55.5.13/AdminService/content//ReportFile/202412/20241231155805/net1.JPG",
-                    "reportDescription": "88888899999999990000",
-                    "reportExpertDescription": "99999999990000",
+                    "imageFileName": null,
+                    "fileName": null,
+                    "reportDescription": null,
+                    "reportExpertDescription": null,
                     "isSecondReport": 0,
-                    "showSaveButton": false
+                    "showSaveButton": true
                 },
                 "damageReportInfo": {
-                    "reportRecognitionList": [
-                        {
-                            "serviceName": "مشکلات امنیتی",
-                            "id": 161,
-                            "serviceGroupTitle": "رفع خرابی",
-                            "serviceId": 14,
-                            "title": "اشکال در Anti Skimming / Anti Fraud",
-                            "isActive": false,
-                            "serviceGroupId": 1,
-                            "description": "65656565"
-                        }
-                    ],
-                    "reportJobTitleList": [
-                        {
-                            "id": 1576901,
-                            "title": "تعویض Optical Indicator",
-                            "jobTitleId": 79,
-                            "description": "656565",
-                            "jobCode": "179"
-                        }
-                    ],
+                    "reportRecognitionList": [],
+                    "reportJobTitleList": [],
                     "reportDBOList": [],
                     "reportWarrantyList": [],
                     "deviceConfigHistory": [],
-                    "deviceConfig": [
-                        {
-                            "id": 10063,
-                            "deviceId": 16377,
-                            "serial": "ha14b18036900",
-                            "deviceModuleModel": "EPP EC2001",
-                            "deviceModuleModelId": 149,
-                            "deviceHWTitle": "EPP",
-                            "deviceHWId": 20,
-                            "code": "20101052602"
-                        },
-                        {
-                            "id": 127421,
-                            "deviceId": 16377,
-                            "serial": "6107377976",
-                            "deviceModuleModel": "ZAC (USB)",
-                            "deviceModuleModelId": 74,
-                            "deviceHWTitle": "Dispenser - Board",
-                            "deviceHWId": 12,
-                            "code": "20101030602"
-                        },
-                        {
-                            "id": 223355,
-                            "deviceId": 16377,
-                            "serial": "فاقد سریال",
-                            "deviceModuleModel": "DDR2 RAM 2GB",
-                            "deviceModuleModelId": 224,
-                            "deviceHWTitle": "PC - RAM",
-                            "deviceHWId": 29,
-                            "code": "30101050800102"
-                        },
-                        {
-                            "id": 392574,
-                            "deviceId": 16377,
-                            "serial": "5671323889",
-                            "deviceModuleModel": "Receipt Printer TP07",
-                            "deviceModuleModelId": 291,
-                            "deviceHWTitle": "Receipt Printer",
-                            "deviceHWId": 34,
-                            "code": "20101050901"
-                        },
-                        {
-                            "id": 434253,
-                            "deviceId": 16377,
-                            "serial": "59ck018728",
-                            "deviceModuleModel": "PC 3G 1500",
-                            "deviceModuleModelId": 266,
-                            "deviceHWTitle": "PC - Type",
-                            "deviceHWId": 31,
-                            "code": "20101050813"
-                        },
-                        {
-                            "id": 434788,
-                            "deviceId": 16377,
-                            "serial": "3x8633",
-                            "deviceModuleModel": "V2XU-Card Reader",
-                            "deviceModuleModelId": 67,
-                            "deviceHWTitle": "Card Reader",
-                            "deviceHWId": 10,
-                            "code": "20101050701"
-                        },
-                        {
-                            "id": 458420,
-                            "deviceId": 16377,
-                            "serial": "5836585009",
-                            "deviceModuleModel": "V-Module 1,2",
-                            "deviceModuleModelId": 101,
-                            "deviceHWTitle": "Dispenser - Main Module",
-                            "deviceHWId": 15,
-                            "code": "20101050301"
-                        },
-                        {
-                            "id": 475597,
-                            "deviceId": 16377,
-                            "serial": "56CQ403316",
-                            "deviceModuleModel": "CMD-V4 Housing 4x ",
-                            "deviceModuleModelId": 90,
-                            "deviceHWTitle": "Dispenser - Housing",
-                            "deviceHWId": 14,
-                            "code": "20101050502"
-                        }
-                    ],
-                    "isWarranty": false,
-                    "softwareWarrantyType": false,
-                    "serviceWarrantyType": false,
-                    "changeModuleWarrantyType": false,
-                    "serviceName": "تهیه اطلاعات"
+                    "deviceConfig": [],
+                    "isWarranty": null,
+                    "softwareWarrantyType": null,
+                    "serviceWarrantyType": null,
+                    "changeModuleWarrantyType": null,
+                    "serviceName": "خرابی کارتخوان"
                 },
                 "siteReportInfo": null,
                 "projectReportInfo": null,
@@ -176,7 +78,13 @@ export const loadReportDetail = async (requestId, reportId, requestActionId) => 
                 "pmReportInfo": null
             }
         };
-        response = await api.get(`/ReportController/loadReportDetail/${requestId}/${reportId == null ? 0 : reportId}?requestActionId=${requestActionId}`);
+        response = await api.get(`/ReportController/loadReportDetail/${requestId}/${reportId == null ? 0 : reportId}?requestActionId=${requestActionId}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submiting /ReportController/loadReportDetail request:', error);

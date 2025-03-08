@@ -10,6 +10,8 @@ export const GetUnreadMessageCount = async () => {
         const response = await api.get(`/MessageBox/GetUnreadMessageCount?isActive=true`, {
             headers: {
                 authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
             }
         });
         return { success: true, data: response.data };

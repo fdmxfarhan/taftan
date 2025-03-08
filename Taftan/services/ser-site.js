@@ -75,13 +75,15 @@ export const submitSiteRequest = async (skip, take) => {
                     }]
                 }
             }, {
-                headers: {
-                    authorization: authData.token,
-                }
-            });
+            headers: {
+                Authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
-        console.log('Error submitting loadAllSiteRequestList request:', error);
+        console.log('Error submitting loadAllSiteRequestList request:', error.response.data);
         return { success: false, error: 'Failed to submit loadAllSiteRequestList request' };
     }
 };

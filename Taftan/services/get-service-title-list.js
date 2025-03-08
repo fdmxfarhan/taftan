@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const GetServiceTitleListByGrupId_DeviceType = async (devTypeId, serviceGroupId) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true,
@@ -103,7 +105,13 @@ export const GetServiceTitleListByGrupId_DeviceType = async (devTypeId, serviceG
                 }
             ]
         };
-        const response = await api.get(`/DeviceTypeService/GetServiceTitleListByGrupId_DeviceType/${devTypeId}/${serviceGroupId}`);
+        const response = await api.get(`/DeviceTypeService/GetServiceTitleListByGrupId_DeviceType/${devTypeId}/${serviceGroupId}`, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /DeviceTypeService/GetServiceTitleListByGrupId_DeviceType request:', error);

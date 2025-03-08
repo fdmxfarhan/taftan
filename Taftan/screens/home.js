@@ -52,7 +52,7 @@ const Home = (props) => {
 
         }
         sendRequest();
-    }, [])
+    }, [tabItem])
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />

@@ -1,7 +1,9 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 export const getDeviceListFilter = async (options) => {
+    const authData = await getAuthData();
     try {
         if (use_local_data) return {
             success: true, data: {
@@ -180,7 +182,13 @@ export const getDeviceListFilter = async (options) => {
                 "TotalCount": 1000
             }
         };
-        const response = await api.post('/Device/getDeviceList', options);
+        const response = await api.post('/Device/getDeviceList', options, {
+            headers: {
+                authorization: authData.token,
+                Accessid: authData.Constraintid,
+                Constraintid: authData.Constraintid,
+            }
+        });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /Device/getDeviceList request:', error);

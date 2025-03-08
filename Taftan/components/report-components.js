@@ -11,44 +11,77 @@ import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 import { GetModuleGroupTitleList } from '../services/device-config-GetModuleGroupTitleList';
 import { getAuthData } from '../services/auth';
+import { GetAreaByRequest } from '../services/device-config-GetAreaByRequest';
+import { LoadModuleListBrandTypeGroupKey } from '../services/device-config-LoadModuleListBrandTypeGroupKey';
+import { GetModuleInUserStore } from '../services/device-config-GetModuleInUserStore';
 
-const ReportcomponentsView = ({ reportDetail }) => {
+const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents }) => {
     var [garantieConflict, setgarantieConflict] = useState(false);
     var [softwareProcess, setsoftwareProcess] = useState(false);
     var [serviceAndRepair, setserviceAndRepair] = useState(false);
     var [moduleExchange, setmoduleExchange] = useState(false);
-    var [usedComponents, setusedComponents] = useState(false);
     var [componentAction, setcomponentAction] = useState('تعویض');
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
     var [moduleGroupList, setmoduleGroupList] = useState([]);
-    const sendRequest = async () => {
-        const authData = await getAuthData();
-
-        var result = await GetModuleGroupTitleList(authData);
+    const updateModuleGroupTitleList = async () => {
+        var result = await GetModuleGroupTitleList();
         if (result.success) {
             setmoduleGroupList(result.data);
         }
         else ToastAndroid.show('لیست گروه ماژول دریافت نشد.', ToastAndroid.SHORT);
     }
+    const updateOfficeKey = async () => {
+        var result = await GetAreaByRequest(reportDetail.requestReportInfo.requestId);
+        if (result.success) {
+            setOfficeKey(result.data);
+        }
+        else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
+    }
+    const updateModuleListBrandTypeGroupKey = async () => {
+        var result = await LoadModuleListBrandTypeGroupKey({
+            TypeKey: reportDetail.requestReportInfo.deviceTypeKey,
+            BrandKey: reportDetail.requestReportInfo.deviceBrandKey,
+            ModuleGroupkey: moduleGroupKey,
+        });
+        if (result.success) {
+            setmoduleListBrand(result.data);
+        }
+        else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
+    }
+    const updateModuleInUserStore = async () => {
+        var result = await GetModuleInUserStore(moduleGroupKey, officeKey);
+        if (result.success) {
+            setmoduleInUserStoreList(result.data);
+        }
+        else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
+    }
+
     useEffect(() => {
-        if(reportDetail) sendRequest();
+
     }, [reportDetail]);
     return (
         <ScrollView style={styleslocal.contents}>
             <Text style={styleslocal.sectionTitle}>اطلاعات قطعات:</Text>
-            <CheckBox text={'قطعات مصرفی'} value={usedComponents} onChange={() => { setusedComponents(!usedComponents) }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
+            <CheckBox text={'قطعات مصرفی'} value={usedComponents} onChange={() => {
+                setusedComponents(!usedComponents);
+                updateModuleGroupTitleList();
+                updateOfficeKey();
+                updateModuleListBrandTypeGroupKey();
+                updateModuleInUserStore();
+            }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {usedComponents && (<View>
                 <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>ماژول: </Text>
                         <DropDownObj
+                            searchEN={true}
                             list={moduleGroupList}
-                            getLabel={(item) => item.title}
-                            getValue={(item) => item.title}
-                            setValue={(item) => { }}
-                            value={'asdf'}
+                            getLabel={(item) => item.Title}
+                            getValue={(item) => item.Title}
+                            setValue={(item) => { setModuleGroup(item) }}
+                            value={moduleGroup.Title}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
                             onSubmit={(val) => { }}
@@ -73,14 +106,15 @@ const ReportcomponentsView = ({ reportDetail }) => {
                         <View style={styles.dualInputPart}>
                             <Text style={styles.label}>مدل ماژول جدید: </Text>
                             <DropDownObj
-                                list={[]}
-                                getLabel={(item) => item}
-                                getValue={(item) => item}
-                                setValue={(item) => { }}
-                                value={'asdf'}
+                                list={moduleInUserStoreList}
+                                getLabel={(item) => item.Title}
+                                getValue={(item) => item.Title}
+                                setValue={(item) => { setselectedPreviousModule(item) }}
+                                value={selectedPreviousModule.Title}
                                 buttonStyle={styles.dropdown}
                                 buttonTextStyle={styles.dropdownText}
                                 onSubmit={(val) => { }}
+                                searchEN={true}
                             />
                         </View>
                         <View style={styles.dualInputPart}>
@@ -107,14 +141,15 @@ const ReportcomponentsView = ({ reportDetail }) => {
                         <View style={styles.dualInputPart}>
                             <Text style={styles.label}>مدل ماژول قدیم: </Text>
                             <DropDownObj
-                                list={[]}
-                                getLabel={(item) => item}
-                                getValue={(item) => item}
-                                setValue={(item) => { }}
-                                value={'asdf'}
+                                list={moduleListBrand}
+                                getLabel={(item) => item.Title}
+                                getValue={(item) => item.Title}
+                                setValue={(item) => { setselectedNewModule(item) }}
+                                value={selectedNewModule.Title}
                                 buttonStyle={styles.dropdown}
                                 buttonTextStyle={styles.dropdownText}
                                 onSubmit={(val) => { }}
+                                searchEN={true}
                             />
                         </View>
                         <View style={styles.dualInputPart}>
@@ -217,7 +252,7 @@ const ReportcomponentsView = ({ reportDetail }) => {
                     <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
                 </TouchableOpacity>
             </View>)}
-            
+
             <View style={{ height: 150, }} />
         </ScrollView>
     );
