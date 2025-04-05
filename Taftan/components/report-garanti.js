@@ -10,11 +10,7 @@ import DropDownObj from './dropdown-obj';
 import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 
-const ReportGarantiView = ({ }) => {
-    var [garantieConflict, setgarantieConflict] = useState(false);
-    var [softwareProcess, setsoftwareProcess] = useState(false);
-    var [serviceAndRepair, setserviceAndRepair] = useState(false);
-    var [moduleExchange, setmoduleExchange] = useState(false);
+const ReportGarantiView = ({ garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange }) => {
     var [usedComponents, setusedComponents] = useState(false);
     var [componentAction, setcomponentAction] = useState('تعویض');
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');

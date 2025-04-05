@@ -14,8 +14,10 @@ import { getAuthData } from '../services/auth';
 import { GetAreaByRequest } from '../services/device-config-GetAreaByRequest';
 import { LoadModuleListBrandTypeGroupKey } from '../services/device-config-LoadModuleListBrandTypeGroupKey';
 import { GetModuleInUserStore } from '../services/device-config-GetModuleInUserStore';
-
-const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents }) => {
+import ScanPopup from './scan-popup';
+import MultiSelectDropdown from './multi-select-dropdown';
+import { loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId } from '../services/device-config-henzaRecognition';
+const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason }) => {
     var [garantieConflict, setgarantieConflict] = useState(false);
     var [softwareProcess, setsoftwareProcess] = useState(false);
     var [serviceAndRepair, setserviceAndRepair] = useState(false);
@@ -25,12 +27,29 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
     var [moduleGroupList, setmoduleGroupList] = useState([]);
+    var [moduleGroupListFiltered, setmoduleGroupListFiltered] = useState([]);
+    var [moduleListBrandFiltered, setmoduleListBrandFiltered] = useState([]);
+    var [scanpopupEnableNew, setscanpopupEnableNew] = useState(false);
+    var [scanpopupEnableOld, setscanpopupEnableOld] = useState(false);
+    var [selectedDamageDescriptions, setSelectedDamageDescriptions] = useState([]);
+    var [henzaRecontions, sethenzaRecontions] = useState([]);
+    var [description, setdescription] = useState('');
+    var [garantiDOAList, setgarantiDOAList] = useState([]);
+    var [deviceConfigList, setdeviceConfigList] = useState([]);
     const updateModuleGroupTitleList = async () => {
         var result = await GetModuleGroupTitleList();
         if (result.success) {
             setmoduleGroupList(result.data);
+            setmoduleGroupListFiltered(result.data);
         }
         else ToastAndroid.show('لیست گروه ماژول دریافت نشد.', ToastAndroid.SHORT);
+    }
+    const filterModuleGroupList = (moduleBrandItem) => {
+        const filteredModules = moduleGroupList.filter(item => item.Id == moduleBrandItem.ModuleGroupId);
+        setmoduleGroupListFiltered(filteredModules);
+        if (filteredModules.length > 0) {
+            setModuleGroup(filteredModules[0]);
+        }
     }
     const updateOfficeKey = async () => {
         var result = await GetAreaByRequest(reportDetail.requestReportInfo.requestId);
@@ -57,12 +76,71 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         }
         else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
     }
-
+    const filterModuleListBrand = (modulegroupItem) => {
+        const filteredModules = moduleListBrand.filter(item => item.ModuleGroupId == modulegroupItem.Id);
+        setmoduleListBrandFiltered(filteredModules);
+    }
+    const handleCodeScannedNew = (code) => {
+        setModuleNewSerial(code);
+        setscanpopupEnableNew(false);
+    }
+    const handleCodeScannedOld = (code) => {
+        setModuleoldSerial(code);
+        setscanpopupEnableOld(false);
+    }
+    const updateHenzaRecontions = async (moduleItem) => {
+        var result = await loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId(moduleItem.TypeKey, moduleItem.ModuleGroupKey);
+        if (result.success) {
+            sethenzaRecontions(result.data);
+        }
+    }
+    const addComponentChanges = async () => {
+        var newcomponentChanges = {
+            moduleGroup: moduleGroup,
+            componentAction: componentAction,
+            moduleNewSerial: moduleNewSerial,
+            moduleOldSerial: moduleoldSerial,
+            NewModule: selectedNewModule,
+            PreviousModule: selectedPreviousModule,
+            description: description,
+            noRepairNeeded: noRepairNeeded,
+            DOAorGarantieConflict: DOAorGarantieConflict,
+            damageDescriptions: selectedDamageDescriptions,
+            selectedDOAReason: selectedDOAReason == 'انتخاب کنید' ? null : selectedDOAReason,
+        };
+        setcomponentChangesList([...componentChangesList, newcomponentChanges]);
+        setselectedDamageDescriptions([]);
+        setselectedDOAReason('انتخاب کنید');
+        setModuleNewSerial('');
+        setModuleoldSerial('');
+        setselectedNewModule(null);
+        setselectedPreviousModule(null);
+        setdescription('');
+        setnoRepairNeeded(false);
+        setDOAorGarantieConflict('هیچکدام');
+        setmoduleListBrandFiltered(moduleListBrand);
+        setmoduleGroupListFiltered(moduleGroupList);
+    };
     useEffect(() => {
-
-    }, [reportDetail]);
+        setmoduleListBrandFiltered(moduleListBrand);
+        if (reportDetail.requestReportInfo.serviceGroupId == 1 || reportDetail.requestReportInfo.serviceGroupId == 8) {
+            setgarantiDOAList(['هیچکدام', 'DOA', 'نقض گارانتی']);
+        } else {
+            setgarantiDOAList(['هیچکدام', 'DOA']);
+        }
+        const sendRequest = async () => {
+            console.log(reportDetail.requestReportInfo.deviceId);
+            var result = await loadDeviceConfigList(reportDetail.requestReportInfo.deviceId);
+            if (result.success) {
+                setdeviceConfigList(result.data.Data);
+            } else ToastAndroid.show('کانفیگ دستگاه دریافت نشد', ToastAndroid.SHORT);
+        }
+        if (reportDetail) sendRequest();
+    }, [reportDetail, moduleListBrand]);
     return (
         <ScrollView style={styleslocal.contents}>
+            <ScanPopup modalEnable={scanpopupEnableNew} setmodalEnable={setscanpopupEnableNew} onCodeScanned={handleCodeScannedNew} />
+            <ScanPopup modalEnable={scanpopupEnableOld} setmodalEnable={setscanpopupEnableOld} onCodeScanned={handleCodeScannedOld} />
             <Text style={styleslocal.sectionTitle}>اطلاعات قطعات:</Text>
             <CheckBox text={'قطعات مصرفی'} value={usedComponents} onChange={() => {
                 setusedComponents(!usedComponents);
@@ -74,13 +152,13 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             {usedComponents && (<View>
                 <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
-                        <Text style={styles.label}>ماژول: </Text>
+                        <Text style={styles.label}>گروه ماژول: </Text>
                         <DropDownObj
                             searchEN={true}
-                            list={moduleGroupList}
+                            list={moduleGroupListFiltered}
                             getLabel={(item) => item.Title}
                             getValue={(item) => item.Title}
-                            setValue={(item) => { setModuleGroup(item) }}
+                            setValue={(item) => { setModuleGroup(item); filterModuleListBrand(item); }}
                             value={moduleGroup.Title}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
@@ -109,42 +187,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                                 list={moduleInUserStoreList}
                                 getLabel={(item) => item.Title}
                                 getValue={(item) => item.Title}
-                                setValue={(item) => { setselectedPreviousModule(item) }}
-                                value={selectedPreviousModule.Title}
-                                buttonStyle={styles.dropdown}
-                                buttonTextStyle={styles.dropdownText}
-                                onSubmit={(val) => { }}
-                                searchEN={true}
-                            />
-                        </View>
-                        <View style={styles.dualInputPart}>
-                            <Text style={styles.label}>سریال ماژول جدید: </Text>
-                            <TextInput
-                                style={[styles.textInput]}
-                                placeholder={'سریال ماژول جدید'}
-                                placeholderTextColor={colors.text}
-                                // onSubmitEditing={()=>passwordInput.current.focus()}
-                                multiline={true}
-                                returnKeyType={'next'}
-                                keyboardType={'default'}
-                            // value={requestDetail.projectInfo.deviceCount}
-                            // editable={false}
-                            // onChange={(text) => {
-                            //     console.log('hello')
-                            // }}
-                            />
-                        </View>
-                    </View>
-                </View>)}
-                {(componentAction == 'تعویض' || componentAction == 'حذف') && (<View>
-                    <View style={[styles.dualInputView]}>
-                        <View style={styles.dualInputPart}>
-                            <Text style={styles.label}>مدل ماژول قدیم: </Text>
-                            <DropDownObj
-                                list={moduleListBrand}
-                                getLabel={(item) => item.Title}
-                                getValue={(item) => item.Title}
-                                setValue={(item) => { setselectedNewModule(item) }}
+                                setValue={(item) => { setselectedNewModule(item); }}
                                 value={selectedNewModule.Title}
                                 buttonStyle={styles.dropdown}
                                 buttonTextStyle={styles.dropdownText}
@@ -153,51 +196,101 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                             />
                         </View>
                         <View style={styles.dualInputPart}>
-                            <Text style={styles.label}>سریال ماژول قدیم: </Text>
-                            <TextInput
-                                style={[styles.textInput]}
-                                placeholder={'سریال ماژول قدیم'}
-                                placeholderTextColor={colors.text}
-                                // onSubmitEditing={()=>passwordInput.current.focus()}
-                                multiline={true}
-                                returnKeyType={'next'}
-                                keyboardType={'default'}
-                            // value={requestDetail.projectInfo.deviceCount}
-                            // editable={false}
-                            // onChange={(text) => {
-                            //     console.log('hello')
-                            // }}
+                            {selectedNewModule && selectedNewModule.HaveSerial && (
+                                <View>
+                                    <Text style={styles.label}>سریال ماژول جدید: </Text>
+                                    <View style={styles.inputWithActionView}>
+                                        <TextInput
+                                            style={[styles.inputWithActionInput, { width: '66%' }]}
+                                            placeholder={'سریال ماژول جدید'}
+                                            placeholderTextColor={colors.text}
+                                            multiline={true}
+                                            returnKeyType={'next'}
+                                            keyboardType={'default'}
+                                            onChange={text => setModuleNewSerial(text.nativeEvent.text)}
+                                            value={moduleNewSerial}
+                                        />
+                                        <TouchableOpacity style={[styles.inputWithActionButton, { width: '17%' }]} onPress={() => { setscanpopupEnableNew(true); }}>
+                                            <Ionicons style={styles.inputWithActionIcon} name={'barcode'} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+                    </View>
+                </View>)}
+                {(componentAction == 'تعویض' || componentAction == 'حذف') && (<View>
+                    <View style={[styles.dualInputView]}>
+                        <View style={styles.dualInputPart}>
+                            <Text style={styles.label}>مدل ماژول قدیم: </Text>
+                            <DropDownObj
+                                list={moduleListBrandFiltered}
+                                getLabel={(item) => item.Title}
+                                getValue={(item) => item.Title}
+                                setValue={(item) => { setselectedPreviousModule(item); filterModuleGroupList(item); updateHenzaRecontions(item); }}
+                                value={selectedPreviousModule.Title}
+                                buttonStyle={styles.dropdown}
+                                buttonTextStyle={styles.dropdownText}
+                                onSubmit={(val) => { }}
+                                searchEN={true}
                             />
+                        </View>
+                        <View style={styles.dualInputPart}>
+                            {selectedPreviousModule && selectedPreviousModule.HaveSerial && (
+                                <View>
+                                    <Text style={styles.label}>سریال ماژول قدیم: </Text>
+                                    <View style={styles.inputWithActionView}>
+                                        <TextInput
+                                            style={[styles.inputWithActionInput, { width: '66%' }]}
+                                            placeholder={'سریال ماژول قدیم'}
+                                            placeholderTextColor={colors.text}
+                                            value={moduleoldSerial}
+                                            multiline={true}
+                                            returnKeyType={'next'}
+                                            keyboardType={'default'}
+                                            onChange={text => setModuleoldSerial(text.nativeEvent.text)}
+                                        />
+                                        <TouchableOpacity style={[styles.inputWithActionButton, { width: '17%' }]} onPress={() => { setscanpopupEnableOld(true); }}>
+                                            <Ionicons style={styles.inputWithActionIcon} name={'barcode'} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                            )}
+                            {selectedPreviousModule && !selectedPreviousModule.HaveSerial && (
+                                <View>
+                                    <Text style={styles.label}>تعداد ماژول قدیم: </Text>
+                                    <TextInput
+                                        style={[styles.textInput]}
+                                        placeholder={'تعداد ماژول قدیم'}
+                                        placeholderTextColor={colors.text}
+                                        value={moduleoldSerial}
+                                        multiline={true}
+                                        returnKeyType={'next'}
+                                        keyboardType={'numeric'}
+                                        onChange={text => setModuleoldSerial(text.nativeEvent.text)}
+                                    />
+                                </View>
+                            )}
                         </View>
                     </View>
                     <Text style={styles.label}>شرح خرابی: </Text>
-                    <TextInput
-                        style={[styles.textInput]}
-                        placeholder={'شرح خرابی'}
-                        placeholderTextColor={colors.text}
-                        // onSubmitEditing={()=>passwordInput.current.focus()}
-                        multiline={true}
-                        returnKeyType={'next'}
-                        keyboardType={'default'}
-                    // value={requestDetail.projectInfo.deviceCount}
-                    // editable={false}
-                    // onChange={(text) => {
-                    //     console.log('hello')
-                    // }}
+                    <MultiSelectDropdown
+                        list={henzaRecontions}
+                        selectedValues={selectedDamageDescriptions}
+                        setSelectedValues={setSelectedDamageDescriptions}
+                        placeHolder={'شرح خرابی'}
+                        buttonStyle={styles.dropdown}
+                        buttonTextStyle={styles.dropdownText}
+                        onSubmit={(val) => { }}
+                        getLabel={(item) => item.henzaRecognitionExpertTitle}
+                        getValue={(item) => item.id}
                     />
+
                 </View>)}
-                <Text style={styles.label}>توضیحات: </Text>
-                <TextInput
-                    style={styles.description}
-                    placeholder="توضیحات"
-                    keyboardType={'default'}
-                // value={descriptionAction}
-                // onChange={text => setdescriptionAction(text.nativeEvent.text)}
-                />
                 <CheckBox text={'نیاز به تعمیر ندارد'} value={noRepairNeeded} onChange={() => { setnoRepairNeeded(!noRepairNeeded) }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
                 <Text style={styles.label}>DOA / نقض گارانتی: </Text>
                 <DropDownObj
-                    list={['هیچکدام', 'DOA', 'نقض گارانتی']}
+                    list={garantiDOAList}
                     getLabel={(item) => item}
                     getValue={(item) => item}
                     setValue={(item) => { setDOAorGarantieConflict(item) }}
@@ -212,19 +305,11 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                         list={['ناموجود', 'عدم عملکرد صحیح', 'شکستگی', 'سایر']}
                         getLabel={(item) => item}
                         getValue={(item) => item}
-                        setValue={(item) => { }}
-                        value={'انتخاب'}
+                        setValue={(item) => { setselectedDOAReason(item) }}
+                        value={selectedDOAReason}
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
                         onSubmit={(val) => { }}
-                    />
-                    <Text style={styles.label}>توضیحات: </Text>
-                    <TextInput
-                        style={styles.description}
-                        placeholder="توضیحات"
-                        keyboardType={'default'}
-                    // value={descriptionAction}
-                    // onChange={text => setdescriptionAction(text.nativeEvent.text)}
                     />
                 </View>)}
                 {DOAorGarantieConflict == 'نقض گارانتی' && (<View>
@@ -239,22 +324,44 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                         buttonTextStyle={styles.dropdownText}
                         onSubmit={(val) => { }}
                     />
-                    <Text style={styles.label}>توضیحات: </Text>
-                    <TextInput
-                        style={styles.description}
-                        placeholder="توضیحات"
-                        keyboardType={'default'}
-                    // value={descriptionAction}
-                    // onChange={text => setdescriptionAction(text.nativeEvent.text)}
-                    />
                 </View>)}
-                <TouchableOpacity style={styleslocal.submitButton} >
+                <Text style={styles.label}>توضیحات: </Text>
+                <TextInput
+                    style={styles.description}
+                    placeholder="توضیحات"
+                    keyboardType={'default'}
+                    value={description}
+                    onChange={text => setdescription(text.nativeEvent.text)}
+                />
+                <TouchableOpacity style={styleslocal.submitButton} onPress={addComponentChanges}>
                     <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
                 </TouchableOpacity>
             </View>)}
-
+            <View style={{ height: 20, }} />
+            <Text style={styles.sectionTitle}>تاریخچه تعویض قطعات:</Text>
+            {componentChangesList.map((item, index) => (
+                <View key={index} >
+                    <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                        <View style={styles.actionHistoryRight}>
+                            <Text style={styles.actionHistoryTitle}>ماژول قدیم: {item.PreviousModule.Title} ({item.moduleOldSerial})</Text>
+                            <Text style={styles.actionHistoryTitle}>ماژول جدید: {item.NewModule.Title} ({item.moduleNewSerial})</Text>
+                            <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.componentAction}</Text>
+                        </View>
+                    </View>
+                </View>
+            ))}
+            <View style={{ height: 20, }} />
+            <Text style={styles.sectionTitle}>پیکربندی دستگاه:</Text>
+            {deviceConfigList.map((item, index) => (
+                <View key={index}>
+                    <Text style={styles.deviceName}>مدل ماژول: {item.ModuleTitle}</Text>
+                    <Text style={styles.damageTitle}>کد انبار: {item.Code}</Text>
+                    <Text style={styles.damageTitle}>ماژول: {item.deviceHWTitle}</Text>
+                    <Text style={styles.date}>سریال: {item.serial}</Text>
+                </View>
+            ))}
             <View style={{ height: 150, }} />
-        </ScrollView>
+        </ScrollView >
     );
 };
 

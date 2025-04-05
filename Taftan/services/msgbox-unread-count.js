@@ -1,8 +1,8 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
-import { getAuthData } from './auth';
+import { getAuthData, logout } from './auth';
 
-export const GetUnreadMessageCount = async () => {
+export const GetUnreadMessageCount = async (navigation) => {
     const authData = await getAuthData();
 
     try {
@@ -17,6 +17,10 @@ export const GetUnreadMessageCount = async () => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /MessageBox/GetUnreadMessageCount request:', error.response.data);
+        if(error.response.data.Message == "Authorization has been denied for this request."){
+            logout();
+            navigation.navigate('Login');
+        }
         return { success: false, error: 'Failed to submit /MessageBox/GetUnreadMessageCount request' };
     }
 };

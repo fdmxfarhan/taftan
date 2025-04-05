@@ -34,7 +34,7 @@ const Home = (props) => {
         const sendRequest = async () => {
             const authData = await getAuthData();
             // console.log(authData.token)
-            var result = await GetUnreadMessageCount();
+            var result = await GetUnreadMessageCount(props.navigation);
             if (result.success) {
                 setunreadMessagesCount(result.data);
             } else ToastAndroid.show('تعداد پیام ها بارگیری نشد.', ToastAndroid.SHORT);

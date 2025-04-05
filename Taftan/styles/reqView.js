@@ -370,4 +370,12 @@ module.exports = StyleSheet.create({
         marginBottom: 10,
         marginTop: 20,
     },
+    sectionTitle: {
+        fontFamily: 'iransansbold',
+        fontSize: 15,
+        color: colors.dark,
+        textAlign: 'right',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
 });

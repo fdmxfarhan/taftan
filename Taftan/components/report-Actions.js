@@ -7,7 +7,7 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
 
-const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail }) => {
+const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail, newactionList, setnewactionList }) => {
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;
         if (detail.requestReportInfo.serviceGroupId == 2) return detail.pmReportInfo;
@@ -41,12 +41,27 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
                 value={descriptionAction}
                 onChange={text => setdescriptionAction(text.nativeEvent.text)}
             />
-            <TouchableOpacity style={styleslocal.submitButton} >
+            <TouchableOpacity style={styleslocal.submitButton} onPress={() => {
+                setnewactionList(prevList => [...prevList, { title: jobTitle.title, description: descriptionAction }]);
+            }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>
-
-
             <View style={styles.content}>
+                {newactionList.map((item, index) => (
+                    <View key={index} >
+                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                            <View style={styles.actionHistoryRight}>
+                                <Text style={styles.actionHistoryTitle}>{item.title}</Text>
+                                <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.description}</Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity style={styles.deleteItemButton} onPress={() => {
+                            setnewactionList(prevList => prevList.filter((_, i) => i !== index));
+                        }}>
+                            <Ionicons name={'trash'} style={styles.deleteItemIcon} />
+                        </TouchableOpacity> 
+                    </View>
+                ))} 
                 {reportDetail && serviceObject(reportDetail).reportJobTitleList.map((item, index) => (
                     <View key={index} >
                         <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
@@ -154,6 +169,16 @@ const styleslocal = StyleSheet.create({
         textAlign: 'center',
         color: colors.white,
     },
+    deleteItemButton: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+    },
+    deleteItemIcon: {
+        fontSize: 18,
+        color: colors.red,
+    },
+
 });
 
 export default ReportActions;

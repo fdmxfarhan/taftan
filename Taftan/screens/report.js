@@ -44,7 +44,15 @@ const Report = (props) => {
     var [moduleListBrand, setmoduleListBrand] = useState([]);
     var [moduleInUserStoreList, setmoduleInUserStoreList] = useState([]);
     var [usedComponents, setusedComponents] = useState(false);
-    
+    var [newactionList, setnewactionList] = useState([]);
+    var [garantieConflict, setgarantieConflict] = useState(false);
+    var [softwareProcess, setsoftwareProcess] = useState(false);
+    var [serviceAndRepair, setserviceAndRepair] = useState(false);
+    var [moduleExchange, setmoduleExchange] = useState(false);
+    var [moduleoldSerial, setModuleoldSerial] = useState('');
+    var [moduleNewSerial, setModuleNewSerial] = useState('');
+    var [componentChangesList, setcomponentChangesList] = useState([]);
+    var [selectedDOAReason, setselectedDOAReason] = useState('انتخاب کنید');
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -123,7 +131,7 @@ const Report = (props) => {
             )}
             {tabItem == 'tab3' && (
                 <View style={{ flex: 1, }}>
-                    <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} reportDetail={reportDetail} />
+                    <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} reportDetail={reportDetail} newactionList={newactionList} setnewactionList={setnewactionList} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab2')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
@@ -138,7 +146,16 @@ const Report = (props) => {
             )}
             {tabItem == 'tab4' && (
                 <View style={{ flex: 1, }}>
-                    <ReportGarantiView />
+                    <ReportGarantiView 
+                        garantieConflict={garantieConflict}
+                        setgarantieConflict={setgarantieConflict}
+                        softwareProcess={softwareProcess}
+                        setsoftwareProcess={setsoftwareProcess}
+                        serviceAndRepair={serviceAndRepair}
+                        setserviceAndRepair={setserviceAndRepair}
+                        moduleExchange={moduleExchange}
+                        setmoduleExchange={setmoduleExchange}
+                    />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
@@ -153,7 +170,7 @@ const Report = (props) => {
             )}
             {tabItem == 'tab5' && (
                 <View style={{ flex: 1, }}>
-                    <ReportcomponentsView reportDetail={reportDetail} moduleGroup={moduleGroup} setModuleGroup={setModuleGroup} officeKey={officeKey} setOfficeKey={setOfficeKey} moduleGroupKey={moduleGroupKey} moduleListBrand={moduleListBrand} setmoduleListBrand={setmoduleListBrand} selectedNewModule={selectedNewModule} setselectedNewModule={setselectedNewModule} selectedPreviousModule={selectedPreviousModule} setselectedPreviousModule={setselectedPreviousModule} moduleInUserStoreList={moduleInUserStoreList} setmoduleInUserStoreList={setmoduleInUserStoreList} usedComponents={usedComponents} setusedComponents={setusedComponents} />
+                    <ReportcomponentsView reportDetail={reportDetail} moduleGroup={moduleGroup} setModuleGroup={setModuleGroup} officeKey={officeKey} setOfficeKey={setOfficeKey} moduleGroupKey={moduleGroupKey} moduleListBrand={moduleListBrand} setmoduleListBrand={setmoduleListBrand} selectedNewModule={selectedNewModule} setselectedNewModule={setselectedNewModule} selectedPreviousModule={selectedPreviousModule} setselectedPreviousModule={setselectedPreviousModule} moduleInUserStoreList={moduleInUserStoreList} setmoduleInUserStoreList={setmoduleInUserStoreList} usedComponents={usedComponents} setusedComponents={setusedComponents} moduleoldSerial={moduleoldSerial} setModuleoldSerial={setModuleoldSerial} moduleNewSerial={moduleNewSerial} setModuleNewSerial={setModuleNewSerial} componentChangesList={componentChangesList} setcomponentChangesList={setcomponentChangesList} selectedDOAReason={selectedDOAReason} setselectedDOAReason={setselectedDOAReason} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
