@@ -4,15 +4,27 @@ import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
 const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail }) => {
-    const scrollViewRef = useRef(null); // Create a ref for the ScrollView
+    const scrollViewRef = useRef(null);
+    const [contentWidth, setContentWidth] = useState(0);
+    const [scrollViewWidth, setScrollViewWidth] = useState(0);
+
     useEffect(() => {
-        if (scrollViewRef.current) {
-            scrollViewRef.current.scrollTo({ x: 0, animated: false });
+        if (scrollViewRef.current && contentWidth > scrollViewWidth) {
+            scrollViewRef.current.scrollTo({ x: contentWidth - scrollViewWidth, animated: false });
         }
-    }, []);
+    }, [contentWidth, scrollViewWidth]);
+
     return (
         <View style={styles.tabLinksView}>
-            <ScrollView horizontal={true} style={styles.scrollview} contentContainerStyle={styles.invertedScrollView} showsHorizontalScrollIndicator={false} ref={scrollViewRef} >
+            <ScrollView 
+                horizontal={true} 
+                style={styles.scrollview} 
+                contentContainerStyle={styles.invertedScrollView} 
+                showsHorizontalScrollIndicator={false} 
+                ref={scrollViewRef}
+                onContentSizeChange={(width) => setContentWidth(width)}
+                onLayout={(event) => setScrollViewWidth(event.nativeEvent.layout.width)}
+            >
                 <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab1' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab1')}>
                     <Ionicons name={tabItemVar == 'tab1' ? "information" : "information-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab1' ? styles.activeIcon : styles.deactive]} />
                     <Text style={[styles.tabLinkText, tabItemVar == 'tab1' ? styles.activeText : styles.deactive]}>اطلاعات گزارش</Text>
@@ -33,6 +45,12 @@ const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail }) => {
                     <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab3' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab3')}>
                         <Ionicons name={tabItemVar == 'tab3' ? "footsteps" : "footsteps-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab3' ? styles.activeIcon : styles.deactive]} />
                         <Text style={[styles.tabLinkText, tabItemVar == 'tab3' ? styles.activeText : styles.deactive]}>اقدامات</Text>
+                    </TouchableOpacity>
+                )}
+                {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 2 && (
+                    <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab3.5' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab3.5')}>
+                        <Ionicons name={tabItemVar == 'tab3.5' ? "document-text" : "document-text-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab3.5' ? styles.activeIcon : styles.deactive]} />
+                        <Text style={[styles.tabLinkText, tabItemVar == 'tab3.5' ? styles.activeText : styles.deactive]}>پرسشنامه</Text>
                     </TouchableOpacity>
                 )}
                 <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab4' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab4')}>

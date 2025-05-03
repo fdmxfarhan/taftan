@@ -16,6 +16,7 @@ import ReportInstallation from '../components/report-installation';
 import ReportcomponentsView from '../components/report-components';
 import ReportGarantiView from '../components/report-garanti';
 import ReportDamageBeforeUseView from '../components/report-damageBeforeUse';
+import ReportQuestionnaire from '../components/report-questionnaire';
 
 const Report = (props) => {
     var reportInfo = props.route.params.reportInfo;
@@ -148,6 +149,21 @@ const Report = (props) => {
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3.5')}>
+                            <Text style={styles.nextTabButtonText}>بعدی</Text>
+                            <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )}
+            {tabItem == 'tab3.5' && (
+                <View style={{ flex: 1, }}>
+                    <ReportQuestionnaire />
+                    <View style={styles.buttonsControlView}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
+                            <Text style={styles.nextTabButtonText}>قبلی</Text>
+                            <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
+                        </TouchableOpacity>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
@@ -169,7 +185,7 @@ const Report = (props) => {
                         reportDetail={reportDetail}
                     />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3.5')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>

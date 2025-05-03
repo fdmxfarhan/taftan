@@ -21,28 +21,28 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
     return (
         <ScrollView style={styleslocal.contents}>
             {/* <Text style={styleslocal.sectionTitle}>تشخیص کارشناس:</Text> */}
-            <Text style={styles.label}>نوع خرابی: </Text>
+            <Text style={styleslocal.sectionTitle}>نوع خرابی: </Text>
             <DropDownObj list={damageReasonsList}
                 getLabel={(item) => item.Title}
                 getValue={(item) => item.Title}
                 setValue={(item) => { setdamageReason(item); updateRecognitionExpertList(item); }}
                 value={damageReason.Title}
-                buttonStyle={styles.dropdown}
-                buttonTextStyle={styles.dropdownText}
+                buttonStyle={styleslocal.dropdown}
+                buttonTextStyle={styleslocal.dropdownText}
                 onSubmit={(val) => { }}
             />
-            <Text style={styles.label}>تشخیص سطح دوم: </Text>
+            <Text style={styleslocal.sectionTitle}>تشخیص سطح دوم: </Text>
             <DropDownObj list={recognitionExpertList}
                 getLabel={(item) => item.title}
                 getValue={(item) => item.title}
                 setValue={(item) => { setrecognitionExpert(item) }}
                 value={recognitionExpert.title}
-                buttonStyle={styles.dropdown}
-                buttonTextStyle={styles.dropdownText}
+                buttonStyle={styleslocal.dropdown}
+                buttonTextStyle={styleslocal.dropdownText}
                 onSubmit={(val) => { }}
             />
-            <Text style={styles.label}>توضیحات: </Text>
-            <TextInput style={styles.description}
+            <Text style={styleslocal.sectionTitle}>توضیحات: </Text>
+            <TextInput style={styleslocal.textInput}
                 placeholder="توضیحات"
                 keyboardType={'default'}
                 value={description}
@@ -65,30 +65,30 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
             }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>
-            <View style={styles.content}>
+            <View style={styleslocal.content}>
                 {newRecognitionList.map((item, index) => (
                     <View key={index} >
-                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
-                            <View style={styles.actionHistoryRight}>
-                                <Text style={styles.actionHistoryTitle}>{item.serviceName} ({item.serviceGroupTitle})</Text>
-                                <Text style={styles.actionHistoryTitle2}>{item.title}</Text>
-                                <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.description}</Text>
+                        <View style={styleslocal.actionHistoryItem}>
+                            <View style={styleslocal.actionHistoryRight}>
+                                <Text style={styleslocal.actionHistoryTitle}>{item.serviceName} ({item.serviceGroupTitle})</Text>
+                                <Text style={styleslocal.actionHistoryTitle2}>{item.title}</Text>
+                                <Text style={styleslocal.actionResult}>{item.description}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styles.deleteItemButton} onPress={() => {
+                        <TouchableOpacity style={styleslocal.deleteItemButton} onPress={() => {
                             setNewRecognitionList(prevList => prevList.filter((_, i) => i !== index));
                         }}>
-                            <Ionicons name={'trash'} style={styles.deleteItemIcon} />
+                            <Ionicons name={'trash'} style={styleslocal.deleteItemIcon} />
                         </TouchableOpacity>
                     </View>
                 ))}
                 {reportDetail.damageReportInfo.reportRecognitionList.map((item, index) => (
                     <View key={index} >
-                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
-                            <View style={styles.actionHistoryRight}>
-                                <Text style={styles.actionHistoryTitle}>{item.serviceName} ({item.serviceGroupTitle})</Text>
-                                <Text style={styles.actionHistoryTitle2}>{item.title}</Text>
-                                <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.description}</Text>
+                        <View style={styleslocal.actionHistoryItem}>
+                            <View style={styleslocal.actionHistoryRight}>
+                                <Text style={styleslocal.actionHistoryTitle}>{item.serviceName} ({item.serviceGroupTitle})</Text>
+                                <Text style={styleslocal.actionHistoryTitle2}>{item.title}</Text>
+                                <Text style={styleslocal.actionResult}>{item.description}</Text>
                             </View>
                         </View>
                     </View>
@@ -106,17 +106,18 @@ const styleslocal = StyleSheet.create({
     },
     sectionTitle: {
         fontFamily: 'iransansbold',
-        fontSize: 12,
+        fontSize: 14,
         width: '85%',
         marginHorizontal: 'auto',
-        marginTop: 10,
+        marginTop: 15,
+        marginBottom: 5,
         color: colors.black,
     },
     label: {
         color: colors.text,
-        fontSize: 11,
-        marginTop: 5,
-        marginBottom: 5,
+        fontSize: 12,
+        marginTop: 8,
+        marginBottom: 6,
         width: '85%',
         margin: 'auto',
         fontFamily: 'iransansbold',
@@ -129,12 +130,17 @@ const styleslocal = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 13,
         backgroundColor: colors.white,
-        borderRadius: 8,
+        borderRadius: 10,
         textAlign: 'right',
         direction: 'rtl',
-        paddingVertical: 2,
+        paddingVertical: 8,
         paddingHorizontal: 15,
         color: colors.text,
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
     },
     textArea: {
         borderColor: colors.gray,
@@ -144,25 +150,35 @@ const styleslocal = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 13,
         backgroundColor: colors.white,
-        borderRadius: 8,
+        borderRadius: 10,
         textAlign: 'right',
         direction: 'rtl',
-        paddingVertical: 4,
+        paddingVertical: 8,
         paddingHorizontal: 15,
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
     },
     dropdown: {
         backgroundColor: colors.white,
         borderWidth: 1,
         borderColor: colors.lightgray,
-        borderRadius: 7,
+        borderRadius: 10,
         width: '85%',
         marginHorizontal: '7.5%',
         alignContent: 'center',
         alignItems: 'center',
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
     },
     dropdownText: {
-        paddingVertical: 5,
-        paddingHorizontal: 5,
+        paddingVertical: 8,
+        paddingHorizontal: 8,
         textAlign: 'center',
         width: '100%',
         fontFamily: 'iransans',
@@ -179,17 +195,77 @@ const styleslocal = StyleSheet.create({
     submitButton: {
         width: '85%',
         marginHorizontal: '7.5%',
-        marginTop: 15,
-        paddingVertical: 5,
+        marginTop: 20,
+        paddingVertical: 10,
         backgroundColor: colors.emerald,
-        borderRadius: 5,
+        borderRadius: 10,
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+        elevation: 3,
     },
     submitButtonText: {
-        fontFamily: 'iransans',
-        fontSize: 14,
+        fontFamily: 'iransansbold',
+        fontSize: 15,
         textAlign: 'center',
         color: colors.white,
     },
+    deleteItemButton: {
+        position: 'absolute',
+        left: 10,
+        top: 10,
+        backgroundColor: colors.white,
+        padding: 6,
+        borderRadius: 20,
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.2,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    deleteItemIcon: {
+        fontSize: 20,
+        color: colors.red,
+    },
+    actionHistoryItem: {
+        backgroundColor: colors.antiflashWhite,
+        marginBottom: 12,
+        borderRadius: 10,
+        padding: 12,
+        shadowColor: colors.black,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+    },
+    actionHistoryRight: {
+        flexDirection: 'column',
+        gap: 8,
+    },
+    actionHistoryTitle: {
+        fontFamily: 'iransansbold',
+        fontSize: 14,
+        color: colors.black,
+        marginBottom: 4,
+    },
+    actionHistoryTitle2: {
+        fontFamily: 'iransans',
+        fontSize: 13,
+        color: colors.text,
+        lineHeight: 20,
+    },
+    actionResult: {
+        fontFamily: 'iransans',
+        fontSize: 13,
+        color: colors.text,
+        lineHeight: 20,
+        textAlign: 'right',
+    },
+    contents: {
+        backgroundColor: colors.white,
+        paddingTop: 15,
+    }
 });
 
 export default ReportRecognition;
