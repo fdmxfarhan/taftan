@@ -17,6 +17,10 @@ import { GetModuleInUserStore } from '../services/device-config-GetModuleInUserS
 import ScanPopup from './scan-popup';
 import MultiSelectDropdown from './multi-select-dropdown';
 import { loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId } from '../services/device-config-henzaRecognition';
+import SerialMismatchPopup from './serial-mismatch-popup';
+import DuplicateItemPopup from './duplicate-item-popup';
+import InsufficientStockPopup from './insufficient-stock-popup';
+import MaxModulesExceededPopup from './max-modules-exceeded-popup';
 const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason }) => {
     var [garantieConflict, setgarantieConflict] = useState(false);
     var [softwareProcess, setsoftwareProcess] = useState(false);
@@ -36,6 +40,10 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     var [description, setdescription] = useState('');
     var [garantiDOAList, setgarantiDOAList] = useState([]);
     var [deviceConfigList, setdeviceConfigList] = useState([]);
+    var [serialMismatchPopup, setSerialMismatchPopup] = useState(false);
+    var [duplicateItemPopup, setDuplicateItemPopup] = useState(false);
+    var [insufficientStockPopup, setInsufficientStockPopup] = useState(false);
+    var [maxModulesExceededPopup, setMaxModulesExceededPopup] = useState(false);
     const updateModuleGroupTitleList = async () => {
         var result = await GetModuleGroupTitleList();
         if (result.success) {
@@ -54,7 +62,9 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     const updateOfficeKey = async () => {
         var result = await GetAreaByRequest(reportDetail.requestReportInfo.requestId);
         if (result.success) {
-            setOfficeKey(result.data);
+            officeKey = result.data;
+            // console.log(officeKey);
+            setOfficeKey(officeKey);
         }
         else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
     }
@@ -95,6 +105,14 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         }
     }
     const addComponentChanges = async () => {
+        // Check for old serial mismatch
+        if (selectedPreviousModule && selectedPreviousModule.HaveSerial) {
+            const found = deviceConfigList.some(config => config.serial == moduleoldSerial);
+            if (!found) {
+                setSerialMismatchPopup(true);
+                return;
+            }
+        }
         var newcomponentChanges = {
             moduleGroup: moduleGroup,
             componentAction: componentAction,
@@ -121,6 +139,10 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setmoduleListBrandFiltered(moduleListBrand);
         setmoduleGroupListFiltered(moduleGroupList);
     };
+    const handleSerialMismatchConfirm = () => {
+        // Add your logic here for handling the serial mismatch confirmation
+        setModuleNewSerial(moduleNewSerial);
+    }
     useEffect(() => {
         setmoduleListBrandFiltered(moduleListBrand);
         if (reportDetail.requestReportInfo.serviceGroupId == 1 || reportDetail.requestReportInfo.serviceGroupId == 8) {
@@ -129,18 +151,26 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             setgarantiDOAList(['هیچکدام', 'DOA']);
         }
         const sendRequest = async () => {
-            console.log(reportDetail.requestReportInfo.deviceId);
+            // console.log(reportDetail.requestReportInfo.deviceId);
             var result = await loadDeviceConfigList(reportDetail.requestReportInfo.deviceId);
             if (result.success) {
                 setdeviceConfigList(result.data.Data);
             } else ToastAndroid.show('کانفیگ دستگاه دریافت نشد', ToastAndroid.SHORT);
         }
-        if (reportDetail) sendRequest();
+        if (reportDetail) {
+            sendRequest();
+            updateOfficeKey();
+        }
     }, [reportDetail, moduleListBrand]);
     return (
         <ScrollView style={styleslocal.contents}>
             <ScanPopup modalEnable={scanpopupEnableNew} setmodalEnable={setscanpopupEnableNew} onCodeScanned={handleCodeScannedNew} />
             <ScanPopup modalEnable={scanpopupEnableOld} setmodalEnable={setscanpopupEnableOld} onCodeScanned={handleCodeScannedOld} />
+            <SerialMismatchPopup popupEN={serialMismatchPopup} setPopupEN={setSerialMismatchPopup} onConfirm={handleSerialMismatchConfirm}/>
+            <DuplicateItemPopup popupEN={duplicateItemPopup} setPopupEN={setDuplicateItemPopup}/>
+            <InsufficientStockPopup popupEN={insufficientStockPopup} setPopupEN={setInsufficientStockPopup}/>
+            <MaxModulesExceededPopup popupEN={maxModulesExceededPopup} setPopupEN={setMaxModulesExceededPopup}/>
+            
             <Text style={styleslocal.sectionTitle}>اطلاعات قطعات:</Text>
             <CheckBox text={'قطعات مصرفی'} value={usedComponents} onChange={() => {
                 setusedComponents(!usedComponents);
@@ -185,10 +215,10 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                             <Text style={styles.label}>مدل ماژول جدید: </Text>
                             <DropDownObj
                                 list={moduleInUserStoreList}
-                                getLabel={(item) => item.Title}
-                                getValue={(item) => item.Title}
+                                getLabel={(item) => item.ModuleTitle}
+                                getValue={(item) => item.ModuleTitle}
                                 setValue={(item) => { setselectedNewModule(item); }}
-                                value={selectedNewModule.Title}
+                                value={selectedNewModule.ModuleTitle}
                                 buttonStyle={styles.dropdown}
                                 buttonTextStyle={styles.dropdownText}
                                 onSubmit={(val) => { }}
@@ -196,7 +226,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                             />
                         </View>
                         <View style={styles.dualInputPart}>
-                            {selectedNewModule && selectedNewModule.HaveSerial && (
+                            {selectedNewModule.ModuleTitle != 'انتخاب کنید' && selectedNewModule.HaveSerial && (
                                 <View>
                                     <Text style={styles.label}>سریال ماژول جدید: </Text>
                                     <View style={styles.inputWithActionView}>
@@ -214,6 +244,21 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                                             <Ionicons style={styles.inputWithActionIcon} name={'barcode'} />
                                         </TouchableOpacity>
                                     </View>
+                                </View>
+                            )}
+                            {selectedNewModule.ModuleTitle != 'انتخاب کنید' && !selectedNewModule.HaveSerial && (
+                                <View>
+                                    <Text style={styles.label}>تعداد ماژول جدید: </Text>
+                                    <TextInput
+                                        style={[styles.textInput]}
+                                        placeholder={'تعداد ماژول جدید'}
+                                        placeholderTextColor={colors.text}
+                                        value={moduleNewSerial}
+                                        multiline={true}
+                                        returnKeyType={'next'}
+                                        keyboardType={'numeric'}
+                                        onChange={text => setModuleNewSerial(text.nativeEvent.text)}
+                                    />  
                                 </View>
                             )}
                         </View>
@@ -236,7 +281,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                             />
                         </View>
                         <View style={styles.dualInputPart}>
-                            {selectedPreviousModule && selectedPreviousModule.HaveSerial && (
+                            {selectedPreviousModule.Title != 'انتخاب کنید' && selectedPreviousModule.HaveSerial && (
                                 <View>
                                     <Text style={styles.label}>سریال ماژول قدیم: </Text>
                                     <View style={styles.inputWithActionView}>
@@ -256,7 +301,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                                     </View>
                                 </View>
                             )}
-                            {selectedPreviousModule && !selectedPreviousModule.HaveSerial && (
+                            {selectedPreviousModule.Title != 'انتخاب کنید' && !selectedPreviousModule.HaveSerial && (
                                 <View>
                                     <Text style={styles.label}>تعداد ماژول قدیم: </Text>
                                     <TextInput
@@ -353,11 +398,11 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             <View style={{ height: 20, }} />
             <Text style={styles.sectionTitle}>پیکربندی دستگاه:</Text>
             {deviceConfigList.map((item, index) => (
-                <View key={index}>
-                    <Text style={styles.deviceName}>مدل ماژول: {item.ModuleTitle}</Text>
-                    <Text style={styles.damageTitle}>کد انبار: {item.Code}</Text>
-                    <Text style={styles.damageTitle}>ماژول: {item.deviceHWTitle}</Text>
-                    <Text style={styles.date}>سریال: {item.serial}</Text>
+                <View style={styleslocal.deviceConfigItem} key={index}>
+                    <Text style={styleslocal.deviceName}>مدل ماژول: {item.ModuleTitle}</Text>
+                    <Text style={styleslocal.damageTitle}>کد انبار: {item.Code}</Text>
+                    <Text style={styleslocal.damageTitle}>ماژول: {item.deviceHWTitle}</Text>
+                    <Text style={styleslocal.date}>سریال: {item.serial}</Text>
                 </View>
             ))}
             <View style={{ height: 150, }} />
@@ -433,6 +478,51 @@ const styleslocal = StyleSheet.create({
         fontSize: 14,
         textAlign: 'center',
         color: colors.white,
+    },
+    deviceConfigItem: {
+        paddingVertical: 5,
+        paddingHorizontal: 15,
+        marginVertical: 0,
+        backgroundColor: colors.lightergray,
+        borderColor: colors.lightgray,
+        borderWidth: 1,
+        direction: 'rtl',
+    },
+    deviceName: {
+        fontSize: 14,
+        marginBottom: 2,
+        fontFamily: 'iransansbold',
+        direction: 'rtl',
+        color: colors.darkBackground,
+        textAlign: 'right',
+    },
+    damageTitle: {
+        fontSize: 12,
+        fontFamily: 'iransansbold',
+        color: colors.gray,
+        textAlign: 'right',
+    },
+    textTitle: {
+        fontSize: 12,
+        fontFamily: 'iransansbold',
+        color: colors.darkblue,
+        textAlign: 'right',
+        marginTop: 5,
+    },
+    date: {
+        position: 'absolute',
+        bottom: 5,
+        left: 15,
+        fontFamily: 'iransans',
+        fontSize: 12,
+    },
+    stateView: {
+        position: 'absolute',
+        top: 5,
+        left: 15,
+        flexDirection: 'row-reverse',
+        alignContent: 'center',
+        alignItems: 'center',
     },
 });
 

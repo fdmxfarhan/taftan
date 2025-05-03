@@ -9,14 +9,20 @@ import { loadDeviceConfigList } from '../services/device-load-config-list';
 import DropDownObj from './dropdown-obj';
 import CheckBox from './checkbox';
 import styles from '../styles/reqView';
-
-const ReportGarantiView = ({ garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange }) => {
+import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
+const ReportGarantiView = ({ reportDetail, garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange }) => {
     var [usedComponents, setusedComponents] = useState(false);
     var [componentAction, setcomponentAction] = useState('تعویض');
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
-
+    var [warrantyList, setwarrantyList] = useState([]);
+    var [selectedWarranty, setselectedWarranty] = useState({description: 'انتخاب کنید', Id: 0});
+    useEffect(() => {
+        GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId).then(res => {
+            setwarrantyList(res.data);
+        });
+    }, []);
     return (
         <ScrollView style={styleslocal.contents}>
             <Text style={styleslocal.sectionTitle}>اطلاعات نقض گارانتی:</Text>
@@ -28,11 +34,11 @@ const ReportGarantiView = ({ garantieConflict, setgarantieConflict, softwareProc
                 {(softwareProcess || serviceAndRepair || moduleExchange) && (<View>
                     <Text style={styles.label}>علت نقض گارانتی: </Text>
                     <DropDownObj
-                        list={[]}
-                        getLabel={(item) => item.title}
-                        getValue={(item) => item.title}
-                        setValue={(item) => { }}
-                        value={'asdf'}
+                        list={warrantyList}
+                        getLabel={(item) => item.description}
+                        getValue={(item) => item.Id}
+                        setValue={(item) => { setselectedWarranty(item) }}
+                        value={selectedWarranty.description}
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
                         onSubmit={(val) => { }}

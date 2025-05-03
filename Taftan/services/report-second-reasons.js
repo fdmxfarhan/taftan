@@ -90,7 +90,7 @@ export const SecondReportTitleTitleList = async (serviceGroupId) => {
                 },
             ]
         };
-        response = await api.get(`SecondReportCause/SecondReportTitleTitleList?isActive=true&serviceGroupId=${serviceGroupId}`, {
+        response = await api.get(`/SecondReportCause/SecondReportTitleTitleList?isActive=true&serviceGroupId=${serviceGroupId}`, {
             headers: {
                 authorization: authData.token,
                 Accessid: authData.Constraintid,

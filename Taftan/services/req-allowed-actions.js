@@ -2,23 +2,19 @@ import api from '../config/api';
 import { use_local_data } from '../config/consts';
 import { getAuthData } from './auth';
 
-export const LoadAllowedRequestAction = async (requestId, token) => {
+export const LoadAllowedRequestAction = async (requestId) => {
     const authData = await getAuthData();
     try {
         if (use_local_data) return {
-            success: true,
-            data: [
-                // "SendToExpert",
-                // "SendToOffice",
+            success: true, data: [
                 "InsertReport",
-                // "RequestStatus",
+                "RequestStatus",
+                "SendToExpert",
                 "Closed",
-                // "OfficerApprove",
-                // "adminApprove",
                 "Cancel",
-                // "Return",
             ]
         };
+        console.log(requestId);
         const response = await api.get(`/RequestController/LoadAllowedRequestAction?requestId=${requestId}`, {
             headers: {
                 authorization: authData.token,
@@ -26,6 +22,7 @@ export const LoadAllowedRequestAction = async (requestId, token) => {
                 Constraintid: authData.Constraintid,
             }
         });
+        console.log(response.data);
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /RequestController/LoadAllowedRequestAction request:', error);

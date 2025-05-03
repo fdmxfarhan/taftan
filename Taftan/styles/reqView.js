@@ -329,7 +329,7 @@ module.exports = StyleSheet.create({
     },
     requiredBorder: {
         borderRightWidth: 5,
-        borderRightColor: colors.red2,
+        // borderRightColor: colors.red2,
     },
     dropdown: {
         backgroundColor: colors.antiflashWhite,

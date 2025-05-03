@@ -232,7 +232,7 @@ const DamageReqView = (props) => {
             setareaDetail(result.data);
         } else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
 
-        result = await LoadAllowedRequestAction(reqInfo.requestId, authData.token);
+        result = await LoadAllowedRequestAction(reqInfo.requestId);
         if (result.success) {
             setallowdActionList(result.data);
         } else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);

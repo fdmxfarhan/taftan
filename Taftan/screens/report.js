@@ -37,7 +37,7 @@ const Report = (props) => {
     var [cityName, setcityName] = useState({ "id": 10528, "cityName": "تهران", "provinceId": 8, "isActive": true });
     var [zoneName, setzoneName] = useState({"id": 36,"title": "منطقه 1-آجودانیه","cityId": 0,"isActive": true});
     var [moduleGroup, setModuleGroup] = useState({Title: 'انتخاب کنید'});
-    var [selectedNewModule, setselectedNewModule] = useState({Title: 'انتخاب کنید'});
+    var [selectedNewModule, setselectedNewModule] = useState({ModuleTitle: 'انتخاب کنید'});
     var [selectedPreviousModule, setselectedPreviousModule] = useState({Title: 'انتخاب کنید'});
     var [officeKey, setOfficeKey] = useState('00000000-0000-0000-0000-000000000000');
     var [moduleGroupKey, setmoduleGroupKey] = useState('00000000-0000-0000-0000-000000000000');
@@ -53,6 +53,16 @@ const Report = (props) => {
     var [moduleNewSerial, setModuleNewSerial] = useState('');
     var [componentChangesList, setcomponentChangesList] = useState([]);
     var [selectedDOAReason, setselectedDOAReason] = useState('انتخاب کنید');
+    var [installationReportInfo, setinstallationReportInfo] = useState({
+        sourceAddress: '',
+        destinationAddress: '',
+        deviceName: '',
+        deviceSerial: '',
+        deviceTerminal: '',
+        deviceCodeNumber: '',
+        longitude: '',
+        latitude: '',
+    });
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -74,7 +84,8 @@ const Report = (props) => {
         var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id);
         if (result.success) {
             reportDetail = result.data;
-            setreportDetail(result.data);
+            setreportDetail(reportDetail);
+            setinstallationReportInfo(reportDetail.installReportInfo);
         }
         else ToastAndroid.show('جزئیات لود نشد', ToastAndroid.SHORT);
 
@@ -115,7 +126,7 @@ const Report = (props) => {
                         <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} setrecognitionExpertList={setrecognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} reportDetail={reportDetail} newRecognitionList={newRecognitionList} setNewRecognitionList={setNewRecognitionList} />
                     )}
                     {reportDetail.requestReportInfo.serviceGroupId == 3 && (
-                        <ReportInstallation reportDetail={reportDetail} provinceName={provinceName} setprovinceName={setprovinceName} cityName={cityName} setcityName={setcityName}  zoneName={zoneName} setzoneName={setzoneName} />
+                        <ReportInstallation reportDetail={reportDetail} provinceName={provinceName} setprovinceName={setprovinceName} cityName={cityName} setcityName={setcityName}  zoneName={zoneName} setzoneName={setzoneName} installationReportInfo={installationReportInfo} setinstallationReportInfo={setinstallationReportInfo} />
                     )}
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab1')}>
@@ -155,6 +166,7 @@ const Report = (props) => {
                         setserviceAndRepair={setserviceAndRepair}
                         moduleExchange={moduleExchange}
                         setmoduleExchange={setmoduleExchange}
+                        reportDetail={reportDetail}
                     />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>

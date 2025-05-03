@@ -6,7 +6,7 @@ export const LoadProvinceList = async () => {
     const authData = await getAuthData();
     var response = null;
     try {
-        if (use_local_data) return {
+        if (true || use_local_data) return {
             success: true, data: [
                 {
                     "id": 1,
