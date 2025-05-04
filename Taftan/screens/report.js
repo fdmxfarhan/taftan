@@ -74,6 +74,7 @@ const Report = (props) => {
     var [isTab7Valid, setIsTab7Valid] = useState(false);
     var [questionnaireAnswers, setQuestionnaireAnswers] = useState({});
     var [questionnaireDescriptions, setQuestionnaireDescriptions] = useState({});
+    var [selectedWarranties, setSelectedWarranties] = useState([]);
 
     const handleSearchPress = () => {
         props.navigation.goBack();
@@ -280,6 +281,8 @@ const Report = (props) => {
                         reportDetail={reportDetail}
                         setIsValid={setIsTab4Valid}
                         navigation={props.navigation}
+                        selectedWarranties={selectedWarranties}
+                        setSelectedWarranties={setSelectedWarranties}
                     />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3.5')}>

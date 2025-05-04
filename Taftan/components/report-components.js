@@ -23,14 +23,9 @@ import InsufficientStockPopup from './insufficient-stock-popup';
 import MaxModulesExceededPopup from './max-modules-exceeded-popup';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
 const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason, setIsValid, navigation }) => {
-    var [garantieConflict, setgarantieConflict] = useState(false);
-    var [softwareProcess, setsoftwareProcess] = useState(false);
-    var [serviceAndRepair, setserviceAndRepair] = useState(false);
-    var [moduleExchange, setmoduleExchange] = useState(false);
     var [componentAction, setcomponentAction] = useState('تعویض');
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
-    var [damageBeforeUse, setdamageBeforeUse] = useState(false);
     var [moduleGroupList, setmoduleGroupList] = useState([]);
     var [moduleGroupListFiltered, setmoduleGroupListFiltered] = useState([]);
     var [moduleListBrandFiltered, setmoduleListBrandFiltered] = useState([]);
@@ -52,7 +47,6 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         if (result.success) {
             setmoduleGroupList(result.data);
             setmoduleGroupListFiltered(result.data);
-            // console.log(result.data);
         }
         else ToastAndroid.show('لیست گروه ماژول دریافت نشد.', ToastAndroid.SHORT);
     }
@@ -67,7 +61,6 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         var result = await GetAreaByRequest(reportDetail.requestReportInfo.requestId);
         if (result.success) {
             officeKey = result.data;
-            // console.log(officeKey);
             setOfficeKey(officeKey);
         }
         else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
@@ -110,10 +103,33 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     }
     const addComponentChanges = async () => {
         // Check for old serial mismatch
+        if (componentAction == 'حذف'){
+            if (selectedPreviousModule.Title === 'انتخاب کنید') {
+                ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
+                return;
+            }
+        }
+        else if(componentAction == 'اضافه'){
+            if (selectedNewModule.ModuleTitle === 'انتخاب کنید') {
+                ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
+                return;
+            }
+        }
+        else if(componentAction == 'تعویض'){
+            if (selectedPreviousModule.Title === 'انتخاب کنید' || selectedNewModule.ModuleTitle === 'انتخاب کنید') {
+                ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
+                return;
+            }
+        }
         if (selectedPreviousModule && selectedPreviousModule.HaveSerial) {
             const found = deviceConfigList.some(config => config.serial == moduleoldSerial);
             if (!found) {
-                setSerialMismatchPopup(true);
+                if(componentAction == 'حذف'){
+                    setSerialMismatchPopup(true);
+                }
+                else{
+                    setSerialMismatchPopup(true);
+                }
                 return;
             }
         }
@@ -135,17 +151,42 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setselectedDOAReason('انتخاب کنید');
         setModuleNewSerial('');
         setModuleoldSerial('');
-        setselectedNewModule(null);
-        setselectedPreviousModule(null);
+        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
+        setselectedPreviousModule({Title: 'انتخاب کنید'});
         setdescription('');
         setnoRepairNeeded(false);
         setDOAorGarantieConflict('هیچکدام');
         setmoduleListBrandFiltered(moduleListBrand);
         setmoduleGroupListFiltered(moduleGroupList);
+        ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
     };
     const handleSerialMismatchConfirm = () => {
-        // Add your logic here for handling the serial mismatch confirmation
-        setModuleNewSerial(moduleNewSerial);
+        var newcomponentChanges = {
+            moduleGroup: moduleGroup,
+            componentAction: 'حذف-مغایرت',
+            moduleNewSerial: moduleNewSerial,
+            moduleOldSerial: moduleoldSerial,
+            NewModule: selectedNewModule,
+            PreviousModule: selectedPreviousModule,
+            description: description,
+            noRepairNeeded: noRepairNeeded,
+            DOAorGarantieConflict: DOAorGarantieConflict,
+            damageDescriptions: selectedDamageDescriptions,
+            selectedDOAReason: selectedDOAReason == 'انتخاب کنید' ? null : selectedDOAReason,
+        };
+        setcomponentChangesList([...componentChangesList, newcomponentChanges]);
+        setSelectedDamageDescriptions([]);
+        setselectedDOAReason('انتخاب کنید');
+        setModuleNewSerial('');
+        setModuleoldSerial('');
+        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
+        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setdescription('');
+        setnoRepairNeeded(false);
+        setDOAorGarantieConflict('هیچکدام');
+        setmoduleListBrandFiltered(moduleListBrand);
+        setmoduleGroupListFiltered(moduleGroupList);
+        ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
     }
     useEffect(() => {
         setIsValid(true);
@@ -157,7 +198,6 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             setgarantiDOAList(['هیچکدام', 'DOA']);
         }
         const sendRequest = async () => {
-            // console.log(reportDetail.requestReportInfo.deviceId);
             var result = await loadDeviceConfigList(reportDetail.requestReportInfo.deviceId);
             if (result.success) {
                 setdeviceConfigList(result.data.Data);
@@ -400,10 +440,20 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 <View key={index} >
                     <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
                         <View style={styles.actionHistoryRight}>
-                            <Text style={styles.actionHistoryTitle}>ماژول قدیم: {item.PreviousModule.Title} ({item.moduleOldSerial})</Text>
-                            <Text style={styles.actionHistoryTitle}>ماژول جدید: {item.NewModule.Title} ({item.moduleNewSerial})</Text>
-                            <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.componentAction}</Text>
+                            {(item.componentAction == 'تعویض' || item.componentAction == 'حذف' || item.componentAction == 'حذف-مغایرت') && (<Text style={styles.actionHistoryTitle}>ماژول قدیم: {item.PreviousModule.Title} ({item.moduleOldSerial})</Text>)}
+                            {(item.componentAction == 'تعویض' || item.componentAction == 'اضافه') && (<Text style={styles.actionHistoryTitle}>ماژول جدید: {item.NewModule.Title} ({item.moduleNewSerial})</Text>)}
+                            <Text style={[styles.actionResult, { textAlign: 'right', color: colors.red2 }]}>{item.componentAction}</Text>
                         </View>
+                        <TouchableOpacity 
+                            style={styleslocal.deleteButton}
+                            onPress={() => {
+                                const newList = [...componentChangesList];
+                                newList.splice(index, 1);
+                                setcomponentChangesList(newList);
+                            }}
+                        >
+                            <Ionicons name="trash-outline" size={20} color={colors.red} />
+                        </TouchableOpacity>
                     </View>
                 </View>
             ))}
@@ -536,6 +586,12 @@ const styleslocal = StyleSheet.create({
         flexDirection: 'row-reverse',
         alignContent: 'center',
         alignItems: 'center',
+    },
+    deleteButton: {
+        position: 'absolute',
+        left: 10,
+        top: 10,
+        padding: 5,
     },
 });
 

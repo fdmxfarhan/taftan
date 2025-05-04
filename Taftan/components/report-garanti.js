@@ -11,16 +11,27 @@ import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
 import MultiSelectDropdown from './multi-select-dropdown';
-const ReportGarantiView = ({ navigation, reportDetail, garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange, setIsValid }) => {
-    var [usedComponents, setusedComponents] = useState(false);
-    var [componentAction, setcomponentAction] = useState('تعویض');
-    var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
-    var [noRepairNeeded, setnoRepairNeeded] = useState(false);
-    var [damageBeforeUse, setdamageBeforeUse] = useState(false);
+const ReportGarantiView = ({ navigation, reportDetail, garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange, setIsValid, selectedWarranties, setSelectedWarranties }) => {
     var [warrantyList, setwarrantyList] = useState([]);
-    var [selectedWarranties, setSelectedWarranties] = useState([]);
     useEffect(() => {
-        setIsValid(true);
+        if(garantieConflict){
+            if(softwareProcess || serviceAndRepair || moduleExchange){
+                if(selectedWarranties.length > 0){
+                    setIsValid(true);
+                }
+                else{
+                    setIsValid(false);
+                }
+            }
+            else{
+                setIsValid(false);
+            }
+        }
+        else{
+            setIsValid(true);
+        }
+    }, [garantieConflict, softwareProcess, serviceAndRepair, moduleExchange, selectedWarranties]);
+    useEffect(() => {
         GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId, navigation).then(res => {
             setwarrantyList(res.data);
         });
