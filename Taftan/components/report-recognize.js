@@ -8,9 +8,9 @@ import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
 import { GetRecognitionExpertByDeviceTypeId } from '../services/get-recognition-expert';
 
-const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, recognitionExpertList, setrecognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription, reportDetail, newRecognitionList, setNewRecognitionList }) => {
+const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, recognitionExpertList, setrecognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription, reportDetail, newRecognitionList, setNewRecognitionList, setIsValid }) => {
     useEffect(() => {
-
+        setIsValid(true);
     }, [newRecognitionList]);
     var updateRecognitionExpertList = async (resaon) => {
         result = await GetRecognitionExpertByDeviceTypeId(reportDetail.requestReportInfo.deviceTypeKey, resaon.Id);

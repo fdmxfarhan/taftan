@@ -3,9 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const ReportQuestionnaire = () => {
-    const [answers, setAnswers] = useState({});
-    const [descriptions, setDescriptions] = useState({});
+const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, setDescriptions }) => {
     const [expandedGroups, setExpandedGroups] = useState({});
 
     const questionnaires = [
@@ -96,6 +94,15 @@ const ReportQuestionnaire = () => {
         });
         setExpandedGroups(initialExpandedGroups);
     }, []);
+
+    useEffect(() => {
+        // Check if all questions in all questionnaires are complete
+        const allQuestionsComplete = questionnaires.every(questionnaire => 
+            questionnaire.groups.every(group => isGroupComplete(group))
+        );
+        
+        setIsValid(allQuestionsComplete);
+    }, [answers, descriptions, setIsValid]);
 
     const handleAnswerChange = (questionId, value) => {
         setAnswers(prev => ({

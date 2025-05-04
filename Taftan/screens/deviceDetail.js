@@ -57,7 +57,7 @@ const DeviceDetailView = (props) => {
     const handleSearchPress = () => props.navigation.goBack();
     const toggleMenu = () => setMenuVisible(!menuVisible);
     const sendRequest = async () => {
-        var result = await GetDeviceDetail(deviceInfo.id);
+        var result = await GetDeviceDetail(deviceInfo.id, props.navigation);
         if (result.success) {
             deviceDetail = result.data;
             setcustomerName(deviceDetail.customerName);

@@ -11,6 +11,7 @@ const ReqActionInfo = ({ toggleactionsInfo, actionsInfo, requestDetail, actionsH
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
     const navigateToReport = async (item) => {
+        var result = await loadReportDetail(requestDetail.requestInfo.requestId, item.reportId, item.id, navigation);
         navigation.navigate('Report', {item, requestDetail, reportInfo: item});
     };
     return (

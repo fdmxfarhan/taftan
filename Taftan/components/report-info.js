@@ -10,7 +10,7 @@ import AreaDetailPopup from './rec-popup-area-detail';
 import { GetAreaDetail } from '../services/area-detail';
 import { SecondReportTitleTitleList } from '../services/report-second-reasons';
 
-const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecondReportReason }) => {
+const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecondReportReason, setIsValid }) => {
     var [testVal, setTestVal] = useState('-');
     var testList = [{ title: 'label1' }, { title: 'label2' }, { title: 'label3' }, { title: 'label4' }, { title: 'label5' }, { title: 'label6' }, { title: 'label7' }, { title: 'label8' }, { title: 'label9' }, { title: 'label10' },]
     var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
@@ -28,6 +28,7 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
         if (reportDetail) {
             if (reportDetail.reportInfo.isSecondReport) sendRequest();
         }
+        setIsValid(true);
     }, [reportDetail, isLoading])
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;

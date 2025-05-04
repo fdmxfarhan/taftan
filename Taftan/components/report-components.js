@@ -22,7 +22,7 @@ import DuplicateItemPopup from './duplicate-item-popup';
 import InsufficientStockPopup from './insufficient-stock-popup';
 import MaxModulesExceededPopup from './max-modules-exceeded-popup';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
-const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason }) => {
+const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason, setIsValid, navigation }) => {
     var [garantieConflict, setgarantieConflict] = useState(false);
     var [softwareProcess, setsoftwareProcess] = useState(false);
     var [serviceAndRepair, setserviceAndRepair] = useState(false);
@@ -48,10 +48,11 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     var [selectedWarrantyReasons, setSelectedWarrantyReasons] = useState([]);
     var [warrantyList, setwarrantyList] = useState([]);
     const updateModuleGroupTitleList = async () => {
-        var result = await GetModuleGroupTitleList();
+        var result = await GetModuleGroupTitleList(navigation);
         if (result.success) {
             setmoduleGroupList(result.data);
             setmoduleGroupListFiltered(result.data);
+            // console.log(result.data);
         }
         else ToastAndroid.show('لیست گروه ماژول دریافت نشد.', ToastAndroid.SHORT);
     }
@@ -83,7 +84,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
     }
     const updateModuleInUserStore = async () => {
-        var result = await GetModuleInUserStore(moduleGroupKey, officeKey);
+        var result = await GetModuleInUserStore(moduleGroupKey, officeKey, navigation);
         if (result.success) {
             setmoduleInUserStoreList(result.data);
         }
@@ -147,6 +148,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setModuleNewSerial(moduleNewSerial);
     }
     useEffect(() => {
+        setIsValid(true);
+        updateModuleGroupTitleList();
         setmoduleListBrandFiltered(moduleListBrand);
         if (reportDetail.requestReportInfo.serviceGroupId == 1 || reportDetail.requestReportInfo.serviceGroupId == 8) {
             setgarantiDOAList(['هیچکدام', 'DOA', 'نقض گارانتی']);
@@ -410,8 +413,9 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 <View style={styleslocal.deviceConfigItem} key={index}>
                     <Text style={styleslocal.deviceName}>مدل ماژول: {item.ModuleTitle}</Text>
                     <Text style={styleslocal.damageTitle}>کد انبار: {item.Code}</Text>
-                    <Text style={styleslocal.damageTitle}>ماژول: {item.deviceHWTitle}</Text>
-                    <Text style={styleslocal.date}>سریال: {item.serial}</Text>
+                    <Text style={styleslocal.damageTitle}>گروه ماژول: {item.ModuleGroupTitle}</Text>
+                    {item.haveSerial && (<Text style={styleslocal.date}>سریال: {item.serial}</Text>)}
+                    {!item.haveSerial && (<Text style={styleslocal.date}>تعداد: {item.count}</Text>)}
                 </View>
             ))}
             <View style={{ height: 150, }} />

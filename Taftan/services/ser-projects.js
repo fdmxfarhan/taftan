@@ -1,8 +1,8 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
-import { getAuthData } from './auth';
+import { getAuthData, logout } from './auth';
 
-export const submitProjectRequest = async (skip, take) => {
+export const submitProjectRequest = async (skip, take, navigation) => {
     const authData = await getAuthData();
     try {
         if (use_local_data) return {
@@ -251,7 +251,22 @@ export const submitProjectRequest = async (skip, take) => {
                 "TotalCount": 27
             }
         }
-        const response = await api.post('/RequestProjectController/loadAllProjectRequestList', { "skip": skip, "take": take, "sort": [{ "field": "id", "dir": "desc" }], "filter": { "logic": "and", "filters": [{ "field": "IsArchived", "operator": "Eq", "value": 0 }] } }, {
+        const response = await api.post('/ProjectRequest/LoadAllProjectRequestList', {
+            "skip": skip,
+            "take": take,
+            "sort": [{
+                "field": "id",
+                "dir": "desc"
+            }],
+            "filter": {
+                "logic": "and",
+                "filters": [{
+                    "field": "IsArchived",
+                    "operator": "Eq",
+                    "value": 0
+                }]
+            }
+        }, {
             headers: {
                 Authorization: authData.token,
                 Accessid: authData.Constraintid,
@@ -261,6 +276,20 @@ export const submitProjectRequest = async (skip, take) => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting loadAllProjectRequestList request:', error);
+        
+        if (error.response) {
+            if (error.response.status === 401 || error.response.status === 403) {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Unauthorized access' };
+            }
+            if (error.response.data?.Message === "Authorization has been denied for this request.") {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Authorization denied' };
+            }
+        }
+        
         return { success: false, error: 'Failed to submit loadAllProjectRequestList request' };
     }
 };

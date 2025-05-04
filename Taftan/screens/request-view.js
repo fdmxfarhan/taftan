@@ -158,7 +158,7 @@ const DamageReqView = (props) => {
         userToken = authData.token;
         setuserToken(userToken);
 
-        var result = await getRequestDetail(reqInfo.requestId);
+        var result = await getRequestDetail(reqInfo.requestId, props.navigation);
         if (result.success) {
             if (result.data != 'داده پیدا نشد') {
                 requestDetail = result.data;
@@ -222,7 +222,7 @@ const DamageReqView = (props) => {
             setbranchInfo(result.data);
         } else ToastAndroid.show('اطلاعات شعبه بارگیری نشد.', ToastAndroid.SHORT);
 
-        result = await GetDeviceDetail(requestDetail.requestInfo.deviceId);
+        result = await GetDeviceDetail(requestDetail.requestInfo.deviceId, props.navigation);
         if (result.success) {
             setdeviceDetail(result.data);
         } else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
@@ -232,7 +232,7 @@ const DamageReqView = (props) => {
             setareaDetail(result.data);
         } else ToastAndroid.show('اطلاعات دفتر بارگیری نشد.', ToastAndroid.SHORT);
 
-        result = await LoadAllowedRequestAction(reqInfo.requestId);
+        result = await LoadAllowedRequestAction(reqInfo.requestId, props.navigation);
         if (result.success) {
             setallowdActionList(result.data);
         } else ToastAndroid.show('لیست دسترسی‌ها بارگیری نشد.', ToastAndroid.SHORT);

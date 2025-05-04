@@ -1,8 +1,8 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
-import { getAuthData } from './auth';
+import { getAuthData, logout } from './auth';
 
-export const GetWarrantyListByRequestId = async (requestId) => {
+export const GetWarrantyListByRequestId = async (requestId, navigation) => {
     const authData = await getAuthData();
     var response = null;
     try {
@@ -32,7 +32,21 @@ export const GetWarrantyListByRequestId = async (requestId) => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submiting /RequestController/GetWarrantyListByRequestId request:', error);
-        return { success: false };
+        
+        if (error.response) {
+            if (error.response.status === 401 || error.response.status === 403) {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Unauthorized access' };
+            }
+            if (error.response.data?.Message === "Authorization has been denied for this request.") {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Authorization denied' };
+            }
+        }
+        
+        return { success: false, error: 'Failed to submit request' };
     }
 };
 

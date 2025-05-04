@@ -8,7 +8,7 @@ import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
 import { ToastAndroid } from 'react-native';
 
-const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail, newactionList, setnewactionList }) => {
+const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail, newactionList, setnewactionList, setIsValid }) => {
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;
         if (detail.requestReportInfo.serviceGroupId == 2) return detail.pmReportInfo;
@@ -20,6 +20,9 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
         if (detail.requestReportInfo.serviceGroupId == 10) return detail.siteReportInfo;
         if (detail.requestReportInfo.serviceGroupId == 11) return detail.siteReportInfo;
     }
+    useEffect(() => {
+        setIsValid(true);
+    }, []);
     return (
         <ScrollView style={styleslocal.contents}>
             {/* <Text style={styleslocal.sectionTitle}>اقدامات انجام شده:</Text> */}

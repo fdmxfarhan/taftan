@@ -67,7 +67,7 @@ const DeviceListView = (props) => {
         props.navigation.navigate('DeviceDetailView', { item });
     };
     const handleCall = async (item) => {
-        var result = await GetDeviceDetail(item.id);
+        var result = await GetDeviceDetail(item.id, props.navigation);
         if (result.success) {
             var deviceDetail = result.data;
             const url = `tel:${deviceDetail.installationPhone}`;

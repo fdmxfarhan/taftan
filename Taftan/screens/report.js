@@ -64,6 +64,17 @@ const Report = (props) => {
         longitude: '',
         latitude: '',
     });
+    var [isTab1Valid, setIsTab1Valid] = useState(true);
+    var [isTab2Valid, setIsTab2Valid] = useState(false);
+    var [isTab3Valid, setIsTab3Valid] = useState(false);
+    var [isTab3_5Valid, setIsTab3_5Valid] = useState(false);
+    var [isTab4Valid, setIsTab4Valid] = useState(false);
+    var [isTab5Valid, setIsTab5Valid] = useState(false);
+    var [isTab6Valid, setIsTab6Valid] = useState(false);
+    var [isTab7Valid, setIsTab7Valid] = useState(false);
+    var [questionnaireAnswers, setQuestionnaireAnswers] = useState({});
+    var [questionnaireDescriptions, setQuestionnaireDescriptions] = useState({});
+
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -82,10 +93,9 @@ const Report = (props) => {
         if (detail.requestInfo.serviceGroup == 11) return detail.siteInfo.id;
     }
     const sendRequest = async () => {
-        var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id);
+        var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id, props.navigation);
         if (result.success) {
             reportDetail = result.data;
-            console.log(reportDetail)
             setreportDetail(reportDetail);
             setinstallationReportInfo(reportDetail.installReportInfo);
         }
@@ -106,6 +116,43 @@ const Report = (props) => {
     useEffect(() => {
         sendRequest();
     }, [])
+
+    const handleNextTab = (currentTab, nextTab) => {
+        let isValid = false;
+        switch (currentTab) {
+            case 'tab1':
+                isValid = isTab1Valid;
+                break;
+            case 'tab2':
+                isValid = isTab2Valid;
+                break;
+            case 'tab3':
+                isValid = isTab3Valid;
+                break;
+            case 'tab3.5':
+                isValid = isTab3_5Valid;
+                break;
+            case 'tab4':
+                isValid = isTab4Valid;
+                break;
+            case 'tab5':
+                isValid = isTab5Valid;
+                break;
+            case 'tab6':
+                isValid = isTab6Valid;
+                break;
+            case 'tab7':
+                isValid = isTab7Valid;
+                break;
+        }
+
+        if (!isValid) {
+            ToastAndroid.show('لطفا اطلاعات خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
+            return;
+        }
+        setTabItem(nextTab);
+    };
+
     return (
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
@@ -113,9 +160,15 @@ const Report = (props) => {
             <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} reportDetail={reportDetail} />
             {tabItem == 'tab1' && (
                 <View style={{ flex: 1, }}>
-                    <ReportInfoView reportDetail={reportDetail} isLoading={isLoading} secondReportReason={secondReportReason} setsecondReportReason={setsecondReportReason} />
+                    <ReportInfoView 
+                        reportDetail={reportDetail} 
+                        isLoading={isLoading} 
+                        secondReportReason={secondReportReason} 
+                        setsecondReportReason={setsecondReportReason}
+                        setIsValid={setIsTab1Valid}
+                    />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab2')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab1', 'tab2')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -125,17 +178,42 @@ const Report = (props) => {
             {tabItem == 'tab2' && (
                 <View style={{ flex: 1, }}>
                     {reportDetail.requestReportInfo.serviceGroupId == 1 && (
-                        <ReportRecognition damageReasonsList={damageReasonsList} damageReason={damageReason} setdamageReason={setdamageReason} recognitionExpertList={recognitionExpertList} setrecognitionExpertList={setrecognitionExpertList} recognitionExpert={recognitionExpert} setrecognitionExpert={setrecognitionExpert} description={description} setdescription={setdescription} reportDetail={reportDetail} newRecognitionList={newRecognitionList} setNewRecognitionList={setNewRecognitionList} />
+                        <ReportRecognition 
+                            damageReasonsList={damageReasonsList} 
+                            damageReason={damageReason} 
+                            setdamageReason={setdamageReason} 
+                            recognitionExpertList={recognitionExpertList} 
+                            setrecognitionExpertList={setrecognitionExpertList} 
+                            recognitionExpert={recognitionExpert} 
+                            setrecognitionExpert={setrecognitionExpert} 
+                            description={description} 
+                            setdescription={setdescription} 
+                            reportDetail={reportDetail} 
+                            newRecognitionList={newRecognitionList} 
+                            setNewRecognitionList={setNewRecognitionList}
+                            setIsValid={setIsTab2Valid}
+                        />
                     )}
                     {reportDetail.requestReportInfo.serviceGroupId == 3 && (
-                        <ReportInstallation reportDetail={reportDetail} provinceName={provinceName} setprovinceName={setprovinceName} cityName={cityName} setcityName={setcityName}  zoneName={zoneName} setzoneName={setzoneName} installationReportInfo={installationReportInfo} setinstallationReportInfo={setinstallationReportInfo} />
+                        <ReportInstallation 
+                            reportDetail={reportDetail} 
+                            provinceName={provinceName} 
+                            setprovinceName={setprovinceName} 
+                            cityName={cityName} 
+                            setcityName={setcityName}  
+                            zoneName={zoneName} 
+                            setzoneName={setzoneName} 
+                            installationReportInfo={installationReportInfo} 
+                            setinstallationReportInfo={setinstallationReportInfo}
+                            setIsValid={setIsTab2Valid}
+                        />
                     )}
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab1')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab2', 'tab3')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -144,13 +222,23 @@ const Report = (props) => {
             )}
             {tabItem == 'tab3' && (
                 <View style={{ flex: 1, }}>
-                    <ReportActions JobTitleList={JobTitleList} setjobTitle={setjobTitle} jobTitle={jobTitle} descriptionAction={descriptionAction} setdescriptionAction={setdescriptionAction} reportDetail={reportDetail} newactionList={newactionList} setnewactionList={setnewactionList} />
+                    <ReportActions 
+                        JobTitleList={JobTitleList} 
+                        setjobTitle={setjobTitle} 
+                        jobTitle={jobTitle} 
+                        descriptionAction={descriptionAction} 
+                        setdescriptionAction={setdescriptionAction} 
+                        reportDetail={reportDetail} 
+                        newactionList={newactionList} 
+                        setnewactionList={setnewactionList}
+                        setIsValid={setIsTab3Valid}
+                    />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab2')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3.5')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab3', 'tab3.5')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -159,13 +247,19 @@ const Report = (props) => {
             )}
             {tabItem == 'tab3.5' && (
                 <View style={{ flex: 1, }}>
-                    <ReportQuestionnaire />
+                    <ReportQuestionnaire 
+                        setIsValid={setIsTab3_5Valid} 
+                        answers={questionnaireAnswers}
+                        setAnswers={setQuestionnaireAnswers}
+                        descriptions={questionnaireDescriptions}
+                        setDescriptions={setQuestionnaireDescriptions}
+                    />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab3.5', 'tab4')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -184,13 +278,15 @@ const Report = (props) => {
                         moduleExchange={moduleExchange}
                         setmoduleExchange={setmoduleExchange}
                         reportDetail={reportDetail}
+                        setIsValid={setIsTab4Valid}
+                        navigation={props.navigation}
                     />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3.5')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab4', 'tab5')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -199,13 +295,40 @@ const Report = (props) => {
             )}
             {tabItem == 'tab5' && (
                 <View style={{ flex: 1, }}>
-                    <ReportcomponentsView reportDetail={reportDetail} moduleGroup={moduleGroup} setModuleGroup={setModuleGroup} officeKey={officeKey} setOfficeKey={setOfficeKey} moduleGroupKey={moduleGroupKey} moduleListBrand={moduleListBrand} setmoduleListBrand={setmoduleListBrand} selectedNewModule={selectedNewModule} setselectedNewModule={setselectedNewModule} selectedPreviousModule={selectedPreviousModule} setselectedPreviousModule={setselectedPreviousModule} moduleInUserStoreList={moduleInUserStoreList} setmoduleInUserStoreList={setmoduleInUserStoreList} usedComponents={usedComponents} setusedComponents={setusedComponents} moduleoldSerial={moduleoldSerial} setModuleoldSerial={setModuleoldSerial} moduleNewSerial={moduleNewSerial} setModuleNewSerial={setModuleNewSerial} componentChangesList={componentChangesList} setcomponentChangesList={setcomponentChangesList} selectedDOAReason={selectedDOAReason} setselectedDOAReason={setselectedDOAReason} />
+                    <ReportcomponentsView 
+                        reportDetail={reportDetail} 
+                        moduleGroup={moduleGroup} 
+                        setModuleGroup={setModuleGroup} 
+                        officeKey={officeKey} 
+                        setOfficeKey={setOfficeKey} 
+                        moduleGroupKey={moduleGroupKey} 
+                        moduleListBrand={moduleListBrand} 
+                        setmoduleListBrand={setmoduleListBrand} 
+                        selectedNewModule={selectedNewModule} 
+                        setselectedNewModule={setselectedNewModule} 
+                        selectedPreviousModule={selectedPreviousModule} 
+                        setselectedPreviousModule={setselectedPreviousModule} 
+                        moduleInUserStoreList={moduleInUserStoreList} 
+                        setmoduleInUserStoreList={setmoduleInUserStoreList} 
+                        usedComponents={usedComponents} 
+                        setusedComponents={setusedComponents} 
+                        moduleoldSerial={moduleoldSerial} 
+                        setModuleoldSerial={setModuleoldSerial} 
+                        moduleNewSerial={moduleNewSerial} 
+                        setModuleNewSerial={setModuleNewSerial} 
+                        componentChangesList={componentChangesList} 
+                        setcomponentChangesList={setcomponentChangesList} 
+                        selectedDOAReason={selectedDOAReason} 
+                        setselectedDOAReason={setselectedDOAReason}
+                        navigation={props.navigation}
+                        setIsValid={setIsTab5Valid}
+                    />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab6')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab5', 'tab6')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -214,13 +337,13 @@ const Report = (props) => {
             )}
             {tabItem == 'tab6' && (
                 <View style={{ flex: 1, }}>
-                    <ReportDamageBeforeUseView />
+                    <ReportDamageBeforeUseView setIsValid={setIsTab6Valid} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab7')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab6', 'tab7')}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -229,15 +352,14 @@ const Report = (props) => {
             )}
             {tabItem == 'tab7' && (
                 <View style={{ flex: 1, }}>
-                    <ReportUploadView />
+                    <ReportUploadView setIsValid={setIsTab7Valid} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab6')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.nextTabButton, { backgroundColor: colors.emerald }]} onPress={() => notWorking()}>
+                        <TouchableOpacity style={[styles.nextTabButton, { backgroundColor: colors.emerald }]} onPress={() => handleNextTab('tab7', '')}>
                             <Text style={styles.nextTabButtonText}>تایید و ثبت گزارش کار</Text>
-                            {/* <Ionicons name={'checkmark'} style={styles.nextTabButtonIcon} /> */}
                         </TouchableOpacity>
                     </View>
                 </View>

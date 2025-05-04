@@ -1,8 +1,8 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
-import { getAuthData } from './auth';
+import { getAuthData, logout } from './auth';
 
-export const getRequestDetail = async (requestId) => {
+export const getRequestDetail = async (requestId, navigation) => {
     const authData = await getAuthData();
     try {
         if (use_local_data) return {
@@ -80,6 +80,20 @@ export const getRequestDetail = async (requestId) => {
 
     } catch (error) {
         console.log('Error submitting GetRequestDetail request:', error);
+        
+        if (error.response) {
+            if (error.response.status === 401 || error.response.status === 403) {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Unauthorized access' };
+            }
+            if (error.response.data?.Message === "Authorization has been denied for this request.") {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Authorization denied' };
+            }
+        }
+        
         return { success: false, error: 'Failed to submit GetRequestDetail request' };
     }
 };

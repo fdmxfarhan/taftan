@@ -44,7 +44,7 @@ const Home = (props) => {
                 setmyMessageList(result.data.Data);
             } else ToastAndroid.show('پیام های من بارگیری نشد.', ToastAndroid.SHORT);
 
-            var result = await loadMyDamageRequestList(0, 50);
+            var result = await loadMyDamageRequestList(0, 50, props.navigation);
             if (result.success) {
                 setmyRequestsList(result.data.Data);
                 setmyRequestCount(result.data.TotalCount);

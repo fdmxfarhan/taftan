@@ -10,7 +10,7 @@ import DropDownObj from './dropdown-obj';
 import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 
-const ReportDamageBeforeUseView = ({ }) => {
+const ReportDamageBeforeUseView = ({ setIsValid }) => {
     var [garantieConflict, setgarantieConflict] = useState(false);
     var [softwareProcess, setsoftwareProcess] = useState(false);
     var [serviceAndRepair, setserviceAndRepair] = useState(false);
@@ -20,6 +20,10 @@ const ReportDamageBeforeUseView = ({ }) => {
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
+
+    useEffect(() => {
+        setIsValid(true);
+    }, []);
 
     return (
         <ScrollView style={styleslocal.contents}>

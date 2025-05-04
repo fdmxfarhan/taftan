@@ -54,7 +54,7 @@ const ServiceDamage = (props) => {
     };
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitDamageRequest(skip, take);
+        var result = await submitDamageRequest(skip, take, props.navigation);
         if (result.success) {
             setDamageRequests(result.data.Data);
             setIsLoading(false);
@@ -126,7 +126,7 @@ const ServiceDamage = (props) => {
             }
         };
         setIsLoading(true);
-        var result = await submitDamageRequestFilter(options);
+        var result = await submitDamageRequestFilter(options, props.navigation);
         if (result.success) {
             setDamageRequests(result.data.Data);
             setIsLoading(false);
@@ -140,7 +140,7 @@ const ServiceDamage = (props) => {
         }
     }
     const openRequestReport = async (item) => {
-        var result = await getRequestDetail(item.requestId);
+        var result = await getRequestDetail(item.requestId, props.navigation);
         if (result.success) {
             if (result.data != 'داده پیدا نشد') {
                 requestDetail = result.data;
@@ -169,7 +169,7 @@ const ServiceDamage = (props) => {
         }
     }
     const openMapDirection = async (item) => {
-        result = await GetDeviceDetail(item.deviceId);
+        result = await GetDeviceDetail(item.deviceId, props.navigation);
         if (result.success) {
             deviceDetail = result.data;
             setdeviceDetail(deviceDetail);
@@ -181,7 +181,7 @@ const ServiceDamage = (props) => {
         setIsLoading(false);
     }
     const openPhoneCall = async (item) => {
-        var result = await getRequestDetail(item.requestId);
+        var result = await getRequestDetail(item.requestId, props.navigation);
         if (result.success) {
             if (result.data != 'داده پیدا نشد') {
                 requestDetail = result.data;

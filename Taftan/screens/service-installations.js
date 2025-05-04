@@ -42,7 +42,7 @@ const ServiceInstallation = (props) => {
     };
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitInstallRequest(skip, take);
+        var result = await submitInstallRequest(skip, take, props.navigation);
         if (result.success) {
             setInstallRequests(result.data.Data);
             setIsLoading(false);
@@ -61,7 +61,7 @@ const ServiceInstallation = (props) => {
         props.navigation.navigate('DamageReqView', { item });
     };
     const openRequestReport = async (item) => {
-        var result = await getRequestDetail(item.requestId);
+        var result = await getRequestDetail(item.requestId, props.navigation);
         if (result.success) {
             if (result.data != 'داده پیدا نشد') {
                 requestDetail = result.data;

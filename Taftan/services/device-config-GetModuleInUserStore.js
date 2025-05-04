@@ -2,7 +2,7 @@ import api from '../config/api';
 import { use_local_data } from '../config/consts';
 import { getAuthData } from './auth';
 
-export const GetModuleInUserStore = async (moduleGroupKey, officeKey) => {
+export const GetModuleInUserStore = async (moduleGroupKey, officeKey, navigation) => {
     const authData = await getAuthData();
     try {
         if (use_local_data) return {
@@ -33,7 +33,6 @@ export const GetModuleInUserStore = async (moduleGroupKey, officeKey) => {
                 }
             ]
         };
-        console.log(moduleGroupKey, officeKey);
         const response = await api.get(`/StoreController/GetModuleInUserStore/${moduleGroupKey}/${officeKey}`, {
             headers: {
                 authorization: authData.token,
@@ -41,7 +40,6 @@ export const GetModuleInUserStore = async (moduleGroupKey, officeKey) => {
                 Constraintid: authData.Constraintid,
             }
         });
-        console.log(response.data);
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /StoreController/GetModuleInUserStore request:', error.response);

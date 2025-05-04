@@ -1,8 +1,8 @@
 import api from '../config/api';
 import { use_local_data } from '../config/consts';
-import { getAuthData } from './auth';
+import { getAuthData, logout } from './auth';
 
-export const SaveRequestStatus = async (options) => {
+export const SaveRequestStatus = async (options, navigation) => {
     const authData = await getAuthData();
     var response = null;
     try {
@@ -20,7 +20,21 @@ export const SaveRequestStatus = async (options) => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error /RequestController/SaveRequestStatus');
-        return { success: false, error: error.response.data.Message };
+        
+        if (error.response) {
+            if (error.response.status === 401 || error.response.status === 403) {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Unauthorized access' };
+            }
+            if (error.response.data?.Message === "Authorization has been denied for this request.") {
+                logout();
+                navigation.navigate('Login');
+                return { success: false, error: 'Authorization denied' };
+            }
+        }
+        
+        return { success: false, error: error.response?.data?.Message || 'Failed to submit request' };
     }
 };
 
