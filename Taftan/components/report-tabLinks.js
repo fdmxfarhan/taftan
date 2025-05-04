@@ -38,13 +38,13 @@ const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail }) => {
                 {reportDetail && reportDetail.requestReportInfo.serviceGroupId == 3 && (
                     <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab2' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab2')}>
                         <Ionicons name={tabItemVar == 'tab2' ? "settings" : "settings-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab2' ? styles.activeIcon : styles.deactive]} />
-                        <Text style={[styles.tabLinkText, tabItemVar == 'tab2' ? styles.activeText : styles.deactive]}>نصب</Text>
+                        <Text style={[styles.tabLinkText, tabItemVar == 'tab2' ? styles.activeText : styles.deactive]}>اطلاعات سرویس نصب</Text>
                     </TouchableOpacity>
                 )}
                 {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 2 && (
                     <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab3' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab3')}>
                         <Ionicons name={tabItemVar == 'tab3' ? "footsteps" : "footsteps-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab3' ? styles.activeIcon : styles.deactive]} />
-                        <Text style={[styles.tabLinkText, tabItemVar == 'tab3' ? styles.activeText : styles.deactive]}>اقدامات</Text>
+                        <Text style={[styles.tabLinkText, tabItemVar == 'tab3' ? styles.activeText : styles.deactive]}>اقدامات انجام شده</Text>
                     </TouchableOpacity>
                 )}
                 {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 2 && (

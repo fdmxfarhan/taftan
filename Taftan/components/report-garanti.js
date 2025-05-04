@@ -10,6 +10,7 @@ import DropDownObj from './dropdown-obj';
 import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
+import MultiSelectDropdown from './multi-select-dropdown';
 const ReportGarantiView = ({ reportDetail, garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange }) => {
     var [usedComponents, setusedComponents] = useState(false);
     var [componentAction, setcomponentAction] = useState('تعویض');
@@ -17,7 +18,7 @@ const ReportGarantiView = ({ reportDetail, garantieConflict, setgarantieConflict
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
     var [warrantyList, setwarrantyList] = useState([]);
-    var [selectedWarranty, setselectedWarranty] = useState({description: 'انتخاب کنید', Id: 0});
+    var [selectedWarranties, setSelectedWarranties] = useState([]);
     useEffect(() => {
         GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId).then(res => {
             setwarrantyList(res.data);
@@ -33,14 +34,15 @@ const ReportGarantiView = ({ reportDetail, garantieConflict, setgarantieConflict
                 <CheckBox text={'تعویض ماژول'} value={moduleExchange} onChange={() => { setmoduleExchange(!moduleExchange) }} checkboxstyle={styleslocal.checkboxView} enabled={garantieConflict} />
                 {(softwareProcess || serviceAndRepair || moduleExchange) && (<View>
                     <Text style={styles.label}>علت نقض گارانتی: </Text>
-                    <DropDownObj
+                    <MultiSelectDropdown
                         list={warrantyList}
-                        getLabel={(item) => item.description}
-                        getValue={(item) => item.Id}
-                        setValue={(item) => { setselectedWarranty(item) }}
-                        value={selectedWarranty.description}
+                        selectedValues={selectedWarranties}
+                        setSelectedValues={setSelectedWarranties}
+                        placeHolder="انتخاب کنید"
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
+                        getLabel={(item) => item.description}
+                        getValue={(item) => item.Id}
                         onSubmit={(val) => { }}
                     />
                     <Text style={styles.label}>توضیحات: </Text>

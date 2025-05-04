@@ -21,6 +21,7 @@ import SerialMismatchPopup from './serial-mismatch-popup';
 import DuplicateItemPopup from './duplicate-item-popup';
 import InsufficientStockPopup from './insufficient-stock-popup';
 import MaxModulesExceededPopup from './max-modules-exceeded-popup';
+import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
 const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason }) => {
     var [garantieConflict, setgarantieConflict] = useState(false);
     var [softwareProcess, setsoftwareProcess] = useState(false);
@@ -44,6 +45,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     var [duplicateItemPopup, setDuplicateItemPopup] = useState(false);
     var [insufficientStockPopup, setInsufficientStockPopup] = useState(false);
     var [maxModulesExceededPopup, setMaxModulesExceededPopup] = useState(false);
+    var [selectedWarrantyReasons, setSelectedWarrantyReasons] = useState([]);
+    var [warrantyList, setwarrantyList] = useState([]);
     const updateModuleGroupTitleList = async () => {
         var result = await GetModuleGroupTitleList();
         if (result.success) {
@@ -127,7 +130,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             selectedDOAReason: selectedDOAReason == 'انتخاب کنید' ? null : selectedDOAReason,
         };
         setcomponentChangesList([...componentChangesList, newcomponentChanges]);
-        setselectedDamageDescriptions([]);
+        setSelectedDamageDescriptions([]);
         setselectedDOAReason('انتخاب کنید');
         setModuleNewSerial('');
         setModuleoldSerial('');
@@ -162,6 +165,11 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             updateOfficeKey();
         }
     }, [reportDetail, moduleListBrand]);
+    useEffect(() => {
+        GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId).then(res => {
+            setwarrantyList(res.data);
+        });
+    }, []);
     return (
         <ScrollView style={styleslocal.contents}>
             <ScanPopup modalEnable={scanpopupEnableNew} setmodalEnable={setscanpopupEnableNew} onCodeScanned={handleCodeScannedNew} />
@@ -359,14 +367,15 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 </View>)}
                 {DOAorGarantieConflict == 'نقض گارانتی' && (<View>
                     <Text style={styles.label}>علت نقض گارانتی: </Text>
-                    <DropDownObj
-                        list={[]}
-                        getLabel={(item) => item}
-                        getValue={(item) => item}
-                        setValue={(item) => { }}
-                        value={'انتخاب'}
+                    <MultiSelectDropdown
+                        list={warrantyList}
+                        selectedValues={selectedWarrantyReasons}
+                        setSelectedValues={setSelectedWarrantyReasons}
+                        placeHolder="انتخاب کنید"
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
+                        getLabel={(item) => item.description}
+                        getValue={(item) => item.Id}
                         onSubmit={(val) => { }}
                     />
                 </View>)}

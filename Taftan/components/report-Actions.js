@@ -6,6 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import DropDownObj from './dropdown-obj';
 import styles from '../styles/reqView';
+import { ToastAndroid } from 'react-native';
 
 const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction, setdescriptionAction, reportDetail, newactionList, setnewactionList }) => {
     var serviceObject = (detail) => {
@@ -22,52 +23,56 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
     return (
         <ScrollView style={styleslocal.contents}>
             {/* <Text style={styleslocal.sectionTitle}>اقدامات انجام شده:</Text> */}
-            <Text style={styleslocal.sectionTitle}>کار: </Text>
+            <Text style={styles.label}>کار: </Text>
             <DropDownObj
                 list={JobTitleList}
                 getLabel={(item) => item.title}
                 getValue={(item) => item.title}
                 setValue={(item) => { setjobTitle(item) }}
                 value={jobTitle.title}
-                buttonStyle={styleslocal.dropdown}
-                buttonTextStyle={styleslocal.dropdownText}
+                buttonStyle={styles.dropdown}
+                buttonTextStyle={styles.dropdownText}
                 onSubmit={(val) => { }}
             />
-            <Text style={styleslocal.label}>توضیحات: </Text>
+            <Text style={styles.label}>توضیحات: </Text>
             <TextInput
-                style={styleslocal.textInput}
+                style={styles.description}
                 placeholder="توضیحات"
                 keyboardType={'default'}
                 value={descriptionAction}
                 onChange={text => setdescriptionAction(text.nativeEvent.text)}
             />
             <TouchableOpacity style={styleslocal.submitButton} onPress={() => {
+                if (jobTitle.title === 'نوع خرابی') {
+                    ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
+                    return;
+                }
                 setnewactionList(prevList => [...prevList, { title: jobTitle.title, description: descriptionAction }]);
             }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>
-            <View style={styleslocal.content}>
+            <View style={styles.content}>
                 {newactionList.map((item, index) => (
                     <View key={index} >
-                        <View style={styleslocal.actionHistoryItem}>
-                            <View style={styleslocal.actionHistoryRight}>
-                                <Text style={styleslocal.actionHistoryTitle}>{item.title}</Text>
-                                <Text style={styleslocal.actionResult}>{item.description}</Text>
+                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                            <View style={styles.actionHistoryRight}>
+                                <Text style={styles.actionHistoryTitle}>{item.title}</Text>
+                                <Text style={[styles.actionResult, { textAlign: 'right' }]}>{item.description}</Text>
                             </View>
                         </View>
-                        <TouchableOpacity style={styleslocal.deleteItemButton} onPress={() => {
+                        <TouchableOpacity style={styles.deleteItemButton} onPress={() => {
                             setnewactionList(prevList => prevList.filter((_, i) => i !== index));
                         }}>
-                            <Ionicons name={'trash'} style={styleslocal.deleteItemIcon} />
+                            <Ionicons name={'trash'} style={styles.deleteItemIcon} />
                         </TouchableOpacity> 
                     </View>
                 ))} 
                 {reportDetail && serviceObject(reportDetail).reportJobTitleList.map((item, index) => (
                     <View key={index} >
-                        <View style={styleslocal.actionHistoryItem}>
-                            <View style={styleslocal.actionHistoryRight}>
-                                <Text style={styleslocal.actionHistoryTitle}>{item.title} ({item.jobCode})</Text>
-                                <Text style={styleslocal.actionHistoryTitle2}>{item.description}</Text>
+                        <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                            <View style={styles.actionHistoryRight}>
+                                <Text style={styles.actionHistoryTitle}>{item.title} ({item.jobCode})</Text>
+                                <Text style={styles.actionHistoryTitle2}>{item.description}</Text>
                             </View>
                         </View>
                     </View>
@@ -85,18 +90,17 @@ const styleslocal = StyleSheet.create({
     },
     sectionTitle: {
         fontFamily: 'iransansbold',
-        fontSize: 14,
+        fontSize: 12,
         width: '85%',
         marginHorizontal: 'auto',
-        marginTop: 15,
-        marginBottom: 5,
+        marginTop: 10,
         color: colors.black,
     },
     label: {
         color: colors.text,
-        fontSize: 12,
-        marginTop: 8,
-        marginBottom: 6,
+        fontSize: 11,
+        marginTop: 5,
+        marginBottom: 5,
         width: '85%',
         margin: 'auto',
         fontFamily: 'iransansbold',
@@ -109,17 +113,12 @@ const styleslocal = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 13,
         backgroundColor: colors.white,
-        borderRadius: 10,
+        borderRadius: 8,
         textAlign: 'right',
         direction: 'rtl',
-        paddingVertical: 8,
+        paddingVertical: 2,
         paddingHorizontal: 15,
         color: colors.text,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
     },
     textArea: {
         borderColor: colors.gray,
@@ -129,35 +128,25 @@ const styleslocal = StyleSheet.create({
         fontFamily: 'iransans',
         fontSize: 13,
         backgroundColor: colors.white,
-        borderRadius: 10,
+        borderRadius: 8,
         textAlign: 'right',
         direction: 'rtl',
-        paddingVertical: 8,
+        paddingVertical: 4,
         paddingHorizontal: 15,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
     },
     dropdown: {
         backgroundColor: colors.white,
         borderWidth: 1,
         borderColor: colors.lightgray,
-        borderRadius: 10,
+        borderRadius: 7,
         width: '85%',
         marginHorizontal: '7.5%',
         alignContent: 'center',
         alignItems: 'center',
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
     },
     dropdownText: {
-        paddingVertical: 8,
-        paddingHorizontal: 8,
+        paddingVertical: 5,
+        paddingHorizontal: 5,
         textAlign: 'center',
         width: '100%',
         fontFamily: 'iransans',
@@ -174,77 +163,27 @@ const styleslocal = StyleSheet.create({
     submitButton: {
         width: '85%',
         marginHorizontal: '7.5%',
-        marginTop: 20,
-        paddingVertical: 10,
+        marginTop: 15,
+        paddingVertical: 5,
         backgroundColor: colors.emerald,
-        borderRadius: 10,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 3,
+        borderRadius: 5,
     },
     submitButtonText: {
-        fontFamily: 'iransansbold',
-        fontSize: 15,
+        fontFamily: 'iransans',
+        fontSize: 14,
         textAlign: 'center',
         color: colors.white,
     },
     deleteItemButton: {
         position: 'absolute',
-        right: 10,
-        top: 10,
-        backgroundColor: colors.white,
-        padding: 6,
-        borderRadius: 20,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 2,
+        right: 0,
+        top: 0,
     },
     deleteItemIcon: {
-        fontSize: 20,
+        fontSize: 18,
         color: colors.red,
     },
-    actionHistoryItem: {
-        backgroundColor: colors.antiflashWhite,
-        marginBottom: 12,
-        borderRadius: 10,
-        padding: 12,
-        shadowColor: colors.black,
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    actionHistoryRight: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    actionHistoryTitle: {
-        fontFamily: 'iransansbold',
-        fontSize: 14,
-        color: colors.black,
-        marginBottom: 4,
-    },
-    actionHistoryTitle2: {
-        fontFamily: 'iransans',
-        fontSize: 13,
-        color: colors.text,
-        lineHeight: 20,
-    },
-    actionResult: {
-        fontFamily: 'iransans',
-        fontSize: 13,
-        color: colors.text,
-        lineHeight: 20,
-    },
-    contents: {
-        backgroundColor: colors.white,
-        paddingTop: 15,
-    }
+
 });
 
 export default ReportActions;

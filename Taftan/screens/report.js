@@ -85,6 +85,7 @@ const Report = (props) => {
         var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id);
         if (result.success) {
             reportDetail = result.data;
+            console.log(reportDetail)
             setreportDetail(reportDetail);
             setinstallationReportInfo(reportDetail.installReportInfo);
         }
