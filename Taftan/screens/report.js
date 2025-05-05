@@ -75,7 +75,8 @@ const Report = (props) => {
     var [questionnaireAnswers, setQuestionnaireAnswers] = useState({});
     var [questionnaireDescriptions, setQuestionnaireDescriptions] = useState({});
     var [selectedWarranties, setSelectedWarranties] = useState([]);
-
+    var [selectedConsumedModule, setselectedConsumedModule] = useState({ModuleTitle: 'انتخاب کنید'});
+    var [selectedConsumedModuleSerial, setselectedConsumedModuleSerial] = useState({Serial: 'انتخاب کنید'});
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -340,7 +341,15 @@ const Report = (props) => {
             )}
             {tabItem == 'tab6' && (
                 <View style={{ flex: 1, }}>
-                    <ReportDamageBeforeUseView setIsValid={setIsTab6Valid} />
+                    <ReportDamageBeforeUseView 
+                        setIsValid={setIsTab6Valid} 
+                        navigation={props.navigation} 
+                        moduleGroupKey={moduleGroupKey} 
+                        officeKey={officeKey} 
+                        selectedModule={selectedConsumedModule} 
+                        setSelectedModule={setselectedConsumedModule} 
+                        selectedConsumedModuleSerial={selectedConsumedModuleSerial} 
+                        setselectedConsumedModuleSerial={setselectedConsumedModuleSerial} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>

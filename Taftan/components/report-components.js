@@ -22,6 +22,7 @@ import DuplicateItemPopup from './duplicate-item-popup';
 import InsufficientStockPopup from './insufficient-stock-popup';
 import MaxModulesExceededPopup from './max-modules-exceeded-popup';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
+import SerialMismatchPopupWithConfig from './serial-mismatch-popup-with-config';
 const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason, setIsValid, navigation }) => {
     var [componentAction, setcomponentAction] = useState('تعویض');
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
@@ -42,6 +43,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     var [maxModulesExceededPopup, setMaxModulesExceededPopup] = useState(false);
     var [selectedWarrantyReasons, setSelectedWarrantyReasons] = useState([]);
     var [warrantyList, setwarrantyList] = useState([]);
+    var [serialMismatchConfigPopup, setSerialMismatchConfigPopup] = useState(false);
     const updateModuleGroupTitleList = async () => {
         var result = await GetModuleGroupTitleList(navigation);
         if (result.success) {
@@ -126,11 +128,12 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             if (!found) {
                 if(componentAction == 'حذف'){
                     setSerialMismatchPopup(true);
+                    return;
                 }
-                else{
-                    setSerialMismatchPopup(true);
+                else if(componentAction == 'تعویض'){
+                    setSerialMismatchConfigPopup(true);
+                    return;
                 }
-                return;
             }
         }
         var newcomponentChanges = {
@@ -188,6 +191,12 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setmoduleGroupListFiltered(moduleGroupList);
         ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
     }
+    const handleSerialMismatchConfigConfirm = () => {
+
+    }
+    const handleAddToConfig = () => {
+
+    }
     useEffect(() => {
         setIsValid(true);
         updateModuleGroupTitleList();
@@ -209,7 +218,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         }
     }, [reportDetail, moduleListBrand]);
     useEffect(() => {
-        GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId).then(res => {
+        GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId, navigation).then(res => {
             setwarrantyList(res.data);
         });
     }, []);
@@ -218,6 +227,12 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             <ScanPopup modalEnable={scanpopupEnableNew} setmodalEnable={setscanpopupEnableNew} onCodeScanned={handleCodeScannedNew} />
             <ScanPopup modalEnable={scanpopupEnableOld} setmodalEnable={setscanpopupEnableOld} onCodeScanned={handleCodeScannedOld} />
             <SerialMismatchPopup popupEN={serialMismatchPopup} setPopupEN={setSerialMismatchPopup} onConfirm={handleSerialMismatchConfirm}/>
+            <SerialMismatchPopupWithConfig
+                popupEN={serialMismatchConfigPopup} 
+                setPopupEN={setSerialMismatchConfigPopup} 
+                onConfirm={handleSerialMismatchConfigConfirm}
+                onAddToConfig={handleAddToConfig}
+            />
             <DuplicateItemPopup popupEN={duplicateItemPopup} setPopupEN={setDuplicateItemPopup}/>
             <InsufficientStockPopup popupEN={insufficientStockPopup} setPopupEN={setInsufficientStockPopup}/>
             <MaxModulesExceededPopup popupEN={maxModulesExceededPopup} setPopupEN={setMaxModulesExceededPopup}/>

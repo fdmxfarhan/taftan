@@ -9,49 +9,66 @@ import { loadDeviceConfigList } from '../services/device-load-config-list';
 import DropDownObj from './dropdown-obj';
 import CheckBox from './checkbox';
 import styles from '../styles/reqView';
+import { GetModuleInUserStore } from '../services/device-config-GetModuleInUserStore';
+import { ToastAndroid } from 'react-native';
+import { GetModuleSerialListByUserKeyModuleKey } from '../services/device-config-GetModuleSerialListByUserKeyModuleKey';
 
-const ReportDamageBeforeUseView = ({ setIsValid }) => {
-    var [garantieConflict, setgarantieConflict] = useState(false);
-    var [softwareProcess, setsoftwareProcess] = useState(false);
-    var [serviceAndRepair, setserviceAndRepair] = useState(false);
-    var [moduleExchange, setmoduleExchange] = useState(false);
-    var [usedComponents, setusedComponents] = useState(false);
-    var [componentAction, setcomponentAction] = useState('تعویض');
-    var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
-    var [noRepairNeeded, setnoRepairNeeded] = useState(false);
+const ReportDamageBeforeUseView = ({ setIsValid, navigation, moduleGroupKey, officeKey, selectedModule, setSelectedModule, selectedConsumedModuleSerial, setselectedConsumedModuleSerial }) => {
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
+    const [moduleInUserStoreList, setModuleInUserStoreList] = useState([]);
+    const [moduleSerialList, setModuleSerialList] = useState([]);
 
+    const updateModuleSerialList = async (moduleItem) => {
+        console.log(moduleItem.UserKey, moduleItem.ModuleKey, officeKey);
+        var result = await GetModuleSerialListByUserKeyModuleKey(moduleItem.UserKey, moduleItem.ModuleKey, officeKey);
+        if (result.success) {
+            setModuleSerialList(result.data);
+        }
+        else {
+            ToastAndroid.show('لیست سریال‌ها دریافت نشد.', ToastAndroid.SHORT);
+        }
+    }
     useEffect(() => {
         setIsValid(true);
     }, []);
 
+    const updateModuleInUserStore = async () => {
+        var result = await GetModuleInUserStore(moduleGroupKey, officeKey, navigation);
+        if (result.success) {
+            setModuleInUserStoreList(result.data);
+        }
+        else {
+            ToastAndroid.show('لیست ماژول‌ها دریافت نشد.', ToastAndroid.SHORT);
+        }
+    }
+
     return (
         <ScrollView style={styleslocal.contents}>
             <Text style={styleslocal.sectionTitle}>اطلاعات قطعات:</Text>
-            <CheckBox text={'خرابی قبل از بهره برداری'} value={damageBeforeUse} onChange={() => { setdamageBeforeUse(!damageBeforeUse) }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
+            <CheckBox text={'خرابی قبل از بهره برداری'} value={damageBeforeUse} onChange={() => { setdamageBeforeUse(!damageBeforeUse); updateModuleInUserStore(); }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {damageBeforeUse && (<View>
                 <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>ماژول: </Text>
                         <DropDownObj
-                            list={[]}
-                            getLabel={(item) => item.title}
-                            getValue={(item) => item.title}
-                            setValue={(item) => { }}
-                            value={'asdf'}
+                            list={moduleInUserStoreList}
+                            getLabel={(item) => item.ModuleTitle}
+                            getValue={(item) => item.ModuleTitle}
+                            setValue={(item) => { setSelectedModule(item); updateModuleSerialList(item); }}
+                            value={selectedModule?.ModuleTitle || ''}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
-                            onSubmit={(val) => { }}
+                            searchEN={true}
                         />
                     </View>
                     <View style={styles.dualInputPart}>
-                        <Text style={styles.label}>مدل ماژول: </Text>
+                        <Text style={styles.label}>سریال ماژول جدید: </Text>
                         <DropDownObj
-                            list={[]}
-                            getLabel={(item) => item}
-                            getValue={(item) => item}
-                            setValue={(item) => { }}
-                            value={'asdf'}
+                            list={moduleSerialList}
+                            getLabel={(item) => item.Serial}
+                            getValue={(item) => item.Serial}
+                            setValue={(item) => { setselectedConsumedModuleSerial(item); }}
+                            value={selectedConsumedModuleSerial?.Serial || ''}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
                             onSubmit={(val) => { }}
@@ -59,23 +76,6 @@ const ReportDamageBeforeUseView = ({ setIsValid }) => {
                     </View>
                 </View>
                 <View style={[styles.dualInputView]}>
-                    <View style={styles.dualInputPart}>
-                        <Text style={styles.label}>سریال: </Text>
-                        <TextInput
-                            style={[styles.textInput]}
-                            placeholder={'سریال'}
-                            placeholderTextColor={colors.text}
-                            // onSubmitEditing={()=>passwordInput.current.focus()}
-                            multiline={true}
-                            returnKeyType={'next'}
-                            keyboardType={'default'}
-                        // value={requestDetail.projectInfo.deviceCount}
-                        // editable={false}
-                        // onChange={(text) => {
-                        //     console.log('hello')
-                        // }}
-                        />
-                    </View>
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>شرح خرابی: </Text>
                         <DropDownObj
