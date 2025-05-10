@@ -20,6 +20,8 @@ import styles from '../styles/requestList';
 import { getRequestDetail } from '../services/req-detail';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
 import InstallationRequestItem from '../components/InstallationRequestItem';
+import { GetDeviceDetail } from '../services/device-detail';
+import { Linking } from 'react-native';
 
 const ServiceInstallation = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -90,6 +92,22 @@ const ServiceInstallation = (props) => {
             }
         }
     }
+    const openMapDirection = async (item) => {
+        GetDeviceDetail(item.deviceId, props.navigation).then((result) => {
+            if (result.success) {
+                deviceDetail = result.data;
+                setdeviceDetail(deviceDetail);
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${deviceDetail.strLatitude},${deviceDetail.strLongitude}`;
+                Linking.openURL(url).catch((err) => {
+                    console.log(err);
+                })
+            } else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+            setIsLoading(false);
+        })
+    }
+    const openPhoneCall = async (item) => {
+        setIsLoading(false);
+    }
     const renderItem = ({ item, index }) => (
         <InstallationRequestItem
             item={item}
@@ -97,6 +115,8 @@ const ServiceInstallation = (props) => {
             installRequests={installRequests}
             handleItemPress={handleItemPress}
             openRequestReport={openRequestReport}
+            openMapDirection={openMapDirection}
+            openPhoneCall={openPhoneCall}
             getSLAColor={getSLAColor}
         />
     );

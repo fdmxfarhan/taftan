@@ -6,7 +6,8 @@ import {
     FlatList,
     TouchableOpacity,
     Animated,
-    ScrollView
+    ScrollView,
+    ToastAndroid
 } from 'react-native';
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
@@ -20,6 +21,12 @@ import DamageRequestItem from './DamageRequestItem';
 import SiteRequestItem from './SiteRequestItem';
 import ProjectRequestItem from './ProjectRequestItem';
 import PMRequestItem from './PMRequestItem';
+import { GetDeviceDetail } from '../services/device-detail';
+import { Linking } from 'react-native';
+import { getRequestDetail } from '../services/req-detail';
+import ReportListPopup from './rec-popup-report-list';
+import { loadRequestReportActionList } from '../services/report-load-action-list';
+
 const MyRequestsList = ({
     navigation,
     myDamageRequestsList,
@@ -28,23 +35,73 @@ const MyRequestsList = ({
     myProjectRequestsList,
     myPeriodicRequestsList,
 }) => {
-    const [skipValue, setskipValue] = useState(1);
-    const [rowsValue, setrowsValue] = useState(10);
-    const [isLoading, setIsLoading] = useState(false);
-    const [DamageFilterEN, setDamageFilterEN] = useState(true);
-    const [InstallFilterEN, setInstallFilterEN] = useState(true);
-    const [siteFilterEN, setsiteFilterEN] = useState(true);
-    const [projectFilterEN, setprojectFilterEN] = useState(true);
-    const [periodicFilterEN, setperiodicFilterEN] = useState(true);
+    var [DamageFilterEN, setDamageFilterEN] = useState(true);
+    var [InstallFilterEN, setInstallFilterEN] = useState(true);
+    var [siteFilterEN, setsiteFilterEN] = useState(true);
+    var [projectFilterEN, setprojectFilterEN] = useState(true);
+    var [periodicFilterEN, setperiodicFilterEN] = useState(true);
+    var [isLoading, setIsLoading] = useState(false);
+    var [requestDetail, setRequestDetail] = useState(null);
+    var [reportInfo, setreportInfo] = useState(null);
+    var [reportList, setreportList] = useState([]);
+    var [reportlistPopupEN, setreportlistPopupEN] = useState(false);
     useEffect(() => {
 
     })
     const handleItemPress = (item) => {
         navigation.navigate('DamageReqView', { item });
     };
-
+    const openMapDirection = (item) => {
+        GetDeviceDetail(item.deviceId, navigation).then((result) => {
+            if (result.success) {
+                deviceDetail = result.data;
+                const url = `https://www.google.com/maps/dir/?api=1&destination=${deviceDetail.strLatitude},${deviceDetail.strLongitude}`;
+                Linking.openURL(url).catch((err) => {
+                    console.log(err);
+                })
+            } else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
+        })
+        setIsLoading(false);
+    }
+    const openPhoneCall = (item) => {
+        setIsLoading(false);
+    }
+    const openRequestReport = (item) => {
+        getRequestDetail(item.requestId, navigation).then((result) => {
+            if (result.success) {
+                if (result.data != 'داده پیدا نشد') {
+                    requestDetail = result.data;
+                    setRequestDetail(requestDetail);
+                    loadRequestReportActionList(item.requestId).then((result) => {
+                        setIsLoading(false);
+                        if (result.success) {
+                            if (result.data.Data.length == 0) ToastAndroid.show('گزارشی وجود ندارد.', ToastAndroid.SHORT);
+                            else if (result.data.Data.length == 1) {
+                                reportInfo = result.data.Data[0];
+                                setreportInfo(reportInfo);
+                                navigation.navigate('Report', { requestDetail, reportInfo })
+                            }
+                            else {
+                                reportList = result.data.Data;
+                                setreportList(reportList);
+                                setreportlistPopupEN(true);
+                            }
+                        }
+                    })
+                }
+                else {
+                    ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
+                    navigation.goBack();
+                    return;
+                }
+            }
+        })
+    }
     return (
         <View>
+            <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
+            <ReportListPopup popupEN={reportlistPopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={navigation} />
+
             <ScrollView horizontal={true} style={styles.typeFiltersView} inverted={true}>
                 <TouchableOpacity style={[styles.typeFiltersButton, { backgroundColor: DamageFilterEN ? colors.blue : colors.white }]} onPress={() => setDamageFilterEN(!DamageFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: DamageFilterEN ? colors.white : colors.blue }]}>خرابی</Text>
@@ -62,15 +119,6 @@ const MyRequestsList = ({
                     <Text style={[styles.typeFiltersText, { color: periodicFilterEN ? colors.white : colors.blue }]}>دوره ای</Text>
                 </TouchableOpacity>
             </ScrollView>
-            {/* <ReqGridController
-                currentPage={skipValue}
-                skipValue={skipValue}
-                setskipValue={setskipValue}
-                setData={(skip, rows) => {
-                    setskipValue(skip);
-                    setrowsValue(rows);
-                    sendRequest(skip, rows);
-                }} /> */}
             <ScrollView style={styles.scrollviwe}>
                 <View style={styles.container}>
                     {DamageFilterEN && myDamageRequestsList.length > 0 && (
@@ -81,8 +129,11 @@ const MyRequestsList = ({
                             key={item.requestId}
                             item={item}
                             handleItemPress={handleItemPress}
-                            openRequestReport={() => { }}
+                            openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            setIsLoading={setIsLoading}
+                            openMapDirection={openMapDirection}
+                            openPhoneCall={openPhoneCall}
                         />
                     ))}
                     {InstallFilterEN && myInstallRequestsList.length > 0 && (
@@ -95,8 +146,11 @@ const MyRequestsList = ({
                             index={index}
                             installRequests={myInstallRequestsList}
                             handleItemPress={handleItemPress}
-                            openRequestReport={() => { }}
+                            openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            setIsLoading={setIsLoading}
+                            openMapDirection={openMapDirection}
+                            openPhoneCall={openPhoneCall}
                         />
                     ))}
                     {siteFilterEN && mySiteRequestsList.length > 0 && (
@@ -107,8 +161,11 @@ const MyRequestsList = ({
                             key={item.requestId}
                             item={item}
                             handleItemPress={handleItemPress}
-                            openRequestReport={() => { }}
+                            openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            setIsLoading={setIsLoading}
+                            openMapDirection={openMapDirection}
+                            openPhoneCall={openPhoneCall}
                         />
                     ))}
                     {projectFilterEN && myProjectRequestsList.length > 0 && (
@@ -116,11 +173,14 @@ const MyRequestsList = ({
                     )}
                     {projectFilterEN && myProjectRequestsList.map((item, index) => (
                         <ProjectRequestItem
-                            key={item.requestId}    
+                            key={item.requestId}
                             item={item}
                             handleItemPress={handleItemPress}
-                            openRequestReport={() => { }}
+                            openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            setIsLoading={setIsLoading}
+                            openMapDirection={openMapDirection}
+                            openPhoneCall={openPhoneCall}
                         />
                     ))}
                     {periodicFilterEN && myPeriodicRequestsList.length > 0 && (
@@ -131,8 +191,11 @@ const MyRequestsList = ({
                             key={item.requestId}
                             item={item}
                             handleItemPress={handleItemPress}
-                            openRequestReport={() => { }}
+                            openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            setIsLoading={setIsLoading}
+                            openMapDirection={openMapDirection}
+                            openPhoneCall={openPhoneCall}
                         />
                     ))}
 

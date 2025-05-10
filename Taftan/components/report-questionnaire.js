@@ -2,159 +2,100 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { loadQuestionnaireWithQuestionList } from '../services/report-load-questionnaire';
 
-const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, setDescriptions }) => {
+const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, setDescriptions, requestId }) => {
     const [expandedGroups, setExpandedGroups] = useState({});
-
-    const questionnaires = [
-        {
-            id: 1,
-            title: 'پرسشنامه نصب و راه‌اندازی',
-            groups: [
-                {
-                    id: 1,
-                    title: 'اطلاعات اولیه نصب',
-                    questions: [
-                        {
-                            id: 1,
-                            type: 'single',
-                            question: 'آیا دستگاه به درستی نصب شده است؟',
-                            options: [
-                                { text: 'بله', needsDescription: false },
-                                { text: 'خیر', needsDescription: true, placeholder: 'لطفاً دلیل عدم نصب صحیح را توضیح دهید' },
-                                { text: 'تا حدی', needsDescription: true, placeholder: 'لطفاً موارد ناقص را توضیح دهید' },
-                            ],
-                        },
-                        {
-                            id: 2,
-                            type: 'number',
-                            question: 'مدت زمان نصب دستگاه (به دقیقه):',
-                        },
-                    ],
-                },
-                {
-                    id: 2,
-                    title: 'مشکلات احتمالی',
-                    questions: [
-                        {
-                            id: 3,
-                            type: 'multiple',
-                            question: 'کدام موارد در دستگاه مشکل دارند؟',
-                            options: [
-                                { text: 'صفحه نمایش', needsDescription: true, placeholder: 'لطفاً مشکل صفحه نمایش را توضیح دهید' },
-                                { text: 'صدا', needsDescription: true, placeholder: 'لطفاً مشکل صدا را توضیح دهید' },
-                                { text: 'اتصال به اینترنت', needsDescription: true, placeholder: 'لطفاً مشکل اتصال را توضیح دهید' },
-                                { text: 'باتری', needsDescription: true, placeholder: 'لطفاً مشکل باتری را توضیح دهید' },
-                            ],
-                        },
-                        {
-                            id: 4,
-                            type: 'string',
-                            question: 'توضیحات تکمیلی در مورد مشکل دستگاه:',
-                        },
-                    ],
-                },
-            ],
-        },
-        {
-            id: 2,
-            title: 'پرسشنامه تعمیرات',
-            groups: [
-                {
-                    id: 3,
-                    title: 'اطلاعات تعمیر',
-                    questions: [
-                        {
-                            id: 5,
-                            type: 'single',
-                            question: 'آیا قطعه معیوب تعویض شده است؟',
-                            options: [
-                                { text: 'بله', needsDescription: true, placeholder: 'لطفاً نام قطعه تعویض شده را ذکر کنید' },
-                                { text: 'خیر', needsDescription: true, placeholder: 'لطفاً دلیل عدم تعویض را توضیح دهید' },
-                            ],
-                        },
-                        {
-                            id: 6,
-                            type: 'number',
-                            question: 'مدت زمان تعمیر (به دقیقه):',
-                        },
-                    ],
-                },
-            ],
-        },
-    ];
+    const [questionnaires, setQuestionnaires] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Initialize all groups as expanded
-        const initialExpandedGroups = {};
-        questionnaires.forEach(questionnaire => {
-            questionnaire.groups.forEach(group => {
-                initialExpandedGroups[group.id] = true;
-            });
-        });
-        setExpandedGroups(initialExpandedGroups);
-    }, []);
+        const loadQuestionnaires = async () => {
+            if (!requestId) return;
+            
+            try {
+                const response = await loadQuestionnaireWithQuestionList(requestId);
+                if (response.success) {
+                    setQuestionnaires(response.data);
+                    // Initialize all groups as expanded with unique identifiers
+                    const initialExpandedGroups = {};
+                    response.data.forEach(questionnaire => {
+                        questionnaire.Questions.forEach(category => {
+                            const uniqueGroupId = `${questionnaire.Id}_${category.categoryId}`;
+                            initialExpandedGroups[uniqueGroupId] = true;
+                        });
+                    });
+                    setExpandedGroups(initialExpandedGroups);
+                }
+            } catch (error) {
+                console.error('Error loading questionnaires:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        loadQuestionnaires();
+    }, [requestId]);
 
     useEffect(() => {
         // Check if all questions in all questionnaires are complete
         const allQuestionsComplete = questionnaires.every(questionnaire => 
-            questionnaire.groups.every(group => isGroupComplete(group))
+            questionnaire.Questions.every(category => 
+                category.QuestionList.every(question => {
+                    const answer = answers[question.questionnaireId];
+                    if (!answer) return false;
+
+                    if (question.questionType === 1) { // Multiple choice
+                        if (answer.length === 0) return false;
+                    }
+
+                    // Check required descriptions for selected options
+                    if (question.questionType === 1 || question.questionType === 2) { // Multiple or Single choice
+                        const selectedOptions = question.options.filter(option => 
+                            option.isDescriptionMandatory && 
+                            (answer === option.title || (Array.isArray(answer) && answer.includes(option.title)))
+                        );
+                        
+                        return selectedOptions.every(option => 
+                            descriptions[`${question.questionnaireId}_${option.title}`]
+                        );
+                    }
+
+                    return true;
+                })
+            )
         );
         
         setIsValid(allQuestionsComplete);
-    }, [answers, descriptions, setIsValid]);
+    }, [answers, descriptions, setIsValid, questionnaires]);
 
-    const handleAnswerChange = (questionId, value) => {
+    const handleAnswerChange = (questionnaireId, value) => {
         setAnswers(prev => ({
             ...prev,
-            [questionId]: value
+            [questionnaireId]: value
         }));
     };
 
-    const handleDescriptionChange = (questionId, optionText, text) => {
+    const handleDescriptionChange = (questionnaireId, optionText, text) => {
         setDescriptions(prev => ({
             ...prev,
-            [`${questionId}_${optionText}`]: text
+            [`${questionnaireId}_${optionText}`]: text
         }));
     };
 
-    const toggleGroup = (groupId) => {
+    const toggleGroup = (questionnaireId, categoryId) => {
+        const uniqueGroupId = `${questionnaireId}_${categoryId}`;
         setExpandedGroups(prev => ({
             ...prev,
-            [groupId]: !prev[groupId]
+            [uniqueGroupId]: !prev[uniqueGroupId]
         }));
     };
 
-    const isGroupComplete = (group) => {
-        return group.questions.every(question => {
-            const answer = answers[question.id];
-            if (!answer) return false;
-
-            if (question.type === 'multiple') {
-                if (answer.length === 0) return false;
-            }
-
-            // Check required descriptions for selected options
-            if (question.type === 'single' || question.type === 'multiple') {
-                const selectedOptions = question.options.filter(option => 
-                    option.needsDescription && 
-                    (answer === option.text || (Array.isArray(answer) && answer.includes(option.text)))
-                );
-                
-                return selectedOptions.every(option => 
-                    option.isDescriptionRequired ? descriptions[`${question.id}_${option.text}`] : true
-                );
-            }
-
-            return true;
-        });
-    };
-
-    const renderDescriptionInput = (questionId, option) => {
-        if (!option.needsDescription) return null;
+    const renderDescriptionInput = (questionnaireId, option) => {
+        if (!option.isDescriptionShow) return null;
         
-        const isSelected = answers[questionId] === option.text || 
-                         (Array.isArray(answers[questionId]) && answers[questionId].includes(option.text));
+        const isSelected = answers[questionnaireId] === option.title || 
+                         (Array.isArray(answers[questionnaireId]) && answers[questionnaireId].includes(option.title));
 
         if (!isSelected) return null;
 
@@ -162,9 +103,9 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
             <View style={styles.descriptionContainer}>
                 <TextInput
                     style={styles.descriptionInput}
-                    value={descriptions[`${questionId}_${option.text}`] || ''}
-                    onChangeText={(text) => handleDescriptionChange(questionId, option.text, text)}
-                    placeholder={option.placeholder}
+                    value={descriptions[`${questionnaireId}_${option.title}`] || ''}
+                    onChangeText={(text) => handleDescriptionChange(questionnaireId, option.title, text)}
+                    placeholder={option.description}
                     multiline
                     textAlignVertical="top"
                 />
@@ -177,12 +118,12 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
             <Text style={styles.requiredStar}>*</Text>
         );
 
-        switch (question.type) {
-            case 'single':
+        switch (question.questionType) {
+            case 1: // Multiple choice
                 return (
                     <View style={styles.questionContainer}>
                         <View style={styles.questionHeader}>
-                            <Text style={styles.questionText}>{question.question}</Text>
+                            <Text style={styles.questionText}>{question.title}</Text>
                             {renderRequiredStar()}
                         </View>
                         <View style={styles.optionsContainer}>
@@ -191,91 +132,91 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                                     <TouchableOpacity
                                         style={[
                                             styles.optionButton,
-                                            answers[question.id] === option.text && styles.selectedOption
-                                        ]}
-                                        onPress={() => handleAnswerChange(question.id, option.text)}
-                                    >
-                                        <Text style={[
-                                            styles.optionText,
-                                            answers[question.id] === option.text && styles.selectedOptionText
-                                        ]}>
-                                            {option.text}
-                                        </Text>
-                                    </TouchableOpacity>
-                                    {renderDescriptionInput(question.id, option)}
-                                </View>
-                            ))}
-                        </View>
-                    </View>
-                );
-
-            case 'multiple':
-                return (
-                    <View style={styles.questionContainer}>
-                        <View style={styles.questionHeader}>
-                            <Text style={styles.questionText}>{question.question}</Text>
-                            {renderRequiredStar()}
-                        </View>
-                        <View style={styles.optionsContainer}>
-                            {question.options.map((option, index) => (
-                                <View key={index} style={styles.optionWrapper}>
-                                    <TouchableOpacity
-                                        style={[
-                                            styles.optionButton,
-                                            answers[question.id]?.includes(option.text) && styles.selectedOption
+                                            answers[question.questionnaireId]?.includes(option.title) && styles.selectedOption
                                         ]}
                                         onPress={() => {
-                                            const currentAnswers = answers[question.id] || [];
-                                            const newAnswers = currentAnswers.includes(option.text)
-                                                ? currentAnswers.filter(ans => ans !== option.text)
-                                                : [...currentAnswers, option.text];
-                                            handleAnswerChange(question.id, newAnswers);
+                                            const currentAnswers = answers[question.questionnaireId] || [];
+                                            const newAnswers = currentAnswers.includes(option.title)
+                                                ? currentAnswers.filter(ans => ans !== option.title)
+                                                : [...currentAnswers, option.title];
+                                            handleAnswerChange(question.questionnaireId, newAnswers);
                                         }}
                                     >
                                         <Text style={[
                                             styles.optionText,
-                                            answers[question.id]?.includes(option.text) && styles.selectedOptionText
+                                            answers[question.questionnaireId]?.includes(option.title) && styles.selectedOptionText
                                         ]}>
-                                            {option.text}
+                                            {option.title}
                                         </Text>
                                     </TouchableOpacity>
-                                    {renderDescriptionInput(question.id, option)}
+                                    {renderDescriptionInput(question.questionnaireId, option)}
                                 </View>
                             ))}
                         </View>
                     </View>
                 );
 
-            case 'string':
+            case 2: // Single choice
                 return (
                     <View style={styles.questionContainer}>
                         <View style={styles.questionHeader}>
-                            <Text style={styles.questionText}>{question.question}</Text>
+                            <Text style={styles.questionText}>{question.title}</Text>
+                            {renderRequiredStar()}
+                        </View>
+                        <View style={styles.optionsContainer}>
+                            {question.options.map((option, index) => (
+                                <View key={index} style={styles.optionWrapper}>
+                                    <TouchableOpacity
+                                        style={[
+                                            styles.optionButton,
+                                            answers[question.questionnaireId] === option.title && styles.selectedOption
+                                        ]}
+                                        onPress={() => handleAnswerChange(question.questionnaireId, option.title)}
+                                    >
+                                        <Text style={[
+                                            styles.optionText,
+                                            answers[question.questionnaireId] === option.title && styles.selectedOptionText
+                                        ]}>
+                                            {option.title}
+                                        </Text>
+                                    </TouchableOpacity>
+                                    {renderDescriptionInput(question.questionnaireId, option)}
+                                </View>
+                            ))}
+                        </View>
+                    </View>
+                );
+
+            case 3: // String
+                return (
+                    <View style={styles.questionContainer}>
+                        <View style={styles.questionHeader}>
+                            <Text style={styles.questionText}>{question.title}</Text>
                             {renderRequiredStar()}
                         </View>
                         <TextInput
                             style={styles.textInput}
-                            value={answers[question.id] || ''}
-                            onChangeText={(text) => handleAnswerChange(question.id, text)}
+                            value={answers[question.questionnaireId] || ''}
+                            onChangeText={(text) => handleAnswerChange(question.questionnaireId, text)}
                             multiline
                             textAlignVertical="top"
                         />
                     </View>
                 );
 
-            case 'number':
+            case 4: // Number
                 return (
                     <View style={styles.questionContainer}>
                         <View style={styles.questionHeader}>
-                            <Text style={styles.questionText}>{question.question}</Text>
+                            <Text style={styles.questionText}>{question.title}</Text>
                             {renderRequiredStar()}
                         </View>
                         <TextInput
                             style={styles.textInput}
-                            value={answers[question.id] || ''}
+                            value={answers[question.questionnaireId] || ''}
                             onChangeText={(text) => {
                                 if (text === '' || /^\d+$/.test(text)) {
-                                    handleAnswerChange(question.id, text);
+                                    handleAnswerChange(question.questionnaireId, text);
                                 }
                             }}
                             keyboardType="numeric"
@@ -288,15 +229,36 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
         }
     };
 
-    const renderQuestionGroup = (group) => {
-        const isComplete = isGroupComplete(group);
-        const isExpanded = expandedGroups[group.id] !== false;
+    const renderQuestionGroup = (questionnaire, category) => {
+        const uniqueGroupId = `${questionnaire.Id}_${category.categoryId}`;
+        const isExpanded = expandedGroups[uniqueGroupId] !== false;
+        const isComplete = category.QuestionList.every(question => {
+            const answer = answers[question.questionnaireId];
+            if (!answer) return false;
+
+            if (question.questionType === 1) {
+                if (answer.length === 0) return false;
+            }
+
+            if (question.questionType === 1 || question.questionType === 2) {
+                const selectedOptions = question.options.filter(option => 
+                    option.isDescriptionMandatory && 
+                    (answer === option.title || (Array.isArray(answer) && answer.includes(option.title)))
+                );
+                
+                return selectedOptions.every(option => 
+                    descriptions[`${question.questionnaireId}_${option.title}`]
+                );
+            }
+
+            return true;
+        });
 
         return (
-            <View key={group.id} style={styles.groupContainer}>
+            <View key={uniqueGroupId} style={styles.groupContainer}>
                 <TouchableOpacity 
                     style={styles.groupHeader}
-                    onPress={() => toggleGroup(group.id)}
+                    onPress={() => toggleGroup(questionnaire.Id, category.categoryId)}
                 >
                     <View style={styles.groupHeaderContent}>
                         <Ionicons 
@@ -308,7 +270,7 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                             styles.groupTitle,
                             isComplete && styles.completeGroupTitle
                         ]}>
-                            {group.title}
+                            {category.categoryTitle}
                         </Text>
                     </View>
                     {isComplete && (
@@ -319,8 +281,8 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                         />
                     )}
                 </TouchableOpacity>
-                {isExpanded && group.questions.map(question => (
-                    <View key={question.id}>
+                {isExpanded && category.QuestionList.map(question => (
+                    <View key={question.questionnaireId}>
                         {renderQuestion(question)}
                     </View>
                 ))}
@@ -329,11 +291,19 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
     };
 
     const renderQuestionnaire = (questionnaire) => (
-        <View key={questionnaire.id} style={styles.questionnaireContainer}>
-            <Text style={styles.questionnaireTitle}>{questionnaire.title}</Text>
-            {questionnaire.groups.map(group => renderQuestionGroup(group))}
+        <View key={questionnaire.Id} style={styles.questionnaireContainer}>
+            <Text style={styles.questionnaireTitle}>{questionnaire.Title}</Text>
+            {questionnaire.Questions.map(category => renderQuestionGroup(questionnaire, category))}
         </View>
     );
+
+    if (isLoading) {
+        return (
+            <View style={styles.loadingContainer}>
+                <Text>در حال بارگیری اطلاعات...</Text>
+            </View>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
@@ -346,6 +316,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        fontFamily: 'iransansbold',
     },
     questionnaireContainer: {
         marginBottom: 30,

@@ -9,6 +9,8 @@ const InstallationRequestItem = ({
     installRequests, 
     handleItemPress, 
     openRequestReport, 
+    openMapDirection,
+    openPhoneCall,
     getSLAColor 
 }) => {
     return (
@@ -37,10 +39,10 @@ const InstallationRequestItem = ({
                     <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
                         <Ionicons name={'document'} style={styles.callIcon} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.callButton} onPress={() => { console.log(index) }}>
+                    <TouchableOpacity style={styles.callButton} onPress={() => openMapDirection(item)}>
                         <Ionicons name={'location'} style={styles.callIcon} />
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.callButton} onPress={() => { }}>
+                    <TouchableOpacity style={styles.callButton} onPress={() => openPhoneCall(item)}>
                         <Ionicons name={'call'} style={styles.callIcon} />
                     </TouchableOpacity>
                 </View>

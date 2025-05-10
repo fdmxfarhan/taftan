@@ -12,7 +12,7 @@ module.exports = StyleSheet.create({
         marginVertical: 0,
         backgroundColor: colors.white,
         // backgroundColor: colors.lightergray,
-        borderColor: colors.lightgray,
+        borderColor: colors.antiflashWhite,
         borderWidth: 1,
         direction: 'rtl',
     },

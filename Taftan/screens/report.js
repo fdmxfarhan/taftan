@@ -265,6 +265,7 @@ const Report = (props) => {
                         setAnswers={setQuestionnaireAnswers}
                         descriptions={questionnaireDescriptions}
                         setDescriptions={setQuestionnaireDescriptions}
+                        requestId={reportDetail.requestReportInfo.requestId}
                     />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3')}>
