@@ -28,6 +28,7 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
         if (reportDetail) {
             if (reportDetail.reportInfo.isSecondReport) sendRequest();
         }
+        if(!isSecondReport)
         setIsValid(true);
     }, [reportDetail, isLoading])
     var serviceObject = (detail) => {
@@ -57,9 +58,9 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
                     <DropDownObj list={secondReportReasons}
                         getLabel={(item) => item.title}
                         getValue={(item) => item.title}
-                        setValue={(item) => { setsecondReportReason(item); }}
+                        setValue={(item) => { setsecondReportReason(item); setIsValid(true); }}
                         value={secondReportReason.title}
-                        buttonStyle={[styles.dropdown, styles.requiredBorder]}
+                        buttonStyle={[styles.dropdown, styles.requiredBorder, { borderRightColor: secondReportReason.title == 'انتخاب کنید' ? colors.red2 : colors.emerald }]}
                         buttonTextStyle={styles.dropdownText}
                         onSubmit={(val) => { }}
                     />

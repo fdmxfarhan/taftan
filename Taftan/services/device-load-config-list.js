@@ -9,14 +9,20 @@ export const loadDeviceConfigList = async (deviceId) => {
             success: true,
             data: {
                 "Data": [{
-                    "id": 179431,
-                    "deviceId": 36155,
-                    "serial": "3924115425",
-                    "deviceModuleModel": "Card Reader MSR1000D",
-                    "deviceModuleModelId": 1068,
-                    "deviceHWTitle": "Card Reader",
-                    "deviceHWId": 78,
-                    "code": "20702020021"
+                    "Code": "258",
+                    "GroupModuleId": 2,
+                    "ModuleGroupKey": "e2afe96a-4150-4799-8213-31d5af87874d",
+                    "ModuleGroupTitle": "3In1 Module",
+                    "ModuleTitle": "Module32",
+                    "TypeId": 29,
+                    "count": 1,
+                    "deviceId": 144734,
+                    "deviceModuleGroupKey": "e2afe96a-4150-4799-8213-31d5af87874d",
+                    "deviceModuleKey": "1274bd37-3941-480a-ac82-d7f5b5452116",
+                    "deviceModuleSerialKey": null,
+                    "haveSerial": false,
+                    "id": 9,
+                    "serial": null
                 }],
                 "TotalCount": 1
             }

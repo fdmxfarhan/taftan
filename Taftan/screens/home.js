@@ -13,8 +13,12 @@ import SearchView from '../components/search';
 import { loadMyMessageBoxList } from '../services/message-my-list';
 import MessageListView from '../components/home-message';
 import MyRequestsList from '../components/home-myrequests';
-import { loadMyDamageRequestList } from '../services/req-my-requests';
 import { getAuthData } from '../services/auth';
+import { submitMyDamageRequest } from '../services/ser-my-damage';
+import { submitMyInstallationRequest } from '../services/ser-my-installation';
+import { submitMySiteRequest } from '../services/ser-my-site';
+import { submitMyProjectRequest } from '../services/ser-my-project';
+import { submitMyPMRequest } from '../services/ser-my-pm';
 
 const Home = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -23,7 +27,11 @@ const Home = (props) => {
     var [myRequestCount, setmyRequestCount] = useState(0);
     var [searchEN, setsearchEN] = useState(false);
     var [myMessageList, setmyMessageList] = useState([]);
-    var [myRequestsList, setmyRequestsList] = useState([]);
+    var [myDamageRequestsList, setmyDamageRequestsList] = useState([]);
+    var [myInstallRequestsList, setmyInstallRequestsList] = useState([]);
+    var [mySiteRequestsList, setmySiteRequestsList] = useState([]);
+    var [myProjectRequestsList, setmyProjectRequestsList] = useState([]);
+    var [myPeriodicRequestsList, setmyPeriodicRequestsList] = useState([]);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -44,12 +52,37 @@ const Home = (props) => {
                 setmyMessageList(result.data.Data);
             } else ToastAndroid.show('پیام های من بارگیری نشد.', ToastAndroid.SHORT);
 
-            var result = await loadMyDamageRequestList(0, 50, props.navigation);
+            myRequestCount = 0;
+            var result = await submitMyDamageRequest(0, 50, props.navigation);
             if (result.success) {
-                setmyRequestsList(result.data.Data);
-                setmyRequestCount(result.data.TotalCount);
+                setmyDamageRequestsList(result.data.Data);
+                myRequestCount += result.data.TotalCount;
             } else ToastAndroid.show('درخواست‌های من بارگیری نشد.', ToastAndroid.SHORT);
 
+            var result = await submitMyInstallationRequest(0, 50, props.navigation);
+            if (result.success) {
+                setmyInstallRequestsList(result.data.Data);
+                myRequestCount += result.data.TotalCount;
+            } else ToastAndroid.show('درخواست‌های من بارگیری نشد.', ToastAndroid.SHORT); 
+
+            var result = await submitMySiteRequest(0, 50, props.navigation);
+            if (result.success) {
+                setmySiteRequestsList(result.data.Data);
+                myRequestCount += result.data.TotalCount;
+            } else ToastAndroid.show('درخواست‌های من بارگیری نشد.', ToastAndroid.SHORT); 
+
+            var result = await submitMyProjectRequest(0, 50, props.navigation);
+            if (result.success) {
+                setmyProjectRequestsList(result.data.Data);
+                myRequestCount += result.data.TotalCount;
+            } else ToastAndroid.show('درخواست‌های من بارگیری نشد.', ToastAndroid.SHORT); 
+            
+            var result = await submitMyPMRequest(0, 50, props.navigation);
+            if (result.success) {
+                setmyPeriodicRequestsList(result.data.Data);
+                myRequestCount += result.data.TotalCount;
+            } else ToastAndroid.show('درخواست‌های من بارگیری نشد.', ToastAndroid.SHORT); 
+            setmyRequestCount(myRequestCount);
         }
         sendRequest();
     }, [tabItem])
@@ -66,7 +99,14 @@ const Home = (props) => {
                 </View>
             )}
             {tabItem == 'requests' && (
-                <MyRequestsList myRequestsList={myRequestsList} setmyRequestsList={setmyRequestsList} navigation={props.navigation} />
+                <MyRequestsList 
+                    myDamageRequestsList={myDamageRequestsList} 
+                    myInstallRequestsList={myInstallRequestsList} 
+                    mySiteRequestsList={mySiteRequestsList} 
+                    myProjectRequestsList={myProjectRequestsList} 
+                    myPeriodicRequestsList={myPeriodicRequestsList} 
+                    navigation={props.navigation} 
+                />
             )}
             {tabItem == 'archives' && (
                 <MessageListView myMessageList={myMessageList} setmyMessageList={setmyMessageList} navigation={props.navigation} />

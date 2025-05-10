@@ -110,6 +110,14 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
                 return;
             }
+            if(selectedPreviousModule && !selectedPreviousModule.HaveSerial){
+                const found = deviceConfigList.find(config => config.GroupModuleId == selectedPreviousModule.ModuleGroupId);
+                console.log(found);
+                if(found && found.count < moduleoldSerial){
+                    setMaxModulesExceededPopup(true);
+                    return;
+                }
+            }
         }
         else if(componentAction == 'اضافه'){
             if (selectedNewModule.ModuleTitle === 'انتخاب کنید') {

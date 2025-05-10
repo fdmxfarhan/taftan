@@ -15,23 +15,34 @@ import LoadingView from './loading';
 import { loadMyMessageBoxList } from '../services/message-my-list';
 import { loadMyDamageRequestList } from '../services/req-my-requests';
 import getSLAColor from '../config/getSLAColor';
-
-const MyRequestsList = ({ navigation, myRequestsList, setmyRequestsList }) => {
+import InstallationRequestItem from './InstallationRequestItem';
+import DamageRequestItem from './DamageRequestItem';
+import SiteRequestItem from './SiteRequestItem';
+import ProjectRequestItem from './ProjectRequestItem';
+import PMRequestItem from './PMRequestItem';
+const MyRequestsList = ({
+    navigation,
+    myDamageRequestsList,
+    myInstallRequestsList,
+    mySiteRequestsList,
+    myProjectRequestsList,
+    myPeriodicRequestsList,
+}) => {
     const [skipValue, setskipValue] = useState(1);
     const [rowsValue, setrowsValue] = useState(10);
     const [isLoading, setIsLoading] = useState(false);
     const [DamageFilterEN, setDamageFilterEN] = useState(true);
-    const [InstallFilterEN, setInstallFilterEN] = useState(false);
-    const [siteFilterEN, setsiteFilterEN] = useState(false);
-    const [projectFilterEN, setprojectFilterEN] = useState(false);
-    const [periodicFilterEN, setperiodicFilterEN] = useState(false);
+    const [InstallFilterEN, setInstallFilterEN] = useState(true);
+    const [siteFilterEN, setsiteFilterEN] = useState(true);
+    const [projectFilterEN, setprojectFilterEN] = useState(true);
+    const [periodicFilterEN, setperiodicFilterEN] = useState(true);
     useEffect(() => {
 
     })
     const handleItemPress = (item) => {
         navigation.navigate('DamageReqView', { item });
     };
-    
+
     return (
         <View>
             <ScrollView horizontal={true} style={styles.typeFiltersView} inverted={true}>
@@ -62,22 +73,69 @@ const MyRequestsList = ({ navigation, myRequestsList, setmyRequestsList }) => {
                 }} /> */}
             <ScrollView style={styles.scrollviwe}>
                 <View style={styles.container}>
-                    {myRequestsList.map((item, index) => (
-                        <TouchableOpacity key={item.id} onPress={() => handleItemPress(item)} style={styles.itemContainer}>
-                            <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
-                            <Text style={styles.damageTitle}>{item.serviceName}</Text>
-                            <Text style={styles.textTitle}>{item.requestId}</Text>
-                            <View style={styles.stateView}>
-                                <Text style={styles.state}>{item.persianLastState}</Text>
-                                {item.isPilot == 0 ? (
-                                    <View style={[styles.stateCircle, { backgroundColor: getSLAColor(item.SLAStyle) }]} />
-                                ) : (
-                                    <Ionicons style={styles.pilotIcon} name={'build'} />
-                                )}
-                            </View>
-                            <Text style={styles.date}>{item.persianInsertedDate}</Text>
-                        </TouchableOpacity>
+                    {DamageFilterEN && myDamageRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس خرابی:</Text>
+                    )}
+                    {DamageFilterEN && myDamageRequestsList.map((item, index) => (
+                        <DamageRequestItem
+                            key={item.requestId}
+                            item={item}
+                            handleItemPress={handleItemPress}
+                            openRequestReport={() => { }}
+                            getSLAColor={getSLAColor}
+                        />
                     ))}
+                    {InstallFilterEN && myInstallRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس نصب:</Text>
+                    )}
+                    {InstallFilterEN && myInstallRequestsList.map((item, index) => (
+                        <InstallationRequestItem
+                            key={item.requestId}
+                            item={item}
+                            index={index}
+                            installRequests={myInstallRequestsList}
+                            handleItemPress={handleItemPress}
+                            openRequestReport={() => { }}
+                            getSLAColor={getSLAColor}
+                        />
+                    ))}
+                    {siteFilterEN && mySiteRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس سایت سازی:</Text>
+                    )}
+                    {siteFilterEN && mySiteRequestsList.map((item, index) => (
+                        <SiteRequestItem
+                            key={item.requestId}
+                            item={item}
+                            handleItemPress={handleItemPress}
+                            openRequestReport={() => { }}
+                            getSLAColor={getSLAColor}
+                        />
+                    ))}
+                    {projectFilterEN && myProjectRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس پروژه:</Text>
+                    )}
+                    {projectFilterEN && myProjectRequestsList.map((item, index) => (
+                        <ProjectRequestItem
+                            key={item.requestId}    
+                            item={item}
+                            handleItemPress={handleItemPress}
+                            openRequestReport={() => { }}
+                            getSLAColor={getSLAColor}
+                        />
+                    ))}
+                    {periodicFilterEN && myPeriodicRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس دوره ای:</Text>
+                    )}
+                    {periodicFilterEN && myPeriodicRequestsList.map((item, index) => (
+                        <PMRequestItem
+                            key={item.requestId}
+                            item={item}
+                            handleItemPress={handleItemPress}
+                            openRequestReport={() => { }}
+                            getSLAColor={getSLAColor}
+                        />
+                    ))}
+
                 </View>
             </ScrollView>
         </View>
@@ -88,9 +146,9 @@ const styles = StyleSheet.create({
     container: {
         direction: 'rtl',
         textAlign: 'right',
-        alignContent: 'flex-end',
-        alignItems: 'flex-end',
         paddingBottom: 300,
+        flex: 1,
+        padding: 0,
     },
     typeFiltersView: {
         marginVertical: 10,
@@ -153,8 +211,8 @@ const styles = StyleSheet.create({
         alignContent: 'center',
         alignItems: 'center',
     },
-    stateCircle:{
-        width: 10, 
+    stateCircle: {
+        width: 10,
         height: 10,
         borderRadius: 5,
     },

@@ -142,6 +142,13 @@ const Report = (props) => {
                 break;
             case 'tab5':
                 isValid = isTab5Valid;
+                if (isValid && garantieConflict && moduleExchange) {
+                    const hasGarantiViolation = componentChangesList.some(item => item === 'نقض گارانتی');
+                    if (!hasGarantiViolation) {
+                        ToastAndroid.show('قطعه شامل نقض گارانتی انتخاب نشده است', ToastAndroid.SHORT);
+                        return;
+                    }
+                }
                 break;
             case 'tab6':
                 isValid = isTab6Valid;

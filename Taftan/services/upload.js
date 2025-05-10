@@ -1,5 +1,6 @@
-import api from '../config/api-upload';
+import api from '../config/api';
 import { use_local_data } from '../config/consts';
+import { getAuthData } from './auth';
 
 /**
  * Upload a file to the server.
@@ -11,13 +12,26 @@ import { use_local_data } from '../config/consts';
 
 export const uploadFile = async (endpoint, file, onUploadProgress) => {
     try {
-        const response = await fetch(file.uri);
-        const blob = await response.blob();
+        const authData = await getAuthData();
+        
+        // Create FormData object
+        const formData = new FormData();
+        
+        // Append the file directly to FormData
+        formData.append('file', {
+            uri: Platform.OS === 'android' ? file.uri : file.uri.replace('file://', ''),
+            type: file.type,
+            name: file.name
+        });
 
-        // Upload the binary file directly as the request body
-        const uploadResponse = await api.post(endpoint, file, {
+        // Upload the file using FormData
+        const uploadResponse = await api.post(endpoint, formData, {
             headers: {
-                'Content-Type': file.type || 'application/octet-stream', // Use the file's MIME type or fallback to binary
+                'Accept': 'application/json',
+                'Content-Type': 'multipart/form-data',
+                'Authorization': authData.token,
+                'Accessid': authData.Constraintid,
+                'Constraintid': authData.Constraintid,
             },
             onUploadProgress,
         });
