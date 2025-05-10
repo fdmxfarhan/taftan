@@ -35,7 +35,7 @@ const ServiceSite = (props) => {
 
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitSiteRequest(skip, take);
+        var result = await submitSiteRequest(skip, take, props.navigation);
         if(result.success){
             setSiteRequests(result.data.Data);
             setIsLoading(false);

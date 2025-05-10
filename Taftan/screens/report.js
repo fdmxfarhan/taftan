@@ -77,6 +77,9 @@ const Report = (props) => {
     var [selectedWarranties, setSelectedWarranties] = useState([]);
     var [selectedConsumedModule, setselectedConsumedModule] = useState({ModuleTitle: 'انتخاب کنید'});
     var [selectedConsumedModuleSerial, setselectedConsumedModuleSerial] = useState({Serial: 'انتخاب کنید'});
+    var [damageBeforeUse, setdamageBeforeUse] = useState(false);
+    var [moduleSerialList, setModuleSerialList] = useState([]);
+    var [moduleInUserStoreListforDamageBeforeUse, setmoduleInUserStoreListforDamageBeforeUse] = useState([]);
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -349,7 +352,13 @@ const Report = (props) => {
                         selectedModule={selectedConsumedModule} 
                         setSelectedModule={setselectedConsumedModule} 
                         selectedConsumedModuleSerial={selectedConsumedModuleSerial} 
-                        setselectedConsumedModuleSerial={setselectedConsumedModuleSerial} />
+                        setselectedConsumedModuleSerial={setselectedConsumedModuleSerial}
+                        damageBeforeUse={damageBeforeUse}
+                        setdamageBeforeUse={setdamageBeforeUse}
+                        moduleInUserStoreList={moduleInUserStoreListforDamageBeforeUse}
+                        setModuleInUserStoreList={setmoduleInUserStoreListforDamageBeforeUse}
+                        moduleSerialList={moduleSerialList}
+                        setModuleSerialList={setModuleSerialList} />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>

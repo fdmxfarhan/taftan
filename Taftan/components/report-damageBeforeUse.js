@@ -13,13 +13,23 @@ import { GetModuleInUserStore } from '../services/device-config-GetModuleInUserS
 import { ToastAndroid } from 'react-native';
 import { GetModuleSerialListByUserKeyModuleKey } from '../services/device-config-GetModuleSerialListByUserKeyModuleKey';
 
-const ReportDamageBeforeUseView = ({ setIsValid, navigation, moduleGroupKey, officeKey, selectedModule, setSelectedModule, selectedConsumedModuleSerial, setselectedConsumedModuleSerial }) => {
-    var [damageBeforeUse, setdamageBeforeUse] = useState(false);
-    const [moduleInUserStoreList, setModuleInUserStoreList] = useState([]);
-    const [moduleSerialList, setModuleSerialList] = useState([]);
-
+const ReportDamageBeforeUseView = ({ 
+    setIsValid, 
+    navigation, 
+    moduleGroupKey, 
+    officeKey, 
+    selectedModule, 
+    setSelectedModule, 
+    selectedConsumedModuleSerial, 
+    setselectedConsumedModuleSerial, 
+    damageBeforeUse, 
+    setdamageBeforeUse,
+    moduleInUserStoreList,
+    setModuleInUserStoreList,
+    moduleSerialList,
+    setModuleSerialList 
+}) => {
     const updateModuleSerialList = async (moduleItem) => {
-        console.log(moduleItem.UserKey, moduleItem.ModuleKey, officeKey);
         var result = await GetModuleSerialListByUserKeyModuleKey(moduleItem.UserKey, moduleItem.ModuleKey, officeKey);
         if (result.success) {
             setModuleSerialList(result.data);

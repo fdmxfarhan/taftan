@@ -155,7 +155,7 @@ export const submitPeriodicRequest = async (skip, take, navigation) => {
                 "TotalCount": 6
             }
         }
-        const response = await api.post('/PeriodicRequest/LoadAllPMRequestList', {
+        const response = await api.post('/RequestPMController/loadAllPMRequestList', {
             "skip": skip,
             "take": take,
             "sort": [{

@@ -251,7 +251,7 @@ export const submitProjectRequest = async (skip, take, navigation) => {
                 "TotalCount": 27
             }
         }
-        const response = await api.post('/ProjectRequest/LoadAllProjectRequestList', {
+        const response = await api.post('/RequestProjectController/LoadAllProjectRequestList', {
             "skip": skip,
             "take": take,
             "sort": [{

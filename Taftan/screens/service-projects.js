@@ -17,6 +17,8 @@ import NotConnected from '../components/no-connection';
 import getSLAColor from '../config/getSLAColor';
 import ReqGridController from '../components/req-grid-controller';
 import styles from '../styles/requestList';
+import { getRequestDetail } from '../services/req-detail';
+import { loadRequestReportActionList } from '../services/report-load-action-list';
 
 const ServiceProjects = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
@@ -25,6 +27,12 @@ const ServiceProjects = (props) => {
     const [serviceConnected, setServiceConnected] = useState(true);
     const [skipValue, setskipValue] = useState(1);
     const [rowsValue, setrowsValue] = useState(10);
+    var [reportlistpopupEN, setreportlistPopupEN] = useState(false);
+    var [reportList, setreportList] = useState([]);
+    var [requestDetail, setRequestDetail] = useState(null);
+    var [deviceDetail, setdeviceDetail] = useState([]);
+    var [branchInfo, setbranchInfo] = useState([]);
+    var [reportInfo, setreportInfo] = useState(null);
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -34,7 +42,7 @@ const ServiceProjects = (props) => {
     };
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitProjectRequest(skip, take);
+        var result = await submitProjectRequest(skip, take, props.navigation);
         if(result.success){
             setProjectsRequests(result.data.Data);
             setIsLoading(false);
@@ -54,6 +62,36 @@ const ServiceProjects = (props) => {
         props.navigation.navigate('DamageReqView', { item });
         // props.navigation.navigate('RequestView', { item }); // Navigate to 'Request' screen, passing the item as a prop
     };
+
+    const openRequestReport = async (item) => {
+        var result = await getRequestDetail(item.requestId, props.navigation);
+        if (result.success) {
+            if (result.data != 'داده پیدا نشد') {
+                requestDetail = result.data;
+                setRequestDetail(requestDetail);
+                result = await loadRequestReportActionList(item.requestId);
+                setIsLoading(false);
+                if (result.success) {
+                    if (result.data.Data.length == 0) ToastAndroid.show('گزارشی وجود ندارد.', ToastAndroid.SHORT);
+                    else if (result.data.Data.length == 1) {
+                        reportInfo = result.data.Data[0];
+                        setreportInfo(reportInfo);
+                        props.navigation.navigate('Report', { requestDetail, reportInfo })
+                    }
+                    else {
+                        reportList = result.data.Data;
+                        setreportList(reportList);
+                        setreportlistPopupEN(true);
+                    }
+                }
+            }
+            else {
+                ToastAndroid.show('داده پیدا نشد!', ToastAndroid.SHORT);
+                props.navigation.goBack();
+                return;
+            }
+        }
+    }
 
     const renderItem = ({ item }) => (
         <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
