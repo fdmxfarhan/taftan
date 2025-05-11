@@ -3,7 +3,7 @@ import { Text, StyleSheet, View, TouchableOpacity, ScrollView } from 'react-nati
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
-const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail }) => {
+const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail, reportHasQuestionnaire }) => {
     const scrollViewRef = useRef(null);
     const [contentWidth, setContentWidth] = useState(0);
     const [scrollViewWidth, setScrollViewWidth] = useState(0);
@@ -47,7 +47,7 @@ const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail }) => {
                         <Text style={[styles.tabLinkText, tabItemVar == 'tab3' ? styles.activeText : styles.deactive]}>اقدامات انجام شده</Text>
                     </TouchableOpacity>
                 )}
-                {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 2 && (
+                {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 2 && reportHasQuestionnaire && (
                     <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab3.5' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab3.5')}>
                         <Ionicons name={tabItemVar == 'tab3.5' ? "document-text" : "document-text-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab3.5' ? styles.activeIcon : styles.deactive]} />
                         <Text style={[styles.tabLinkText, tabItemVar == 'tab3.5' ? styles.activeText : styles.deactive]}>پرسشنامه</Text>

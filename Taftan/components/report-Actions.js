@@ -50,7 +50,12 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
                     ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
                     return;
                 }
-                setnewactionList(prevList => [...prevList, { title: jobTitle.title, description: descriptionAction }]);
+                setnewactionList(prevList => [...prevList, { 
+                    title: jobTitle.title, 
+                    description: descriptionAction, 
+                    jobTitleId: jobTitle.id,
+                    
+                }]);
             }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>

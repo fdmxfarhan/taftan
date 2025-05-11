@@ -2,30 +2,18 @@ import api from '../config/api';
 import { use_local_data } from '../config/consts';
 import { getAuthData, logout } from './auth';
 
-export const GetServiceTitleListByDeviceId = async (deviceId, serviceGroupId, navigation) => {
+export const SaveReport = async (options, navigation) => {
     const authData = await getAuthData();
+    var response = null;
     try {
         if (use_local_data) return {
-            success: true,
-            data: [
-                {
-                    "Title": "ایراد عمومی",
-                    "Id": 13,
-                    "Description": null
-                },
-                {
-                    "Title": "99999999",
-                    "Id": 81,
-                    "Description": null
-                },
-                {
-                    "Title": "به‌روزرسانی نرم‌افزار",
-                    "Id": 10,
-                    "Description": null
-                }
-            ]
+            success: true, data: {
+                "resultMessage": "ثبت با موفقیت انجام شد",
+                "resultId": null,
+                "result": 0
+            }
         };
-        const response = await api.get(`/DeviceTypeService/GetServiceTitleListByDeviceId/${deviceId}/${serviceGroupId}`, {
+        response = await api.post('/ReportController/SaveReport', options, {
             headers: {
                 authorization: authData.token,
                 Accessid: authData.Constraintid,
@@ -35,7 +23,7 @@ export const GetServiceTitleListByDeviceId = async (deviceId, serviceGroupId, na
         });
         return { success: true, data: response.data };
     } catch (error) {
-        console.log('Error submitting /DeviceTypeService/GetServiceTitleListByDeviceId request:', error);
+        console.log('Error SaveReport:', error);
         
         if (error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
@@ -50,7 +38,7 @@ export const GetServiceTitleListByDeviceId = async (deviceId, serviceGroupId, na
             }
         }
         
-        return { success: false, error: 'Failed to submit /DeviceTypeService/GetServiceTitleListByDeviceId request' };
+        return { success: false, error: 'Failed to submit SaveReport request' };
     }
 };
 

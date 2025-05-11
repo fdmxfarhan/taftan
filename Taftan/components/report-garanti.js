@@ -11,7 +11,7 @@ import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
 import MultiSelectDropdown from './multi-select-dropdown';
-const ReportGarantiView = ({ navigation, reportDetail, garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange, setIsValid, selectedWarranties, setSelectedWarranties }) => {
+const ReportGarantiView = ({ navigation, reportDetail, garantieConflict, setgarantieConflict, softwareProcess, setsoftwareProcess, serviceAndRepair, setserviceAndRepair, moduleExchange, setmoduleExchange, setIsValid, selectedWarranties, setSelectedWarranties, warrantyDescription, setwarrantyDescription }) => {
     var [warrantyList, setwarrantyList] = useState([]);
     useEffect(() => {
         if(garantieConflict){
@@ -62,8 +62,8 @@ const ReportGarantiView = ({ navigation, reportDetail, garantieConflict, setgara
                         style={styles.description}
                         placeholder="توضیحات"
                         keyboardType={'default'}
-                    // value={descriptionAction}
-                    // onChange={text => setdescriptionAction(text.nativeEvent.text)}
+                        value={warrantyDescription}
+                        onChange={text => setwarrantyDescription(text.nativeEvent.text)}
                     />
                 </View>)}
             </View>)}

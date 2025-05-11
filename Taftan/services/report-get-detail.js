@@ -7,75 +7,68 @@ export const loadReportDetail = async (requestId, reportId, requestActionId, nav
     var response = null;
     try {
         if (use_local_data) return {
-            success: true, data: {
-                "requestReportInfo": {
+            success: true,
+            data: {
+                "damageReportInfo": {
+                    "changeModuleWarrantyType": null,
+                    "deviceConfig": [],
+                    "deviceConfigHistory": [],
+                    "isWarranty": null,
+                    "reportDBOList": [],
+                    "reportJobTitleList": [],
+                    "reportRecognitionList": [],
+                    "reportWarrantyList": [],
+                    "serviceName": "خرابی کارتخوان",
+                    "serviceWarrantyType": null,
+                    "softwareWarrantyType": null
+                },
+                "installReportInfo": null,
+                "pmReportInfo": null,
+                "projectReportInfo": null,
+                "reportInfo": {
+                    "QuestionAnswers": [],
+                    "SecondReportCausesId": 0,
+                    "SecondReportCausesTitle": "",
+                    "endDate": "1403/01/01",
+                    "endDate_long": 140301011000,
+                    "endTime": "10:00",
+                    "fileName": null,
+                    "id": 0,
+                    "imageFileName": null,
+                    "isSecondReport": 1,
+                    "reportDescription": null,
+                    "reportExpertDescription": null,
                     "requestId": 364040,
-                    "customerName": "بانک ملت",
-                    "insertedDateTime_long": 13961106090339,
-                    "insertedDateTime": "1396/11/06 09:03:39",
-                    "areaName": "مدیریت امور عملیات",
+                    "showSaveButton": true,
+                    "startDate": "1403/01/01",
+                    "startDate_long": 140301010000,
+                    "startTime": "00:00"
+                },
+                "requestReportInfo": {
                     "areaId": 6,
-                    "serviceGroupName": "رفع خرابی",
-                    "serviceGroupId": 1,
-                    "deviceTypeKey": "454c3f79-fea0-445e-b293-38610649db72",
-                    "deviceId": 19508,
+                    "areaName": "مدیریت امور عملیات",
+                    "branchCode": null,
+                    "branchId": 36235,
+                    "branchName": "پاسارگاد",
+                    "customerName": "بانک ملت",
                     "deviceBrandKey": "c59ff5c8-866a-4617-8843-7e3d2a165096",
+                    "deviceId": 19508,
                     "deviceModelKey": "e4560eef-320d-4e66-933c-f0107aa69a6b",
+                    "deviceModelName": "NCR 5886",
                     "deviceName": "شعبه میدان مبارزان اردبیل",
                     "deviceSerial": "38508059",
                     "deviceTerminal": "1448",
-                    "branchName": "پاسارگاد",
-                    "branchCode": null,
-                    "branchId": 36235,
-                    "deviceModelName": "NCR 5886",
+                    "deviceTypeKey": "454c3f79-fea0-445e-b293-38610649db72",
                     "expertName": "لیلا شاپوری",
-                    "userAssignList": [
-                        {
-                            "userKey": "8ed21c2e-2733-4622-9e30-cc69ef8a3098",
-                            "Id": 0,
-                            "currentUserName": "لیلا شاپوری",
-                            "expertType_String": "اصلی",
-                            "expertType": 0
-                        }
-                    ],
-                    "openRequestCount": 0
-                },
-                "reportInfo": {
-                    "id": 0,
+                    "insertedDateTime": "1396/11/06 09:03:39",
+                    "insertedDateTime_long": 13961106090339,
+                    "openRequestCount": 0,
                     "requestId": 364040,
-                    "startDate_long": 140301010000,
-                    "endDate_long": 140301011000,
-                    "SecondReportCausesId": 0,
-                    "SecondReportCausesTitle": "",
-                    "startDate": "1403/01/01",
-                    "endDate": "1403/01/01",
-                    "startTime": "00:00",
-                    "endTime": "10:00",
-                    "QuestionAnswers": [],
-                    "imageFileName": null,
-                    "fileName": null,
-                    "reportDescription": null,
-                    "reportExpertDescription": null,
-                    "isSecondReport": 0,
-                    "showSaveButton": true
+                    "serviceGroupId": 1,
+                    "serviceGroupName": "رفع خرابی",
+                    "userAssignList": [[Object]]
                 },
-                "damageReportInfo": {
-                    "reportRecognitionList": [],
-                    "reportJobTitleList": [],
-                    "reportDBOList": [],
-                    "reportWarrantyList": [],
-                    "deviceConfigHistory": [],
-                    "deviceConfig": [],
-                    "isWarranty": null,
-                    "softwareWarrantyType": null,
-                    "serviceWarrantyType": null,
-                    "changeModuleWarrantyType": null,
-                    "serviceName": "خرابی کارتخوان"
-                },
-                "siteReportInfo": null,
-                "projectReportInfo": null,
-                "installReportInfo": null,
-                "pmReportInfo": null
+                "siteReportInfo": null
             }
         };
         response = await api.get(`/ReportController/loadReportDetail/${requestId}/${reportId == null ? 0 : reportId}?requestActionId=${requestActionId}`, {
@@ -83,6 +76,7 @@ export const loadReportDetail = async (requestId, reportId, requestActionId, nav
                 authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
+                'User-Agent': 'Mobile',
             }
         });
         return { success: true, data: response.data };
@@ -107,3 +101,18 @@ export const loadReportDetail = async (requestId, reportId, requestActionId, nav
 };
 
 
+const actionResult = {
+    "actinResult": "موفق",
+    "actionTypeId": 1,
+    "actionTypeTitle": "مراجعه", 
+    "description": "-",
+    "endDateTime": 140301011000,
+    "fileName": "",
+    "id": 36,
+    "reportId": null,
+    "requestId": 364040,
+    "startDateTime": 140301010000,
+    "unsuccessfullActionReasonId": null,
+    "unsuccessfullActionReasonTitle": null,
+    "unsuccessfullActionSide": false
+}

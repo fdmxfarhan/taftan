@@ -14,15 +14,26 @@ export const LoadAllowedRequestAction = async (requestId, navigation) => {
                 "Cancel",
             ]
         };
-        console.log(requestId);
+        // console.log('Making request with:', {
+        //     requestId,
+        //     headers: {
+        //         Authorization: authData.token,
+        //         Accessid: authData.Constraintid,
+        //         Constraintid: authData.Constraintid,
+        //     }
+        // });
         const response = await api.get(`/RequestController/LoadAllowedRequestAction?requestId=${requestId}`, {
             headers: {
-                authorization: authData.token,
+                Authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
             }
         });
-        console.log(response.data);
+        // console.log('Response:', {
+        //     status: response.status,
+        //     headers: response.headers,
+        //     data: response.data
+        // });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /RequestController/LoadAllowedRequestAction request:', error);

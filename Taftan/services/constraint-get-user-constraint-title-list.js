@@ -15,14 +15,17 @@ export const GetUserConstraintTitleList = async (userToken) => {
                 }
             ]
         };
+        // console.log(userToken)
         const response = await api.get(`/Constraint/GetUserConstraintTitleList`, {
             headers: {
-                Authorization: userToken,
+                "Authorization": `Bearer ${userToken}`,
+                "User-Agent": "Mobile",
             }
         });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting GetUserConstraintTitleList request:', error);
+        // console.log(error.response.data)
         return { success: false, error: 'Failed to submit GetUserConstraintTitleList request' };
     }
 };

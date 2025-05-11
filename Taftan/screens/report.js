@@ -17,6 +17,7 @@ import ReportcomponentsView from '../components/report-components';
 import ReportGarantiView from '../components/report-garanti';
 import ReportDamageBeforeUseView from '../components/report-damageBeforeUse';
 import ReportQuestionnaire from '../components/report-questionnaire';
+import { loadQuestionnaireWithQuestionList } from '../services/report-load-questionnaire';
 
 const Report = (props) => {
     var reportInfo = props.route.params.reportInfo;
@@ -25,7 +26,7 @@ const Report = (props) => {
     var [damageReason, setdamageReason] = useState({ Title: 'نوع خرابی' });
     var [recognitionExpert, setrecognitionExpert] = useState({ title: 'تشخیص سطح دوم' });
     var [description, setdescription] = useState(0);
-    var [descriptionAction, setdescriptionAction] = useState(0);
+    var [descriptionAction, setdescriptionAction] = useState('');
     var [tabItem, setTabItem] = useState('tab1');
     var [jobTitle, setjobTitle] = useState({ title: 'نوع خرابی' });
     var [reportDetail, setreportDetail] = useState(null);
@@ -80,6 +81,50 @@ const Report = (props) => {
     var [damageBeforeUse, setdamageBeforeUse] = useState(false);
     var [moduleSerialList, setModuleSerialList] = useState([]);
     var [moduleInUserStoreListforDamageBeforeUse, setmoduleInUserStoreListforDamageBeforeUse] = useState([]);
+    var [reportHasQuestionnaire, setreportHasQuestionnaire] = useState(false);
+    var [warrantyDescription, setwarrantyDescription] = useState('');
+    var [uploadfilename, setuploadfilename] = useState('');
+    var [uploadimagefilename, setuploadimagefilename] = useState('');
+    const handleSaveReport = () => {
+        console.log(newRecognitionList);
+        var options = {
+            "requestId": requestDetail.requestInfo.requestId,
+            "id": 0,
+            "customerInsertKey": requestDetail.requestInfo.customerInsertKey,
+            "secondReportCausesId": secondReportReason.id,
+            "reportDate": reportDetail.requestReportInfo.reportDate,
+            "reportStartTime": reportDetail.requestReportInfo.reportStartTime,
+            "reportEndTime": reportDetail.requestReportInfo.reportEndTime,
+            "reportDescription": reportDetail.requestReportInfo.reportDescription,
+            "reportExpertDescription": reportDetail.requestReportInfo.reportExpertDescription,
+            "warrantyDescription": warrantyDescription,
+            "isWarranty": garantieConflict,
+            "fileName": uploadfilename,
+            "imageFileName": uploadimagefilename,
+            "isConfigChange": 0, ///////////////////////////////////
+            "reportTypeId": 8,  ///////////////////////////////////
+            "requestActionId": reportInfo.actionTypeId,
+            "softwareWarrantyType": softwareProcess,
+            "serviceWarrantyType": serviceAndRepair,
+            "changeModuleWarrantyType": moduleExchange,
+            "reportJobTitleList": newactionList,
+            "reportDBOList": [],
+            "reportWarrantyList": [],
+            "reportRecognitionList": [
+                {
+                    "recognitionDescription": "fwqe",
+                    "recognitionexpertId": 1
+                }
+            ],
+            "reportSaveQuestionList": [],
+            "deviceConfigsRemoveList": [],
+            "deviceConfigsNewList": [],
+            "deviceConfigsConflictList": [],
+            "reportSiteServiceList": [],
+            "reportInstallServiceInfo": null
+        }
+        // SaveReport(options, props.navigation);
+    }
     const handleSearchPress = () => {
         props.navigation.goBack();
     };
@@ -101,6 +146,7 @@ const Report = (props) => {
         var result = await loadReportDetail(requestDetail.requestInfo.requestId, reportInfo.reportId, reportInfo.id, props.navigation);
         if (result.success) {
             reportDetail = result.data;
+            // console.log(reportDetail);
             setreportDetail(reportDetail);
             setinstallationReportInfo(reportDetail.installReportInfo);
         }
@@ -116,12 +162,20 @@ const Report = (props) => {
             setJobTitleList(result.data);
         } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
 
+        result = await loadQuestionnaireWithQuestionList(requestDetail.requestInfo.requestId);
+        if (result.success) {
+            if (result.data.length > 0) {
+                setreportHasQuestionnaire(true);
+            }else{
+                setreportHasQuestionnaire(false);
+            }
+        } else ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);
+
         setIsLoading(false);
     }
     useEffect(() => {
         sendRequest();
     }, [])
-
     const handleNextTab = (currentTab, nextTab) => {
         let isValid = false;
         switch (currentTab) {
@@ -169,7 +223,7 @@ const Report = (props) => {
         <View style={styles.container}>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
-            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} reportDetail={reportDetail} />
+            <ReportTabLink tabItemVar={tabItem} setTabItemCallback={(name) => { setTabItem(name); sendRequest(); }} reportDetail={reportDetail} reportHasQuestionnaire={reportHasQuestionnaire}/>
             {tabItem == 'tab1' && (
                 <View style={{ flex: 1, }}>
                     <ReportInfoView 
@@ -250,14 +304,20 @@ const Report = (props) => {
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => handleNextTab('tab3', 'tab3.5')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => {
+                            if (reportHasQuestionnaire) {
+                                handleNextTab('tab3', 'tab3.5');
+                            } else {
+                                handleNextTab('tab3', 'tab4');
+                            }
+                        }}>
                             <Text style={styles.nextTabButtonText}>بعدی</Text>
                             <Ionicons name={'arrow-back'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
                     </View>
                 </View>
             )}
-            {tabItem == 'tab3.5' && (
+            {reportHasQuestionnaire && tabItem == 'tab3.5' && (
                 <View style={{ flex: 1, }}>
                     <ReportQuestionnaire 
                         setIsValid={setIsTab3_5Valid} 
@@ -282,6 +342,8 @@ const Report = (props) => {
             {tabItem == 'tab4' && (
                 <View style={{ flex: 1, }}>
                     <ReportGarantiView 
+                        warrantyDescription={warrantyDescription}
+                        setwarrantyDescription={setwarrantyDescription}
                         garantieConflict={garantieConflict}
                         setgarantieConflict={setgarantieConflict}
                         softwareProcess={softwareProcess}
@@ -297,7 +359,13 @@ const Report = (props) => {
                         setSelectedWarranties={setSelectedWarranties}
                     />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab3.5')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => {
+                            if (reportHasQuestionnaire) {
+                                setTabItem('tab3.5');
+                            } else {
+                                setTabItem('tab3');
+                            }
+                        }}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
@@ -387,7 +455,7 @@ const Report = (props) => {
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.nextTabButton, { backgroundColor: colors.emerald }]} onPress={() => handleNextTab('tab7', '')}>
+                        <TouchableOpacity style={[styles.nextTabButton, { backgroundColor: colors.emerald }]} onPress={() => handleSaveReport()}>
                             <Text style={styles.nextTabButtonText}>تایید و ثبت گزارش کار</Text>
                         </TouchableOpacity>
                     </View>

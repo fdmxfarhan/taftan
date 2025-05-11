@@ -32,6 +32,7 @@ export const uploadFile = async (endpoint, file, onUploadProgress) => {
                 'Authorization': authData.token,
                 'Accessid': authData.Constraintid,
                 'Constraintid': authData.Constraintid,
+                'User-Agent': 'Mobile',
             },
             onUploadProgress,
         });

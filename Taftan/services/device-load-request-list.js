@@ -198,6 +198,7 @@ export const loadDeviceRequestList = async (deviceId) => {
                 authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
+                'User-Agent': 'Mobile',
             }
         });
         return { success: true, data: response.data };
