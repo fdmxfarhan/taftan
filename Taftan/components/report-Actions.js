@@ -21,7 +21,7 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
         if (detail.requestReportInfo.serviceGroupId == 11) return detail.siteReportInfo;
     }
     useEffect(() => {
-        setIsValid(true);
+        // setIsValid(true);
     }, []);
     return (
         <ScrollView style={styleslocal.contents}>
@@ -56,6 +56,7 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
                     jobTitleId: jobTitle.id,
                     
                 }]);
+                setIsValid(true);
             }}>
                 <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
             </TouchableOpacity>

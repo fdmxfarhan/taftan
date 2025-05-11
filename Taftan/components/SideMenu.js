@@ -77,6 +77,11 @@ const SideMenu = (props) => {
             <Ionicons style={styles.sideButtonIcon} name={'person'} />
             <Text style={styles.menuText}>پروفایل</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('Login'); onClose();}}>
+            <Ionicons style={styles.sideButtonIcon} name={'log-out-outline'} />
+            <Text style={styles.menuText}>خروج</Text>
+          </TouchableOpacity>
         </View>
       </Animated.View>
     </Modal>

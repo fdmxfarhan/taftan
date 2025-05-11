@@ -26,6 +26,7 @@ import { Linking } from 'react-native';
 import { getRequestDetail } from '../services/req-detail';
 import ReportListPopup from './rec-popup-report-list';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
+import { readFilterPreferences, updateFilter } from '../config/userPreferences';
 
 const MyRequestsList = ({
     navigation,
@@ -45,9 +46,48 @@ const MyRequestsList = ({
     var [reportInfo, setreportInfo] = useState(null);
     var [reportList, setreportList] = useState([]);
     var [reportlistPopupEN, setreportlistPopupEN] = useState(false);
-    useEffect(() => {
 
-    })
+    // Load saved filter preferences when component mounts
+    useEffect(() => {
+        loadFilterPreferences();
+    }, []);
+
+    // Function to load saved filter preferences
+    const loadFilterPreferences = async () => {
+        const savedFilters = await readFilterPreferences();
+        if (savedFilters) {
+            setDamageFilterEN(savedFilters.DamageFilterEN);
+            setInstallFilterEN(savedFilters.InstallFilterEN);
+            setsiteFilterEN(savedFilters.siteFilterEN);
+            setprojectFilterEN(savedFilters.projectFilterEN);
+            setperiodicFilterEN(savedFilters.periodicFilterEN);
+        }
+    };
+
+    // Function to handle filter toggle
+    const handleFilterToggle = async (filterName, currentValue) => {
+        const newValue = !currentValue;
+        await updateFilter(filterName, newValue);
+        
+        switch(filterName) {
+            case 'DamageFilterEN':
+                setDamageFilterEN(newValue);
+                break;
+            case 'InstallFilterEN':
+                setInstallFilterEN(newValue);
+                break;
+            case 'siteFilterEN':
+                setsiteFilterEN(newValue);
+                break;
+            case 'projectFilterEN':
+                setprojectFilterEN(newValue);
+                break;
+            case 'periodicFilterEN':
+                setperiodicFilterEN(newValue);
+                break;
+        }
+    };
+
     const handleItemPress = (item) => {
         navigation.navigate('DamageReqView', { item });
     };
@@ -103,19 +143,29 @@ const MyRequestsList = ({
             <ReportListPopup popupEN={reportlistPopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={navigation} />
 
             <ScrollView horizontal={true} style={styles.typeFiltersView} inverted={true}>
-                <TouchableOpacity style={[styles.typeFiltersButton, { backgroundColor: DamageFilterEN ? colors.blue : colors.white }]} onPress={() => setDamageFilterEN(!DamageFilterEN)}>
+                <TouchableOpacity 
+                    style={[styles.typeFiltersButton, { backgroundColor: DamageFilterEN ? colors.blue : colors.white }]} 
+                    onPress={() => handleFilterToggle('DamageFilterEN', DamageFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: DamageFilterEN ? colors.white : colors.blue }]}>خرابی</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.typeFiltersButton, { backgroundColor: InstallFilterEN ? colors.blue : colors.white }]} onPress={() => setInstallFilterEN(!InstallFilterEN)}>
+                <TouchableOpacity 
+                    style={[styles.typeFiltersButton, { backgroundColor: InstallFilterEN ? colors.blue : colors.white }]} 
+                    onPress={() => handleFilterToggle('InstallFilterEN', InstallFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: InstallFilterEN ? colors.white : colors.blue }]}>نصب</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.typeFiltersButton, { backgroundColor: siteFilterEN ? colors.blue : colors.white }]} onPress={() => setsiteFilterEN(!siteFilterEN)}>
+                <TouchableOpacity 
+                    style={[styles.typeFiltersButton, { backgroundColor: siteFilterEN ? colors.blue : colors.white }]} 
+                    onPress={() => handleFilterToggle('siteFilterEN', siteFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: siteFilterEN ? colors.white : colors.blue }]}>سایت سازی</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.typeFiltersButton, { backgroundColor: projectFilterEN ? colors.blue : colors.white }]} onPress={() => setprojectFilterEN(!projectFilterEN)}>
+                <TouchableOpacity 
+                    style={[styles.typeFiltersButton, { backgroundColor: projectFilterEN ? colors.blue : colors.white }]} 
+                    onPress={() => handleFilterToggle('projectFilterEN', projectFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: projectFilterEN ? colors.white : colors.blue }]}>پروژه</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.typeFiltersButton, { backgroundColor: periodicFilterEN ? colors.blue : colors.white }]} onPress={() => setperiodicFilterEN(!periodicFilterEN)}>
+                <TouchableOpacity 
+                    style={[styles.typeFiltersButton, { backgroundColor: periodicFilterEN ? colors.blue : colors.white }]} 
+                    onPress={() => handleFilterToggle('periodicFilterEN', periodicFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: periodicFilterEN ? colors.white : colors.blue }]}>دوره ای</Text>
                 </TouchableOpacity>
             </ScrollView>

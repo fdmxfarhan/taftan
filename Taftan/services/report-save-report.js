@@ -36,6 +36,7 @@ export const SaveReport = async (options, navigation) => {
                 navigation.navigate('Login');
                 return { success: false, error: 'Authorization denied' };
             }
+            console.log(error.response.data);
         }
         
         return { success: false, error: 'Failed to submit SaveReport request' };

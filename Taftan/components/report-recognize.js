@@ -67,7 +67,6 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                     if (isDuplicateInNewList || isDuplicateInExistingList) {
                         ToastAndroid.show('این مورد قبلا ثبت شده', ToastAndroid.SHORT);
                     } else {
-                        console.log(damageReason)
                         setNewRecognitionList(prevList => [
                             ...prevList,
                             {
@@ -75,6 +74,7 @@ const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, r
                                 serviceName: damageReason.Title,
                                 serviceGroupTitle: reportDetail.requestReportInfo.serviceGroupName,
                                 title: recognitionExpert.title,
+                                recognitionexpertId: damageReason.Id,
                             }
                         ]);
                     }

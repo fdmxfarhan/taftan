@@ -32,6 +32,7 @@ const Home = (props) => {
     var [mySiteRequestsList, setmySiteRequestsList] = useState([]);
     var [myProjectRequestsList, setmyProjectRequestsList] = useState([]);
     var [myPeriodicRequestsList, setmyPeriodicRequestsList] = useState([]);
+    var [activeCase, setActiveCase] = useState(null);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -57,6 +58,7 @@ const Home = (props) => {
             if (result.success) {
                 setmyDamageRequestsList(result.data.Data);
                 myRequestCount += result.data.TotalCount;
+                if(result.data.Data.length > 0) setActiveCase(result.data.Data[0]);
             } else ToastAndroid.show('درخواست‌های من بارگیری نشد.', ToastAndroid.SHORT);
 
             var result = await submitMyInstallationRequest(0, 50, props.navigation);
@@ -93,7 +95,7 @@ const Home = (props) => {
             <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
             {tabItem == 'Home' && (
                 <View style={styles.tabContainer}>
-                    <HomeNotif navigation={props.navigation} />
+                    <HomeNotif navigation={props.navigation} activeCase={activeCase} />
                     <GridView navigation={props.navigation} />
                     <BottomNav navigation={props.navigation} />
                 </View>

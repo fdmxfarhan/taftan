@@ -15,6 +15,7 @@ import ReportChose from './rec-popup-report-chose';
 import { GetUnsuccessfullActionReasonList } from '../services/get-full-action-reasons-list';
 import DropDownObj from './dropdown-obj';
 import CheckBox from './checkbox';
+import { loadRequestReportActionList } from '../services/report-load-action-list';
 
 const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, setactionTypeList, updateActionList, setreqActionList, navigation, requestDetail }) => {
     const [actionTypeOpen, setactionTypeOpen] = useState(false);
@@ -85,7 +86,10 @@ const NewActionPopup = ({ requestItem, popupEN, setPopupEN, actionTypeList, seta
             setPopupEN(false);
             if (parseInt(actionTypeValueId) == 1) { // مراجعه
                 if (actionResult) { // موفق
-                    navigation.navigate('Report', { item: requestItem, requestDetail });
+                    result = await loadRequestReportActionList(requestItem.requestId);
+                    var reportInfo = result.data.Data[0];
+                    console.log(reportInfo);
+                    navigation.navigate('Report', { item: requestItem, requestDetail: requestDetail, reportInfo });
                 } else { // ناموفق
                     setreportChoseEN(true);
                 }

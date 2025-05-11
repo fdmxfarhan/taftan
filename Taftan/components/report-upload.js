@@ -12,7 +12,7 @@ import styles from '../styles/reqView';
 import DocumentPicker from 'react-native-document-picker';
 import { uploadFile } from '../services/upload';
 
-const ReportUploadView = ({ setIsValid }) => {
+const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription, reportExpertDescription, setreportExpertDescription }) => {
     const [selectedReportImage, setSelectedReportImage] = useState(null);
     const [selectedAttachmentImage, setSelectedAttachmentImage] = useState(null);
     const [fullScreenImage, setFullScreenImage] = useState(null);
@@ -96,8 +96,8 @@ const ReportUploadView = ({ setIsValid }) => {
                 multiline={true}
                 placeholder="توضیحات کارشناس"
                 keyboardType={'default'}
-            // value={descriptionAction}
-            // onChange={text => setdescriptionAction(text.nativeEvent.text)}
+                value={reportDescription}
+                onChange={text => setreportDescription(text.nativeEvent.text)}
             />
             <Text style={styles.label}>توضیحات نماینده مشتری: </Text>
             <TextInput
@@ -105,15 +105,15 @@ const ReportUploadView = ({ setIsValid }) => {
                 multiline={true}
                 placeholder="توضیحات نماینده مشتری"
                 keyboardType={'default'}
-            // value={descriptionAction}
-            // onChange={text => setdescriptionAction(text.nativeEvent.text)}
+                value={reportExpertDescription}
+                onChange={text => setreportExpertDescription(text.nativeEvent.text)}
             />
             <Text style={styleslocal.sectionTitle}>آپلود مدارک:</Text>
             <View style={styles.buttonsView}>
                 <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
                     <TouchableOpacity style={styles.submitButton} onPress={() => { handleReportFilePicker(); }}>
                         <Ionicons style={styles.buttonIcon} name="attach" />
-                        <Text style={styles.buttonText}>تصویر گزارش کار</Text>
+                        <Text style={styles.buttonText}>تصویر گزارش کار <Text style={{ color: 'red', paddingRight: 10 }}>*</Text></Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.submitButton} onPress={() => { handleAttachmentFilePicker(); }}>
                         <Ionicons style={styles.buttonIcon} name="attach" />

@@ -5,7 +5,7 @@ import { getAuthData, logout } from './auth';
 export const LoadAllowedRequestAction = async (requestId, navigation) => {
     const authData = await getAuthData();
     try {
-        if (use_local_data) return {
+        if (use_local_data || true) return {
             success: true, data: [
                 "InsertReport",
                 "RequestStatus",

@@ -16,7 +16,7 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
     var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
     var [areaDetail, setareaDetail] = useState(null);
     var [secondReportReasons, setsecondReportReasons] = useState([]);
-    var [isSecondReport, setIsSecondReport] = useState(false);
+    var [isSecondReport, setIsSecondReport] = useState(true);
     var sendRequest = async () => {
         var result = await SecondReportTitleTitleList(reportDetail.requestReportInfo.serviceGroupId);
         if (result.success) {
@@ -28,9 +28,9 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
         if (reportDetail) {
             if (reportDetail.reportInfo.isSecondReport) sendRequest();
         }
-        if(!isSecondReport)
-        setIsValid(true);
-    }, [reportDetail, isLoading])
+        if(!isSecondReport) setIsValid(true);
+
+    }, [reportDetail, isLoading, isSecondReport])
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;
         if (detail.requestReportInfo.serviceGroupId == 2) return detail.pmReportInfo;
@@ -57,7 +57,7 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
                     <Text style={styles.label}>علت گزارش کار مجدد: </Text>
                     <DropDownObj list={secondReportReasons}
                         getLabel={(item) => item.title}
-                        getValue={(item) => item.title}
+                        getValue={(item) => item.id}
                         setValue={(item) => { setsecondReportReason(item); setIsValid(true); }}
                         value={secondReportReason.title}
                         buttonStyle={[styles.dropdown, styles.requiredBorder, { borderRightColor: secondReportReason.title == 'انتخاب کنید' ? colors.red2 : colors.emerald }]}

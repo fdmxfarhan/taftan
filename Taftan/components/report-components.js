@@ -170,6 +170,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setmoduleListBrandFiltered(moduleListBrand);
         setmoduleGroupListFiltered(moduleGroupList);
         ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
+        setIsValid(true);
     };
     const handleSerialMismatchConfirm = () => {
         var newcomponentChanges = {
@@ -198,15 +199,15 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setmoduleListBrandFiltered(moduleListBrand);
         setmoduleGroupListFiltered(moduleGroupList);
         ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
+        setIsValid(true);
     }
     const handleSerialMismatchConfigConfirm = () => {
-
+        setIsValid(true);
     }
     const handleAddToConfig = () => {
 
     }
     useEffect(() => {
-        setIsValid(true);
         updateModuleGroupTitleList();
         setmoduleListBrandFiltered(moduleListBrand);
         if (reportDetail.requestReportInfo.serviceGroupId == 1 || reportDetail.requestReportInfo.serviceGroupId == 8) {
@@ -226,6 +227,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         }
     }, [reportDetail, moduleListBrand]);
     useEffect(() => {
+        setIsValid(true);
         GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId, navigation).then(res => {
             setwarrantyList(res.data);
         });
@@ -252,6 +254,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 updateOfficeKey();
                 updateModuleListBrandTypeGroupKey();
                 updateModuleInUserStore();
+                if(!usedComponents) setIsValid(false);
+                else setIsValid(true);
             }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {usedComponents && (<View>
                 <View style={[styles.dualInputView]}>

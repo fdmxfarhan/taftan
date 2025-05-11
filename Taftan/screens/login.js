@@ -6,6 +6,7 @@ import LoadingView from '../components/loading';
 import CryptoJS from 'crypto-js';
 import storage from '../config/storage';
 import { GetUserConstraintTitleList } from '../services/constraint-get-user-constraint-title-list';
+import { savePreferences, readPreferences } from '../config/userPreferences';
 
 const Login = (props) => {
     var [loginView, setLoginView] = useState('admin');
@@ -14,6 +15,19 @@ const Login = (props) => {
     var [isLoading, setIsLoading] = useState(false);
     var [userAuthData, setuserAuthData] = useState(null);
     const passwordInput = useRef(null);
+
+    useEffect(() => {
+        // Load saved credentials when component mounts
+        loadSavedCredentials();
+    }, []);
+
+    const loadSavedCredentials = async () => {
+        const savedPrefs = await readPreferences();
+        if (savedPrefs && savedPrefs.username && savedPrefs.password) {
+            setUsername(savedPrefs.username);
+            setPassword(savedPrefs.password);
+        }
+    };
 
     const sendRequests = async () => {
         
@@ -38,19 +52,16 @@ const Login = (props) => {
                         Constraintid: constraintid,
                     },
                 });
+                
+                // Save credentials to user preferences
+                await savePreferences({
+                    username,
+                    password
+                });
+                
                 props.navigation.navigate('Home');
             }
             else ToastAndroid.show('اطلاعات کاربر یافت نشد', ToastAndroid.SHORT);
-            // await storage.save({
-            //     key: 'auth',
-            //     data: {
-            //         token: result.data.Token,
-            //         username,
-            //         password,
-            //         hash: md5Hash,
-            //         RefreshToken: result.data.RefreshToken,
-            //     },
-            // });
         }
         else {
             if(result.error.status == 400)

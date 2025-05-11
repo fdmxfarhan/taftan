@@ -10,17 +10,21 @@ import {
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
-const HomeNotif = ({ navigation }) => {
+const HomeNotif = ({ navigation, activeCase }) => {
     const [notifScale] = useState(new Animated.Value(0.9)); // Scale animation
-
+    
+    const handleItemPress = (item) => {
+        navigation.navigate('DamageReqView', { item });
+    };
     useEffect(() => {
+        console.log(activeCase);
         Animated.spring(notifScale, {
             toValue: 1,
             friction: 5,
             useNativeDriver: true,
         }).start();
-    });
-
+    }, []);
+    if(activeCase == null) return null;
     return (
         <Animated.View
             style={[
@@ -28,11 +32,12 @@ const HomeNotif = ({ navigation }) => {
                 { transform: [{ scale: notifScale }] },
             ]}
         >
-            <Text style={styles.notifStat}>موفق</Text>
-            <Text style={styles.notifTitle}>پرونده در حال اقدام</Text>
-            <Text style={styles.notifInfoTitle}>آخرین اقدام: {'بررسی دستگاه'}</Text>
-            <Text style={styles.notifDate}>1403/8/27</Text>
-            <TouchableOpacity style={styles.notifButton}>
+            <Text style={styles.notifStat}>{activeCase.currentUserName}</Text>
+            <Text style={styles.notifTitle}>درخواست خرابی: {activeCase.requestId}</Text>
+            <Text style={styles.notifInfoTitle}>{activeCase.areaName} / {activeCase.customerName} / {activeCase.deviceName}</Text>
+            <Text style={styles.notifInfoTitle}>عنوان: {activeCase.serviceName}</Text>
+            <Text style={styles.notifDate}>{activeCase.persianInsertedDate}</Text>
+            <TouchableOpacity style={styles.notifButton} onPress={() => handleItemPress(activeCase)}>
                 <Text style={styles.notifButtonText}>مشاهده جزئیات</Text>
             </TouchableOpacity>
         </Animated.View>
@@ -45,7 +50,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 'auto',
         marginTop: 20,
         borderRadius: 15,
-        borderColor: colors.blue,
+        borderColor: colors.uranianBlue,
         borderWidth: 1,
         paddingVertical: 10,
         paddingHorizontal: 10,
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
         color: colors.gray,
         fontFamily: 'iransans',
         fontSize: 14,
-        color: colors.darkGreen,
+        color: colors.emerald,
     },
     notifTitle: {
         fontFamily: 'iransansbold',
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
     notifInfoTitle: {
         color: colors.gray,
         fontFamily: 'iransans',
-        fontSize: 14,
+        fontSize: 13,
     },
     notifDate: {
         color: colors.gray,
