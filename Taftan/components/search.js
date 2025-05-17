@@ -24,7 +24,6 @@ const SearchView = ({ popupEN, setPopupEN }) => {
                         onChange={(text) => { setSearchText(text.nativeEvent.text) }}
                         autoFocus={true}
                         onSubmitEditing={() => {
-                            
                             ToastAndroid.show('شماره کار یافت نشد', ToastAndroid.SHORT);
                         }}
                     />
