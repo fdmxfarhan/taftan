@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, ToastAndroid } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
@@ -19,10 +19,14 @@ const SearchView = ({ popupEN, setPopupEN }) => {
                     <Ionicons style={styles.searchIcon} name={'search'} />
                     <TextInput
                         style={styles.textinput}
-                        placeholder="جستجو..."
-                        keyboardType={'default'}
+                        placeholder="جستجو شماره کار ..."
+                        keyboardType={'numeric'}
                         onChange={(text) => { setSearchText(text.nativeEvent.text) }}
                         autoFocus={true}
+                        onSubmitEditing={() => {
+                            
+                            ToastAndroid.show('شماره کار یافت نشد', ToastAndroid.SHORT);
+                        }}
                     />
                 </View>
             </TouchableOpacity>

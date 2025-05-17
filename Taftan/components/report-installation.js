@@ -29,7 +29,7 @@ const ReportInstallation = ({ reportDetail, provinceName, setprovinceName, cityN
         var result = await LoadActiveZoneList(provinceName.id);
         if (result.success) {
             setactiveZoneList(result.data);
-        } else ToastAndroid.show('لیست شهرها لود نشد', ToastAndroid.SHORT);
+        } else ToastAndroid.show('لیست مناطق لود نشد', ToastAndroid.SHORT);
     }
     useEffect(() => {
         sendRequest();
@@ -45,7 +45,7 @@ const ReportInstallation = ({ reportDetail, provinceName, setprovinceName, cityN
                 installationReportInfo.deviceCodeNumber,
                 installationReportInfo.longitude,
                 installationReportInfo.latitude,
-                installationReportInfo.phoneNumber,
+                installationReportInfo.phone,
                 provinceName.provinceName,
                 cityName.cityName,
                 zoneName.title
@@ -57,6 +57,7 @@ const ReportInstallation = ({ reportDetail, provinceName, setprovinceName, cityN
 
         validateFields();
     }, [installationReportInfo, provinceName, cityName, zoneName]);
+    if(installationReportInfo == null) return(<View></View>);
     return (
         <ScrollView style={styleslocal.contents}>
             <Text style={styles.label}>آدرس مبداء:</Text>
@@ -147,12 +148,12 @@ const ReportInstallation = ({ reportDetail, provinceName, setprovinceName, cityN
                 <View style={styles.dualInputPart}>
                     <Text style={styles.label}>شماره تلفن:</Text>
                     <TextInput
-                        style={[styles.textInput, styles.requiredBorder, { backgroundColor: colors.white, borderRightColor: installationReportInfo.phoneNumber == null || installationReportInfo.phoneNumber == '' ? colors.red2 : colors.green }]}
+                        style={[styles.textInput, styles.requiredBorder, { backgroundColor: colors.white, borderRightColor: installationReportInfo.phone == null || installationReportInfo.phone == '' ? colors.red2 : colors.green }]}
                         placeholder="شماره تلفن"
-                        value={installationReportInfo.phoneNumber}
+                        value={installationReportInfo.phone}
                         keyboardType={'numeric'}
                         onChange={text => {
-                            setinstallationReportInfo({ ...installationReportInfo, phoneNumber: text.nativeEvent.text });
+                            setinstallationReportInfo({ ...installationReportInfo, phone: text.nativeEvent.text });
                         }} />
                 </View>
             </View>

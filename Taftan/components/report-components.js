@@ -112,7 +112,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
             }
             if(selectedPreviousModule && !selectedPreviousModule.HaveSerial){
                 const found = deviceConfigList.find(config => config.GroupModuleId == selectedPreviousModule.ModuleGroupId);
-                console.log(found);
+                
                 if(found && found.count < moduleoldSerial){
                     setMaxModulesExceededPopup(true);
                     return;
@@ -202,10 +202,75 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setIsValid(true);
     }
     const handleSerialMismatchConfigConfirm = () => {
+        var newcomponentChanges = {
+            moduleGroup: moduleGroup,
+            componentAction: 'تعویض-مغایرت',
+            moduleNewSerial: moduleNewSerial,
+            moduleOldSerial: moduleoldSerial,
+            NewModule: selectedNewModule,
+            PreviousModule: selectedPreviousModule,
+            description: description,
+            noRepairNeeded: noRepairNeeded,
+            DOAorGarantieConflict: DOAorGarantieConflict,
+            damageDescriptions: selectedDamageDescriptions,
+            selectedDOAReason: selectedDOAReason == 'انتخاب کنید' ? null : selectedDOAReason,
+        };
+        var newcomponentChanges2 = {
+            moduleGroup: moduleGroup,
+            componentAction: 'حذف-مغایرت',
+            moduleNewSerial: moduleNewSerial,
+            moduleOldSerial: moduleoldSerial,
+            NewModule: selectedNewModule,
+            PreviousModule: selectedPreviousModule,
+            description: description,
+            noRepairNeeded: noRepairNeeded,
+            DOAorGarantieConflict: DOAorGarantieConflict,
+            damageDescriptions: selectedDamageDescriptions,
+            selectedDOAReason: selectedDOAReason == 'انتخاب کنید' ? null : selectedDOAReason,
+        };
+        setcomponentChangesList([...componentChangesList, newcomponentChanges, newcomponentChanges2]);
+        setSelectedDamageDescriptions([]);
+        setselectedDOAReason('انتخاب کنید');
+        setModuleNewSerial('');
+        setModuleoldSerial('');
+        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
+        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setdescription('');
+        setnoRepairNeeded(false);
+        setDOAorGarantieConflict('هیچکدام');
+        setmoduleListBrandFiltered(moduleListBrand);
+        setmoduleGroupListFiltered(moduleGroupList);
+        ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
         setIsValid(true);
     }
     const handleAddToConfig = () => {
-
+        var newcomponentChanges = {
+            moduleGroup: moduleGroup,
+            componentAction: 'تعویض',
+            moduleNewSerial: moduleNewSerial,
+            moduleOldSerial: moduleoldSerial,
+            NewModule: selectedNewModule,
+            PreviousModule: selectedPreviousModule,
+            description: description,
+            noRepairNeeded: noRepairNeeded,
+            DOAorGarantieConflict: DOAorGarantieConflict,
+            damageDescriptions: selectedDamageDescriptions,
+            selectedDOAReason: selectedDOAReason == 'انتخاب کنید' ? null : selectedDOAReason,
+        };
+        setcomponentChangesList([...componentChangesList, newcomponentChanges]);
+        setSelectedDamageDescriptions([]);
+        setselectedDOAReason('انتخاب کنید');
+        setModuleNewSerial('');
+        setModuleoldSerial('');
+        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
+        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setdescription('');
+        setnoRepairNeeded(false);
+        setDOAorGarantieConflict('هیچکدام');
+        setmoduleListBrandFiltered(moduleListBrand);
+        setmoduleGroupListFiltered(moduleGroupList);
+        ToastAndroid.show('قطعات با موفقیت ثبت شد', ToastAndroid.SHORT);
+        setIsValid(true);
     }
     useEffect(() => {
         updateModuleGroupTitleList();
@@ -467,8 +532,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 <View key={index} >
                     <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
                         <View style={styles.actionHistoryRight}>
-                            {(item.componentAction == 'تعویض' || item.componentAction == 'حذف' || item.componentAction == 'حذف-مغایرت') && (<Text style={styles.actionHistoryTitle}>ماژول قدیم: {item.PreviousModule.Title} ({item.moduleOldSerial})</Text>)}
-                            {(item.componentAction == 'تعویض' || item.componentAction == 'اضافه') && (<Text style={styles.actionHistoryTitle}>ماژول جدید: {item.NewModule.Title} ({item.moduleNewSerial})</Text>)}
+                            {(item.componentAction == 'تعویض' || item.componentAction == 'حذف' || item.componentAction == 'حذف-مغایرت' || item.componentAction == 'تعویض-مغایرت') && (<Text style={styles.actionHistoryTitle}>ماژول قدیم: {item.PreviousModule.Title} ({item.moduleOldSerial})</Text>)}
+                            {(item.componentAction == 'تعویض' || item.componentAction == 'اضافه' || item.componentAction == 'تعویض-مغایرت') && (<Text style={styles.actionHistoryTitle}>ماژول جدید: {item.NewModule.Title} ({item.moduleNewSerial})</Text>)}
                             <Text style={[styles.actionResult, { textAlign: 'right', color: colors.red2 }]}>{item.componentAction}</Text>
                         </View>
                         <TouchableOpacity 

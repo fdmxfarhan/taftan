@@ -63,24 +63,24 @@ const ReportTabLink = ({ tabItemVar, setTabItemCallback, reportDetail, reportHas
                         {isTab3_5Valid && <Ionicons name="checkmark-circle" style={styles.validIcon} />}
                     </TouchableOpacity>
                 )}
-                <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab4' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab4')}>
+                {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 3 && (<TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab4' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab4')}>
                     <Ionicons name={tabItemVar == 'tab4' ? "shield-checkmark" : "shield-checkmark-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab4' ? styles.activeIcon : styles.deactive]} />
                     <Text style={[styles.tabLinkText, tabItemVar == 'tab4' ? styles.activeText : styles.deactive]}>نقض گارانتی</Text>
                     {!isTab4Valid && <View style={styles.invalidDot} />}
                     {isTab4Valid && <Ionicons name="checkmark-circle" style={styles.validIcon} />}
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab5' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab5')}>
+                </TouchableOpacity>)}
+                {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 3 && (<TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab5' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab5')}>
                     <Ionicons name={tabItemVar == 'tab5' ? "construct" : "construct-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab5' ? styles.activeIcon : styles.deactive]} />
                     <Text style={[styles.tabLinkText, tabItemVar == 'tab5' ? styles.activeText : styles.deactive]}>قطعات مصرفی</Text>
                     {!isTab5Valid && <View style={styles.invalidDot} />}
                     {isTab5Valid && <Ionicons name="checkmark-circle" style={styles.validIcon} />}
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab6' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab6')}>
+                </TouchableOpacity>)}
+                {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 3 && (<TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab6' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab6')}>
                     <Ionicons name={tabItemVar == 'tab6' ? "beaker" : "beaker-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab6' ? styles.activeIcon : styles.deactive]} />
                     <Text style={[styles.tabLinkText, tabItemVar == 'tab6' ? styles.activeText : styles.deactive]}>خرابی قبل از بهره برداری</Text>
                     {!isTab6Valid && <View style={styles.invalidDot} />}
                     {isTab6Valid && <Ionicons name="checkmark-circle" style={styles.validIcon} />}
-                </TouchableOpacity>
+                </TouchableOpacity>)}
                 <TouchableOpacity style={[styles.tabLinkItem, tabItemVar == 'tab7' ? styles.activeButton : styles.deactive]} onPress={() => setTabItemCallback('tab7')}>
                     <Ionicons name={tabItemVar == 'tab7' ? "cloud-upload" : "cloud-upload-outline"} style={[styles.tabLinkIcon, tabItemVar == 'tab7' ? styles.activeIcon : styles.deactive]} />
                     <Text style={[styles.tabLinkText, tabItemVar == 'tab7' ? styles.activeText : styles.deactive]}>آپلود</Text>

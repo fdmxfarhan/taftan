@@ -56,16 +56,7 @@ const Report = (props) => {
     var [moduleNewSerial, setModuleNewSerial] = useState('');
     var [componentChangesList, setcomponentChangesList] = useState([]);
     var [selectedDOAReason, setselectedDOAReason] = useState('انتخاب کنید');
-    var [installationReportInfo, setinstallationReportInfo] = useState({
-        sourceAddress: '',
-        destinationAddress: '',
-        deviceName: '',
-        deviceSerial: '',
-        deviceTerminal: '',
-        deviceCodeNumber: '',
-        longitude: '',
-        latitude: '',
-    });
+    var [installationReportInfo, setinstallationReportInfo] = useState(null);
     var [isTab1Valid, setIsTab1Valid] = useState(false);
     var [isTab2Valid, setIsTab2Valid] = useState(false);
     var [isTab3Valid, setIsTab3Valid] = useState(false);
@@ -74,7 +65,7 @@ const Report = (props) => {
     var [isTab5Valid, setIsTab5Valid] = useState(false);
     var [isTab6Valid, setIsTab6Valid] = useState(false);
     var [isTab7Valid, setIsTab7Valid] = useState(false);
-    var [questionnaireAnswers, setQuestionnaireAnswers] = useState({});
+    var [questionnaireAnswers, setQuestionnaireAnswers] = useState([]);
     var [questionnaireDescriptions, setQuestionnaireDescriptions] = useState({});
     var [selectedWarranties, setSelectedWarranties] = useState([]);
     var [selectedConsumedModule, setselectedConsumedModule] = useState({ ModuleTitle: 'انتخاب کنید' });
@@ -89,7 +80,7 @@ const Report = (props) => {
     var [reportExpertDescription, setreportExpertDescription] = useState('');
     var [reportDescription, setreportDescription] = useState('');
     const handleSaveReport = () => {
-        // console.log(reportDetail);
+        // console.log(questionnaireAnswers);
         var options = {
             "requestId": requestDetail.requestInfo.requestId,
             "id": reportInfo.reportId,
@@ -112,24 +103,27 @@ const Report = (props) => {
             "changeModuleWarrantyType": moduleExchange,
             "reportJobTitleList": newactionList,
             "reportDBOList": [], ///////////////////////////////////
-            "reportWarrantyList": [], /////////////////////////////////// selectedWarranties
+            "reportWarrantyList": selectedWarranties.map(warranty => ({
+                warrantyId: warranty.Id,
+                warrantyTitle: warranty.description
+            })),
             "reportRecognitionList": newRecognitionList,
-            "reportSaveQuestionList": [], ///////////////////////////////////
+            "reportSaveQuestionList": questionnaireAnswers, 
             "deviceConfigsRemoveList": [], ///////////////////////////////////
             "deviceConfigsNewList": [], ///////////////////////////////////
             "deviceConfigsConflictList": [], ///////////////////////////////////
             "reportSiteServiceList": [], ///////////////////////////////////
-            "reportInstallServiceInfo": null ///////////////////////////////////
+            "reportInstallServiceInfo": installationReportInfo,
         }
-        console.log(options);
-        // SaveReport(options, props.navigation).then((result) => {
-        //     if(result.success) {
-        //         ToastAndroid.show('گزارش کار با موفقیت ثبت شد', ToastAndroid.SHORT);
-        //         // props.navigation.navigate('Home');
-        //     }else{
-        //         ToastAndroid.show('خطایی رخ داده است', ToastAndroid.SHORT);
-        //     }
-        // });
+        // console.log(options);
+        SaveReport(options, props.navigation).then((result) => {
+            if(result.success) {
+                ToastAndroid.show('گزارش کار با موفقیت ثبت شد', ToastAndroid.SHORT);
+                // props.navigation.navigate('Home');
+            }else{
+                ToastAndroid.show('خطایی رخ داده است', ToastAndroid.SHORT);
+            }
+        });
     }
     const handleSearchPress = () => {
         props.navigation.goBack();
@@ -377,7 +371,10 @@ const Report = (props) => {
                                 styles.nextTabButton,
                                 !isTab3_5Valid && styles.disabledButton
                             ]}
-                            onPress={() => handleNextTab('tab3.5', 'tab4')}
+                            onPress={() => {
+                                if(reportDetail.requestReportInfo.serviceGroupId == 3) handleNextTab('tab3.5', 'tab7');
+                                else handleNextTab('tab3.5', 'tab4');
+                            }}
                             disabled={!isTab3_5Valid}
                         >
                             <Text style={[styles.nextTabButtonText, !isTab3_5Valid && styles.disabledButtonText]}>بعدی</Text>
@@ -386,7 +383,7 @@ const Report = (props) => {
                     </View>
                 </View>
             )}
-            {tabItem == 'tab4' && (
+            {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 3 && tabItem == 'tab4' && (
                 <View style={{ flex: 1, }}>
                     <ReportGarantiView
                         warrantyDescription={warrantyDescription}
@@ -430,7 +427,7 @@ const Report = (props) => {
                     </View>
                 </View>
             )}
-            {tabItem == 'tab5' && (
+            {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 3 && tabItem == 'tab5' && (
                 <View style={{ flex: 1, }}>
                     <ReportcomponentsView
                         reportDetail={reportDetail}
@@ -479,7 +476,7 @@ const Report = (props) => {
                     </View>
                 </View>
             )}
-            {tabItem == 'tab6' && (
+            {reportDetail && reportDetail.requestReportInfo.serviceGroupId != 3 && tabItem == 'tab6' && (
                 <View style={{ flex: 1, }}>
                     <ReportDamageBeforeUseView
                         setIsValid={setIsTab6Valid}
@@ -525,7 +522,13 @@ const Report = (props) => {
                         setreportExpertDescription={setreportExpertDescription}
                     />
                     <View style={styles.buttonsControlView}>
-                        <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab6')}>
+                        <TouchableOpacity style={styles.nextTabButton} onPress={() => {
+                            if(reportDetail.requestReportInfo.serviceGroupId == 3) {
+                                if(reportHasQuestionnaire) setTabItem('tab3.5');
+                                else setTabItem('tab3')
+                            }
+                            else setTabItem('tab6');
+                        }}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
                             <Ionicons name={'arrow-forward'} style={styles.nextTabButtonIcon} />
                         </TouchableOpacity>

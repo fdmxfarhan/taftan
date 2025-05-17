@@ -42,22 +42,21 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
         const allQuestionsComplete = questionnaires.every(questionnaire => 
             questionnaire.Questions.every(category => 
                 category.QuestionList.every(question => {
-                    const answer = answers[question.questionnaireId];
-                    if (!answer) return false;
+                    const answerObj = answers.find(a => a.questionnaireId === question.questionnaireId);
+                    if (!answerObj) return false;
 
                     if (question.questionType === 1) { // Multiple choice
-                        if (answer.length === 0) return false;
+                        if (!answerObj.options || answerObj.options.length === 0) return false;
                     }
 
                     // Check required descriptions for selected options
                     if (question.questionType === 1 || question.questionType === 2) { // Multiple or Single choice
-                        const selectedOptions = question.options.filter(option => 
-                            option.isDescriptionMandatory && 
-                            (answer === option.title || (Array.isArray(answer) && answer.includes(option.title)))
+                        const selectedOptions = answerObj.options.filter(option => 
+                            option.isDescriptionMandatory && option.isChecked
                         );
                         
                         return selectedOptions.every(option => 
-                            descriptions[`${question.questionnaireId}_${option.title}`]
+                            option.description !== undefined && option.description !== null
                         );
                     }
 
@@ -69,18 +68,85 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
         setIsValid(allQuestionsComplete);
     }, [answers, descriptions, setIsValid, questionnaires]);
 
-    const handleAnswerChange = (questionnaireId, value) => {
-        setAnswers(prev => ({
-            ...prev,
-            [questionnaireId]: value
-        }));
+    const handleAnswerChange = (questionnaireId, value, questionType) => {
+        setAnswers(prev => {
+            const existingAnswerIndex = prev.findIndex(a => a.questionnaireId === questionnaireId);
+            let newAnswer;
+
+            if (questionType === 1) { // Multiple choice
+                newAnswer = {
+                    id: existingAnswerIndex >= 0 ? prev[existingAnswerIndex].id : 0,
+                    questionnaireId,
+                    reportId: requestId,
+                    options: value.map(title => ({
+                        id: `${questionnaireId}Answer`,
+                        title,
+                        isDescriptionMandatory: false,
+                        isDescriptionShow: false,
+                        isChecked: true,
+                        TypeId: 0
+                    }))
+                };
+            } else if (questionType === 2) { // Single choice
+                newAnswer = {
+                    id: existingAnswerIndex >= 0 ? prev[existingAnswerIndex].id : 0,
+                    questionnaireId,
+                    reportId: requestId,
+                    options: [{
+                        id: `${questionnaireId}Answer`,
+                        title: value,
+                        isDescriptionMandatory: false,
+                        isDescriptionShow: false,
+                        isChecked: true,
+                        TypeId: 0
+                    }]
+                };
+            } else { // String or Number
+                newAnswer = {
+                    id: existingAnswerIndex >= 0 ? prev[existingAnswerIndex].id : 0,
+                    questionnaireId,
+                    reportId: requestId,
+                    options: [{
+                        id: "0",
+                        title: "",
+                        isDescriptionMandatory: false,
+                        isDescriptionShow: false,
+                        isChecked: true,
+                        description: value,
+                        TypeId: 2
+                    }]
+                };
+            }
+
+            if (existingAnswerIndex >= 0) {
+                const newAnswers = [...prev];
+                newAnswers[existingAnswerIndex] = newAnswer;
+                return newAnswers;
+            } else {
+                return [...prev, newAnswer];
+            }
+        });
     };
 
-    const handleDescriptionChange = (questionnaireId, optionText, text) => {
-        setDescriptions(prev => ({
-            ...prev,
-            [`${questionnaireId}_${optionText}`]: text
-        }));
+    const handleDescriptionChange = (questionnaireId, optionTitle, text) => {
+        setAnswers(prev => {
+            const answerIndex = prev.findIndex(a => a.questionnaireId === questionnaireId);
+            if (answerIndex === -1) return prev;
+
+            const newAnswers = [...prev];
+            const answer = { ...newAnswers[answerIndex] };
+            const optionIndex = answer.options.findIndex(opt => opt.title === optionTitle);
+            
+            if (optionIndex !== -1) {
+                answer.options[optionIndex] = {
+                    ...answer.options[optionIndex],
+                    description: text
+                };
+                newAnswers[answerIndex] = answer;
+            }
+
+            return newAnswers;
+        });
     };
 
     const toggleGroup = (questionnaireId, categoryId) => {
@@ -94,16 +160,17 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
     const renderDescriptionInput = (questionnaireId, option) => {
         if (!option.isDescriptionShow) return null;
         
-        const isSelected = answers[questionnaireId] === option.title || 
-                         (Array.isArray(answers[questionnaireId]) && answers[questionnaireId].includes(option.title));
+        const answerObj = answers.find(a => a.questionnaireId === questionnaireId);
+        if (!answerObj) return null;
 
-        if (!isSelected) return null;
+        const selectedOption = answerObj.options.find(opt => opt.title === option.title);
+        if (!selectedOption || !selectedOption.isChecked) return null;
 
         return (
             <View style={styles.descriptionContainer}>
                 <TextInput
                     style={styles.descriptionInput}
-                    value={descriptions[`${questionnaireId}_${option.title}`] || ''}
+                    value={selectedOption.description || ''}
                     onChangeText={(text) => handleDescriptionChange(questionnaireId, option.title, text)}
                     placeholder={option.description}
                     multiline
@@ -117,6 +184,9 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
         const renderRequiredStar = () => (
             <Text style={styles.requiredStar}>*</Text>
         );
+
+        const answerObj = answers.find(a => a.questionnaireId === question.questionnaireId);
+        const currentAnswer = answerObj ? answerObj.options : [];
 
         switch (question.questionType) {
             case 1: // Multiple choice
@@ -132,19 +202,23 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                                     <TouchableOpacity
                                         style={[
                                             styles.optionButton,
-                                            answers[question.questionnaireId]?.includes(option.title) && styles.selectedOption
+                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOption
                                         ]}
                                         onPress={() => {
-                                            const currentAnswers = answers[question.questionnaireId] || [];
-                                            const newAnswers = currentAnswers.includes(option.title)
-                                                ? currentAnswers.filter(ans => ans !== option.title)
-                                                : [...currentAnswers, option.title];
-                                            handleAnswerChange(question.questionnaireId, newAnswers);
+                                            const selectedTitles = currentAnswer
+                                                .filter(ans => ans.title !== option.title)
+                                                .map(ans => ans.title);
+                                            
+                                            if (!currentAnswer.some(ans => ans.title === option.title)) {
+                                                selectedTitles.push(option.title);
+                                            }
+                                            
+                                            handleAnswerChange(question.questionnaireId, selectedTitles, question.questionType);
                                         }}
                                     >
                                         <Text style={[
                                             styles.optionText,
-                                            answers[question.questionnaireId]?.includes(option.title) && styles.selectedOptionText
+                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOptionText
                                         ]}>
                                             {option.title}
                                         </Text>
@@ -169,13 +243,13 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                                     <TouchableOpacity
                                         style={[
                                             styles.optionButton,
-                                            answers[question.questionnaireId] === option.title && styles.selectedOption
+                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOption
                                         ]}
-                                        onPress={() => handleAnswerChange(question.questionnaireId, option.title)}
+                                        onPress={() => handleAnswerChange(question.questionnaireId, option.title, question.questionType)}
                                     >
                                         <Text style={[
                                             styles.optionText,
-                                            answers[question.questionnaireId] === option.title && styles.selectedOptionText
+                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOptionText
                                         ]}>
                                             {option.title}
                                         </Text>
@@ -196,8 +270,8 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                         </View>
                         <TextInput
                             style={styles.textInput}
-                            value={answers[question.questionnaireId] || ''}
-                            onChangeText={(text) => handleAnswerChange(question.questionnaireId, text)}
+                            value={currentAnswer[0]?.description || ''}
+                            onChangeText={(text) => handleAnswerChange(question.questionnaireId, text, question.questionType)}
                             multiline
                             textAlignVertical="top"
                         />
@@ -213,10 +287,10 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                         </View>
                         <TextInput
                             style={styles.textInput}
-                            value={answers[question.questionnaireId] || ''}
+                            value={currentAnswer[0]?.description || ''}
                             onChangeText={(text) => {
                                 if (text === '' || /^\d+$/.test(text)) {
-                                    handleAnswerChange(question.questionnaireId, text);
+                                    handleAnswerChange(question.questionnaireId, text, question.questionType);
                                 }
                             }}
                             keyboardType="numeric"
@@ -233,21 +307,20 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
         const uniqueGroupId = `${questionnaire.Id}_${category.categoryId}`;
         const isExpanded = expandedGroups[uniqueGroupId] !== false;
         const isComplete = category.QuestionList.every(question => {
-            const answer = answers[question.questionnaireId];
-            if (!answer) return false;
+            const answerObj = answers.find(a => a.questionnaireId === question.questionnaireId);
+            if (!answerObj) return false;
 
             if (question.questionType === 1) {
-                if (answer.length === 0) return false;
+                if (!answerObj.options || answerObj.options.length === 0) return false;
             }
 
             if (question.questionType === 1 || question.questionType === 2) {
-                const selectedOptions = question.options.filter(option => 
-                    option.isDescriptionMandatory && 
-                    (answer === option.title || (Array.isArray(answer) && answer.includes(option.title)))
+                const selectedOptions = answerObj.options.filter(option => 
+                    option.isDescriptionMandatory && option.isChecked
                 );
                 
                 return selectedOptions.every(option => 
-                    descriptions[`${question.questionnaireId}_${option.title}`]
+                    option.description !== undefined && option.description !== null
                 );
             }
 

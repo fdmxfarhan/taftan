@@ -23,7 +23,6 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
             const res = await DocumentPicker.pick({
                 type: [DocumentPicker.types.allFiles],
             });
-            console.log(res[0]);
             setSelectedReportImage(res[0].uri);
             setIsValid(true);
             // Prepare the file object for upload
@@ -54,7 +53,6 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
             const res = await DocumentPicker.pick({
                 type: [DocumentPicker.types.allFiles],
             });
-            console.log(res[0]);
             setSelectedAttachmentImage(res[0].uri);
 
             // Prepare the file object for upload

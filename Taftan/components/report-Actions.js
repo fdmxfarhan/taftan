@@ -50,6 +50,14 @@ const ReportActions = ({ JobTitleList, setjobTitle, jobTitle, descriptionAction,
                     ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
                     return;
                 }
+                
+                // Check for duplicate title
+                const isDuplicate = newactionList.some(item => item.title === jobTitle.title);
+                if (isDuplicate) {
+                    ToastAndroid.show('این مورد قبلا اضافه شده', ToastAndroid.SHORT);
+                    return;
+                }
+
                 setnewactionList(prevList => [...prevList, { 
                     title: jobTitle.title, 
                     description: descriptionAction, 

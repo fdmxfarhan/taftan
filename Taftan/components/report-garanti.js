@@ -49,13 +49,13 @@ const ReportGarantiView = ({ navigation, reportDetail, garantieConflict, setgara
                     <MultiSelectDropdown
                         list={warrantyList}
                         selectedValues={selectedWarranties}
-                        setSelectedValues={setSelectedWarranties}
+                        setSelectedValues={(val) => { setSelectedWarranties(val); }}
                         placeHolder="انتخاب کنید"
                         buttonStyle={styles.dropdown}
                         buttonTextStyle={styles.dropdownText}
                         getLabel={(item) => item.description}
                         getValue={(item) => item.Id}
-                        onSubmit={(val) => { }}
+                        onSubmit={(val) => {  }}
                     />
                     <Text style={styles.label}>توضیحات: </Text>
                     <TextInput

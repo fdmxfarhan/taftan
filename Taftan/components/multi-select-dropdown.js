@@ -24,10 +24,10 @@ const MultiSelectDropdown = ({
     }, [list, searchText, getLabel]);
 
     const toggleItem = (item) => {
-        const value = getValue(item);
-        const newSelectedValues = selectedValues.includes(value)
-            ? selectedValues.filter(v => v !== value)
-            : [...selectedValues, value];
+        const isSelected = selectedValues.some(selectedItem => getValue(selectedItem) === getValue(item));
+        const newSelectedValues = isSelected
+            ? selectedValues.filter(selectedItem => getValue(selectedItem) !== getValue(item))
+            : [...selectedValues, item];
         
         setSelectedValues(newSelectedValues);
         if (onSubmit) {
@@ -41,7 +41,7 @@ const MultiSelectDropdown = ({
             onPress={() => toggleItem(item)}
         >
             <Ionicons 
-                name={selectedValues.includes(getValue(item)) ? 'checkbox' : 'square-outline'} 
+                name={selectedValues.some(selectedItem => getValue(selectedItem) === getValue(item)) ? 'checkbox' : 'square-outline'} 
                 size={20} 
                 color={colors.darkblue}
             />
@@ -52,8 +52,7 @@ const MultiSelectDropdown = ({
     const getDisplayText = () => {
         if (selectedValues.length === 0) return placeHolder || 'انتخاب کنید';
         if (selectedValues.length === 1) {
-            const selectedItem = list.find(item => getValue(item) === selectedValues[0]);
-            return selectedItem ? getLabel(selectedItem) : placeHolder;
+            return getLabel(selectedValues[0]);
         }
         return `${selectedValues.length} مورد انتخاب شده`;
     };
