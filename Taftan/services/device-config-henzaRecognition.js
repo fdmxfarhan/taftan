@@ -30,7 +30,7 @@ export const loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId = async (typ
         });
         return { success: true, data: response.data };
     } catch (error) {
-        console.log('Error submitting /DeviceTypeHenzaRecognitionExpert/loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId/ request:', error.response);
+        console.log('Error submitting /DeviceTypeHenzaRecognitionExpert/loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId/ request:');
         return { success: false, error: 'Failed to submit loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId request' };
     }
 };

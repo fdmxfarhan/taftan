@@ -12,12 +12,15 @@ import styles from '../styles/reqView';
 import { GetModuleInUserStore } from '../services/device-config-GetModuleInUserStore';
 import { ToastAndroid } from 'react-native';
 import { GetModuleSerialListByUserKeyModuleKey } from '../services/device-config-GetModuleSerialListByUserKeyModuleKey';
+import { loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId } from '../services/device-config-henzaRecognition';
+import { GetAreaByRequest } from '../services/device-config-GetAreaByRequest';
 
 const ReportDamageBeforeUseView = ({ 
     setIsValid, 
     navigation, 
     moduleGroupKey, 
     officeKey, 
+    setOfficeKey,
     selectedModule, 
     setSelectedModule, 
     selectedConsumedModuleSerial, 
@@ -27,8 +30,14 @@ const ReportDamageBeforeUseView = ({
     moduleInUserStoreList,
     setModuleInUserStoreList,
     moduleSerialList,
-    setModuleSerialList 
+    setModuleSerialList,
+    damageBeforeUseList,
+    setdamageBeforeUseList,
+    reportDetail,
 }) => {
+    var [henzaRecontions, sethenzaRecontions] = useState([]);
+    var [selectedHenzaRecontion, setselectedHenzaRecontion] = useState({henzaRecognitionExpertTitle: 'انتخاب کنید', id: 0});
+    var [descriptiondamagebeforeuse, setdescriptiondamagebeforeuse] = useState('');
     const updateModuleSerialList = async (moduleItem) => {
         var result = await GetModuleSerialListByUserKeyModuleKey(moduleItem.UserKey, moduleItem.ModuleKey, officeKey);
         if (result.success) {
@@ -38,9 +47,23 @@ const ReportDamageBeforeUseView = ({
             ToastAndroid.show('لیست سریال‌ها دریافت نشد.', ToastAndroid.SHORT);
         }
     }
-    useEffect(() => {
-        setIsValid(true);
-    }, []);
+    const updateHenzaRecontions = async (moduleItem) => {
+        var result = await loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId(reportDetail.requestReportInfo.deviceTypeKey, moduleItem.ModuleGroupKey);
+        if (result.success) {
+            sethenzaRecontions(result.data);
+        }
+        else {
+            ToastAndroid.show('لیست خرابی‌ها دریافت نشد.', ToastAndroid.SHORT);
+        }
+    }
+    const updateOfficeKey = async () => {
+        var result = await GetAreaByRequest(reportDetail.requestReportInfo.requestId);
+        if (result.success) {
+            officeKey = result.data;
+            setOfficeKey(officeKey);
+        }
+        else ToastAndroid.show('کد دفتر دریافت نشد.', ToastAndroid.SHORT);
+    }
 
     const updateModuleInUserStore = async () => {
         var result = await GetModuleInUserStore(moduleGroupKey, officeKey, navigation);
@@ -51,6 +74,11 @@ const ReportDamageBeforeUseView = ({
             ToastAndroid.show('لیست ماژول‌ها دریافت نشد.', ToastAndroid.SHORT);
         }
     }
+    useEffect(() => {
+        setIsValid(true);
+        updateOfficeKey();
+        updateModuleInUserStore();
+    }, []);
 
     return (
         <ScrollView style={styleslocal.contents}>
@@ -64,7 +92,7 @@ const ReportDamageBeforeUseView = ({
                             list={moduleInUserStoreList}
                             getLabel={(item) => item.ModuleTitle}
                             getValue={(item) => item.ModuleTitle}
-                            setValue={(item) => { setSelectedModule(item); updateModuleSerialList(item); }}
+                            setValue={(item) => { setSelectedModule(item); updateModuleSerialList(item);  updateHenzaRecontions(item); }}
                             value={selectedModule?.ModuleTitle || ''}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
@@ -89,11 +117,11 @@ const ReportDamageBeforeUseView = ({
                     <View style={styles.dualInputPart}>
                         <Text style={styles.label}>شرح خرابی: </Text>
                         <DropDownObj
-                            list={[]}
-                            getLabel={(item) => item}
-                            getValue={(item) => item}
-                            setValue={(item) => { }}
-                            value={'asdf'}
+                            list={henzaRecontions}
+                            getLabel={(item) => item.henzaRecognitionExpertTitle}
+                            getValue={(item) => item.henzaRecognitionExpertTitle}
+                            setValue={(item) => { setselectedHenzaRecontion(item); setIsValid(true); }}
+                            value={selectedHenzaRecontion.henzaRecognitionExpertTitle || ''}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
                             onSubmit={(val) => { }}
@@ -105,13 +133,40 @@ const ReportDamageBeforeUseView = ({
                     style={styles.description}
                     placeholder="توضیحات"
                     keyboardType={'default'}
-                // value={descriptionAction}
-                // onChange={text => setdescriptionAction(text.nativeEvent.text)}
+                    value={descriptiondamagebeforeuse}
+                    onChange={text => setdescriptiondamagebeforeuse(text.nativeEvent.text)}
                 />
-                <TouchableOpacity style={styleslocal.submitButton} >
+                <TouchableOpacity style={styleslocal.submitButton} onPress={() => {
+                    setdamageBeforeUseList([...damageBeforeUseList, {
+                        moduleTitle: selectedModule.ModuleTitle,
+                        serial: selectedConsumedModuleSerial.Serial,
+                        henzaRecognitionExpertTitle: selectedHenzaRecontion.henzaRecognitionExpertTitle,
+                        description: descriptiondamagebeforeuse,
+                    }]);
+                }}>
                     <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
                 </TouchableOpacity>
             </View>)}
+            <View style={{ height: 50, }} />
+            {damageBeforeUseList.map((item, index) => (
+                <View key={index}>
+                    <View style={[styles.actionHistoryItem, { backgroundColor: colors.antiflashWhite, marginBottom: 10 }]}>
+                        <View style={styles.actionHistoryRight}>
+                            <Text style={styles.actionHistoryTitle}>مدل ماژول: {item.moduleTitle}</Text>
+                            <Text style={styles.actionHistoryTitle}>سریال ماژول: {item.serial}</Text>
+                            <Text style={styles.actionHistoryTitle}>خرابی: {item.henzaRecognitionExpertTitle}</Text>
+                            <Text style={styles.actionHistoryTitle}>توضیحات: {item.description}</Text>
+                        </View>
+                        <TouchableOpacity style={styleslocal.deleteButton} onPress={() => {
+                            const newList = [...damageBeforeUseList];
+                            newList.splice(index, 1);
+                            setdamageBeforeUseList(newList);
+                        }}>
+                            <Ionicons name="trash-outline" size={20} color={colors.red} />
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            ))}
             <View style={{ height: 150, }} />
         </ScrollView>
     );

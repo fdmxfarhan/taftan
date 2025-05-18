@@ -79,6 +79,7 @@ const Report = (props) => {
     var [uploadimagefilename, setuploadimagefilename] = useState('');
     var [reportExpertDescription, setreportExpertDescription] = useState('');
     var [reportDescription, setreportDescription] = useState('');
+    var [damageBeforeUseList, setdamageBeforeUseList] = useState([]);
     const handleSaveReport = () => {
         // console.log(questionnaireAnswers);
         var options = {
@@ -483,6 +484,7 @@ const Report = (props) => {
                         navigation={props.navigation}
                         moduleGroupKey={moduleGroupKey}
                         officeKey={officeKey}
+                        setOfficeKey={setOfficeKey}
                         selectedModule={selectedConsumedModule}
                         setSelectedModule={setselectedConsumedModule}
                         selectedConsumedModuleSerial={selectedConsumedModuleSerial}
@@ -492,7 +494,11 @@ const Report = (props) => {
                         moduleInUserStoreList={moduleInUserStoreListforDamageBeforeUse}
                         setModuleInUserStoreList={setmoduleInUserStoreListforDamageBeforeUse}
                         moduleSerialList={moduleSerialList}
-                        setModuleSerialList={setModuleSerialList} />
+                        setModuleSerialList={setModuleSerialList}
+                        reportDetail={reportDetail}
+                        damageBeforeUseList={damageBeforeUseList}
+                        setdamageBeforeUseList={setdamageBeforeUseList}
+                    />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab5')}>
                             <Text style={styles.nextTabButtonText}>قبلی</Text>
