@@ -17,7 +17,7 @@ const HomeNotif = ({ navigation, activeCase }) => {
         navigation.navigate('DamageReqView', { item });
     };
     useEffect(() => {
-        console.log(activeCase);
+        // console.log(activeCase);
         Animated.spring(notifScale, {
             toValue: 1,
             friction: 5,

@@ -15,17 +15,17 @@ import { GetModuleSerialListByUserKeyModuleKey } from '../services/device-config
 import { loadDeviceTypeHenzaRecognitionExpertListByDeviceTypeId } from '../services/device-config-henzaRecognition';
 import { GetAreaByRequest } from '../services/device-config-GetAreaByRequest';
 
-const ReportDamageBeforeUseView = ({ 
-    setIsValid, 
-    navigation, 
-    moduleGroupKey, 
-    officeKey, 
+const ReportDamageBeforeUseView = ({
+    setIsValid,
+    navigation,
+    moduleGroupKey,
+    officeKey,
     setOfficeKey,
-    selectedModule, 
-    setSelectedModule, 
-    selectedConsumedModuleSerial, 
-    setselectedConsumedModuleSerial, 
-    damageBeforeUse, 
+    selectedModule,
+    setSelectedModule,
+    selectedConsumedModuleSerial,
+    setselectedConsumedModuleSerial,
+    damageBeforeUse,
     setdamageBeforeUse,
     moduleInUserStoreList,
     setModuleInUserStoreList,
@@ -36,7 +36,7 @@ const ReportDamageBeforeUseView = ({
     reportDetail,
 }) => {
     var [henzaRecontions, sethenzaRecontions] = useState([]);
-    var [selectedHenzaRecontion, setselectedHenzaRecontion] = useState({henzaRecognitionExpertTitle: 'انتخاب کنید', id: 0});
+    var [selectedHenzaRecontion, setselectedHenzaRecontion] = useState({ henzaRecognitionExpertTitle: 'انتخاب کنید', id: 0 });
     var [descriptiondamagebeforeuse, setdescriptiondamagebeforeuse] = useState('');
     const updateModuleSerialList = async (moduleItem) => {
         var result = await GetModuleSerialListByUserKeyModuleKey(moduleItem.UserKey, moduleItem.ModuleKey, officeKey);
@@ -83,7 +83,12 @@ const ReportDamageBeforeUseView = ({
     return (
         <ScrollView style={styleslocal.contents}>
             <Text style={styleslocal.sectionTitle}>اطلاعات قطعات:</Text>
-            <CheckBox text={'خرابی قبل از بهره برداری'} value={damageBeforeUse} onChange={() => { setdamageBeforeUse(!damageBeforeUse); updateModuleInUserStore(); }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
+            <CheckBox text={'خرابی قبل از بهره برداری'} value={damageBeforeUse} onChange={() => {
+                setdamageBeforeUse(!damageBeforeUse);
+                updateModuleInUserStore();
+                if (!damageBeforeUse) setIsValid(false);
+                else setIsValid(true);
+            }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {damageBeforeUse && (<View>
                 <View style={[styles.dualInputView]}>
                     <View style={styles.dualInputPart}>
@@ -92,7 +97,7 @@ const ReportDamageBeforeUseView = ({
                             list={moduleInUserStoreList}
                             getLabel={(item) => item.ModuleTitle}
                             getValue={(item) => item.ModuleTitle}
-                            setValue={(item) => { setSelectedModule(item); updateModuleSerialList(item);  updateHenzaRecontions(item); }}
+                            setValue={(item) => { setSelectedModule(item); updateModuleSerialList(item); updateHenzaRecontions(item); }}
                             value={selectedModule?.ModuleTitle || ''}
                             buttonStyle={styles.dropdown}
                             buttonTextStyle={styles.dropdownText}
@@ -143,6 +148,7 @@ const ReportDamageBeforeUseView = ({
                         henzaRecognitionExpertTitle: selectedHenzaRecontion.henzaRecognitionExpertTitle,
                         description: descriptiondamagebeforeuse,
                     }]);
+                    setIsValid(true);
                 }}>
                     <Text style={styleslocal.submitButtonText}>تایید و اضافه</Text>
                 </TouchableOpacity>
