@@ -45,7 +45,7 @@ adb devices
 ```
 
 ### Configure JDK Path
-Add to `android/gradle.properties` (use "\\" instead of "\"):
+Add to `android/gradle.properties` (use "\\\\" instead of "\\"):
 ```properties
 org.gradle.java.home=C:\\Program Files\\Java\\jdk1.8.0_291
 ```
