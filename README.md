@@ -16,6 +16,15 @@ A React Native mobile application with comprehensive setup and troubleshooting g
 3. Download Emulator (API 25, Medium phone)
 
 ### Initial Setup
+To run the app:
+```bash
+cd Taftan
+npm i
+npx react-native run-android
+```
+
+
+To start a new project:
 ```bash
 # Initialize new React Native app
 npx react-native init {MyApp}
