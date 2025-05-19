@@ -18,6 +18,14 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
     const [fullScreenImage, setFullScreenImage] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
+    useEffect(() => {
+        // Check if all required fields are filled
+        const isFormValid = reportDescription.trim() !== '' && 
+                          reportExpertDescription.trim() !== '' && 
+                          selectedReportImage !== null;
+        setIsValid(isFormValid);
+    }, [reportDescription, reportExpertDescription, selectedReportImage]);
+
     const handleReportFilePicker = async () => {
         try {
             const res = await DocumentPicker.pick({
@@ -88,7 +96,7 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
         <ScrollView style={styleslocal.contents}>
             <Text style={styleslocal.sectionTitle}>توضیحات:</Text>
 
-            <Text style={styles.label}>توضیحات کارشناس: </Text>
+            <Text style={styles.label}>توضیحات کارشناس: <Text style={{ color: 'red' }}>*</Text></Text>
             <TextInput
                 style={[styles.description, { height: 100 }]}
                 multiline={true}
@@ -97,7 +105,7 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
                 value={reportDescription}
                 onChange={text => setreportDescription(text.nativeEvent.text)}
             />
-            <Text style={styles.label}>توضیحات نماینده مشتری: </Text>
+            <Text style={styles.label}>توضیحات نماینده مشتری: <Text style={{ color: 'red' }}>*</Text></Text>
             <TextInput
                 style={[styles.description, { height: 100 }]}
                 multiline={true}
