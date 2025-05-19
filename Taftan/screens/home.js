@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, StyleSheet, View, FlatList, TouchableOpacity, BackHandler, ToastAndroid } from 'react-native';
+import { Text, StyleSheet, View, FlatList, TouchableOpacity, BackHandler, ToastAndroid, Dimensions, Animated } from 'react-native';
+import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
@@ -33,6 +34,46 @@ const Home = (props) => {
     var [myProjectRequestsList, setmyProjectRequestsList] = useState([]);
     var [myPeriodicRequestsList, setmyPeriodicRequestsList] = useState([]);
     var [activeCase, setActiveCase] = useState(null);
+
+    const { width } = Dimensions.get('window');
+    const translateX = useRef(new Animated.Value(0)).current;
+    const [currentTabIndex, setCurrentTabIndex] = useState(0);
+
+    const tabOrder = ['Home', 'requests', 'archives'];
+
+    const handleGestureEvent = Animated.event(
+        [{ nativeEvent: { translationX: translateX } }],
+        { 
+            useNativeDriver: true,
+            listener: (event) => {
+                const { translationX, velocityX } = event.nativeEvent;
+                const threshold = width * 0.1;
+
+                if (Math.abs(velocityX) > 200 || Math.abs(translationX) > threshold) {
+                    if (translationX < 0 && currentTabIndex > 0) {
+                        // Swipe left (which is actually going to previous in RTL)
+                        setCurrentTabIndex(prev => prev - 1);
+                        setTabItem(tabOrder[currentTabIndex - 1]);
+                    } else if (translationX > 0 && currentTabIndex < tabOrder.length - 1) {
+                        // Swipe right (which is actually going to next in RTL)
+                        setCurrentTabIndex(prev => prev + 1);
+                        setTabItem(tabOrder[currentTabIndex + 1]);
+                    }
+                }
+            }
+        }
+    );
+
+    const handleGestureEnd = (event) => {
+        Animated.spring(translateX, {
+            toValue: 0,
+            useNativeDriver: true,
+            velocity: event.nativeEvent.velocityX,
+            tension: 40,
+            friction: 7
+        }).start();
+    };
+
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -89,33 +130,47 @@ const Home = (props) => {
         sendRequest();
     }, [tabItem])
     return (
-        <View style={styles.container}>
-            <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
-            <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
-            <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
-            {tabItem == 'Home' && (
-                <View style={styles.tabContainer}>
-                    <HomeNotif navigation={props.navigation} activeCase={activeCase} />
-                    <GridView navigation={props.navigation} />
-                    <BottomNav navigation={props.navigation} />
-                </View>
-            )}
-            {tabItem == 'requests' && (
-                <MyRequestsList 
-                    myDamageRequestsList={myDamageRequestsList} 
-                    myInstallRequestsList={myInstallRequestsList} 
-                    mySiteRequestsList={mySiteRequestsList} 
-                    myProjectRequestsList={myProjectRequestsList} 
-                    myPeriodicRequestsList={myPeriodicRequestsList} 
-                    navigation={props.navigation} 
-                />
-            )}
-            {tabItem == 'archives' && (
-                <MessageListView myMessageList={myMessageList} setmyMessageList={setmyMessageList} navigation={props.navigation} />
-            )}
-
-            <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
-        </View>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+            <View style={styles.container}>
+                <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
+                <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
+                <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
+                <PanGestureHandler
+                    onGestureEvent={handleGestureEvent}
+                    onHandlerStateChange={({ nativeEvent }) => {
+                        if (nativeEvent.state === 5) { // END state
+                            handleGestureEnd({ nativeEvent });
+                        }
+                    }}
+                >
+                    <Animated.View style={[styles.tabContainer, {
+                        transform: [{ translateX }]
+                    }]}>
+                        {tabItem == 'Home' && (
+                            <View style={styles.tabContainer}>
+                                <HomeNotif navigation={props.navigation} activeCase={activeCase} />
+                                <GridView navigation={props.navigation} />
+                                <BottomNav navigation={props.navigation} />
+                            </View>
+                        )}
+                        {tabItem == 'requests' && (
+                            <MyRequestsList 
+                                myDamageRequestsList={myDamageRequestsList} 
+                                myInstallRequestsList={myInstallRequestsList} 
+                                mySiteRequestsList={mySiteRequestsList} 
+                                myProjectRequestsList={myProjectRequestsList} 
+                                myPeriodicRequestsList={myPeriodicRequestsList} 
+                                navigation={props.navigation} 
+                            />
+                        )}
+                        {tabItem == 'archives' && (
+                            <MessageListView myMessageList={myMessageList} setmyMessageList={setmyMessageList} navigation={props.navigation} />
+                        )}
+                    </Animated.View>
+                </PanGestureHandler>
+                <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
+            </View>
+        </GestureHandlerRootView>
     );
 }
 
