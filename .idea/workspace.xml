@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8e860a50-ec4e-482f-96c8-04f2946f37f0" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="2xGdk5WcAdmo5BkIX8V6kCOxgTs" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8e860a50-ec4e-482f-96c8-04f2946f37f0" name="Default Changelist" comment="" />
+      <created>1747568485511</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1747568485511</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-1229" y="146" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1747568545452">
+      <screen x="-1366" y="131" width="1366" height="720" />
+    </state>
+    <state x="-1229" y="146" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1600.852/-1366.131.1366.720/-3286.-183.1920.1032@-1366.131.1366.720" timestamp="1747568545452" />
+    <state x="-1274" y="223" width="1182" height="536" key="AVDManager" timestamp="1747570327115">
+      <screen x="-1366" y="131" width="1366" height="720" />
+    </state>
+    <state x="-1274" y="223" width="1182" height="536" key="AVDManager/0.0.1600.852/-1366.131.1366.720/-3286.-183.1920.1032@-1366.131.1366.720" timestamp="1747570327115" />
+    <state x="-1182" y="136" key="SettingsEditor" timestamp="1747570324370">
+      <screen x="-1366" y="131" width="1366" height="720" />
+    </state>
+    <state x="-1182" y="136" key="SettingsEditor/0.0.1600.852/-1366.131.1366.720/-3286.-183.1920.1032@-1366.131.1366.720" timestamp="1747570324370" />
+  </component>
+</project>
