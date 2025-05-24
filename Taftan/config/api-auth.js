@@ -1,6 +1,6 @@
 import axios from 'axios';
-url = "http://10.55.5.13:8020/Services/Authentication/api"; //13
 
+url = "http://10.55.5.13:8020/Services/Authentication/api"; //13
 
 
 // url = "http://10.44.4.12:8080/Services/api";

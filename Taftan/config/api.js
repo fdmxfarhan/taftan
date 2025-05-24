@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getAuthData } from '../services/auth';
 
-url = "http://10.55.5.13:8020/Services/Taftan/api";
+url = "http://10.55.5.13:8020/Services/TaftanService/api";
 
 
 
@@ -17,7 +17,6 @@ api = axios.create({
     // headers: {
     //     token: authData.token,
     // },
-
 });
 
 module.exports = api;
