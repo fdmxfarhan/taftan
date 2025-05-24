@@ -80,8 +80,8 @@ const Report = (props) => {
     var [reportExpertDescription, setreportExpertDescription] = useState('');
     var [reportDescription, setreportDescription] = useState('');
     var [damageBeforeUseList, setdamageBeforeUseList] = useState([]);
+    
     const handleSaveReport = () => {
-        // console.log(questionnaireAnswers);
         var options = {
             "requestId": requestDetail.requestInfo.requestId,
             "id": reportInfo.reportId,
@@ -94,8 +94,8 @@ const Report = (props) => {
             "reportExpertDescription": reportExpertDescription,
             "warrantyDescription": warrantyDescription,
             "isWarranty": garantieConflict,
-            "fileName": uploadfilename,
-            "imageFileName": uploadimagefilename,
+            "fileName": uploadimagefilename,
+            "imageFileName": uploadfilename,
             "isConfigChange": 0, ///////////////////////////////////
             "reportTypeId": requestDetail.requestInfo.reportTypeId,
             "requestActionId": reportInfo.actionTypeId,
@@ -122,7 +122,7 @@ const Report = (props) => {
                 ToastAndroid.show('گزارش کار با موفقیت ثبت شد', ToastAndroid.SHORT);
                 // props.navigation.navigate('Home');
             }else{
-                ToastAndroid.show('خطایی رخ داده است', ToastAndroid.SHORT);
+                ToastAndroid.show(result.error, ToastAndroid.SHORT);
             }
         });
     }
@@ -526,6 +526,8 @@ const Report = (props) => {
                         setreportDescription={setreportDescription}
                         reportExpertDescription={reportExpertDescription}
                         setreportExpertDescription={setreportExpertDescription}
+                        setuploadfilename={setuploadfilename}
+                        setuploadimagefilename={setuploadimagefilename}
                     />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => {

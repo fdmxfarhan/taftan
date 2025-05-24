@@ -24,7 +24,7 @@ export const SaveReport = async (options, navigation) => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error SaveReport:', error);
-        
+        var message = 'Failed to submit SaveReport request';
         if (error.response) {
             if (error.response.status === 401 || error.response.status === 403) {
                 logout();
@@ -37,9 +37,10 @@ export const SaveReport = async (options, navigation) => {
                 return { success: false, error: 'Authorization denied' };
             }
             console.log(error.response.data);
+            message = error.response.data?.Message;
         }
         
-        return { success: false, error: 'Failed to submit SaveReport request' };
+        return { success: false, error: message };
     }
 };
 

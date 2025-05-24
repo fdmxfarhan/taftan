@@ -12,7 +12,14 @@ import styles from '../styles/reqView';
 import DocumentPicker from 'react-native-document-picker';
 import { uploadFile } from '../services/upload';
 
-const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription, reportExpertDescription, setreportExpertDescription }) => {
+const ReportUploadView = ({ 
+    setIsValid, 
+    reportDescription, 
+    setreportDescription, 
+    reportExpertDescription, 
+    setreportExpertDescription,
+    setuploadfilename,
+    setuploadimagefilename }) => {
     const [selectedReportImage, setSelectedReportImage] = useState(null);
     const [selectedAttachmentImage, setSelectedAttachmentImage] = useState(null);
     const [fullScreenImage, setFullScreenImage] = useState(null);
@@ -44,8 +51,9 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
                 const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                 console.log(`Upload progress: ${percentCompleted}%`);
             };
-            // const uploadResponse = await uploadFile(endpoint, file, onUploadProgress);
-            // console.log('Upload successful:', uploadResponse);
+            const uploadResponse = await uploadFile(endpoint, file, onUploadProgress);
+            console.log('Upload successful:', uploadResponse);
+            setuploadfilename(uploadResponse);
             ToastAndroid.show('فایل با موفقیت آپلود شد.', ToastAndroid.SHORT);
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
@@ -74,8 +82,9 @@ const ReportUploadView = ({ setIsValid, reportDescription, setreportDescription,
                 const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
                 console.log(`Upload progress: ${percentCompleted}%`);
             };
-            // const uploadResponse = await uploadFile(endpoint, file, onUploadProgress);
-            // console.log('Upload successful:', uploadResponse);
+            const uploadResponse = await uploadFile(endpoint, file, onUploadProgress);
+            console.log('Upload successful:', uploadResponse);
+            setuploadimagefilename(uploadResponse);
             ToastAndroid.show('فایل با موفقیت آپلود شد.', ToastAndroid.SHORT);
         } catch (err) {
             if (DocumentPicker.isCancel(err)) {
