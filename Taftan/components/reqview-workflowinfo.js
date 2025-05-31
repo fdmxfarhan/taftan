@@ -7,7 +7,7 @@ import WorkFlowPopup from './rec-popup-workflow';
 import AreaDetailPopup from './rec-popup-area-detail';
 import styles from '../styles/reqView';
 
-const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, reqHistoryList, areaDetail }) => {
+const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, requestDetail, reqHistoryList, areaDetail }) => {
     var [workflowModalEN, setworkflowModalEN] = useState(false);
     var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
     const notWorking = () => {
@@ -15,7 +15,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, req
     };
     return (
         <View style={styles.container}>
-            <WorkFlowPopup reqHistoryList={reqHistoryList} modalEnable={workflowModalEN} setmodalEnable={setworkflowModalEN} reqInfo={reqInfo} />
+            <WorkFlowPopup reqHistoryList={reqHistoryList} modalEnable={workflowModalEN} setmodalEnable={setworkflowModalEN} />
             <AreaDetailPopup modalEnable={areaDetailModalEN} setmodalEnable={setareaDetailModalEN} areaDetail={areaDetail} />
             <TouchableOpacity style={styles.titleView} onPress={toggleWorkflow}>
                 <Text style={styles.title}>گردش کار</Text>
@@ -30,7 +30,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, req
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={reqInfo.persianLastState}
+                    value={requestDetail.requestInfo.lastState}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -45,7 +45,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, req
                         // onSubmitEditing={()=>passwordInput.current.focus()}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={reqInfo.areaName}
+                        value={requestDetail.requestInfo.areaName}
                         editable={false}
                     // onChange={(text) => {
                     //     console.log('hello')
@@ -63,7 +63,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, req
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={reqInfo.persianInsertedDate}
+                    value={requestDetail.requestInfo.persianInsertedDate}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -77,7 +77,7 @@ const ReqWorkFlowInfo = ({ toggleWorkflow, workflow, reqInfo, requestDetail, req
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={reqInfo.expertName}
+                    value={requestDetail.requestInfo.expertName}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')

@@ -229,7 +229,7 @@ const ServiceDamage = (props) => {
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="درخواست‌های خرابی" leftIcon="search" rightIcon="menu" />
-            <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
+            <SearchView popupEN={searchEN} setPopupEN={setsearchEN} navigation={props.navigation} />
             <ReqGridController
                 currentPage={skipValue}
                 skipValue={skipValue}

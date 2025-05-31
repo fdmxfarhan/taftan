@@ -44,6 +44,6 @@ export const GetModuleInUserStore = async (moduleGroupKey, officeKey, navigation
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /StoreController/GetModuleInUserStore request:', error.response);
-        return { success: false, error: 'Failed to submit GetModuleGroupTitleList request' };
+        return { success: false, error: 'Failed to submit GetModuleInUserStore request' };
     }
 };

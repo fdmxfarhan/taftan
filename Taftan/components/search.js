@@ -9,9 +9,23 @@ import TimePicker from './time-picker';
 import TwoChoice from './twochoice';
 import { getUserList } from '../services/req-load-user-list';
 import UserDropDown from './dropdown-user';
+import { GetRequest } from '../services/search-GetRequest';
 
-const SearchView = ({ popupEN, setPopupEN }) => {
+const SearchView = ({ popupEN, setPopupEN, navigation }) => {
     var [searchText, setSearchText] = useState('');
+    var searchRequestId = (requestId) => {
+        GetRequest(requestId, navigation).then((res) => {
+            if(res.success){
+                if(res.data == true){
+                    navigation.navigate('DamageReqView', { item: {requestId: requestId} });
+                }else{
+                    ToastAndroid.show('شماره کار یافت نشد', ToastAndroid.SHORT);
+                }
+            }else{
+
+            }
+        });
+    }
     return (
         <Modal transparent visible={popupEN} animationType="fade" onRequestClose={() => setPopupEN(false)}>
             <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => {setPopupEN(false)}}>
@@ -24,7 +38,7 @@ const SearchView = ({ popupEN, setPopupEN }) => {
                         onChange={(text) => { setSearchText(text.nativeEvent.text) }}
                         autoFocus={true}
                         onSubmitEditing={() => {
-                            ToastAndroid.show('شماره کار یافت نشد', ToastAndroid.SHORT);
+                            searchRequestId(searchText);
                         }}
                     />
                 </View>

@@ -4,9 +4,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import BranchInfoPopup from './rec-popup-branch-info';
 import styles from '../styles/reqView';
+import { getServiceInfo } from '../config/getServiceInfo';
 
-const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchInfo }) => {
+const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, requestDetail, branchInfo }) => {
     var [branchInfoModalEnable, setbranchInfoModalEnable] = useState(false);
+    
     return (
         <View style={styles.container}>
             <BranchInfoPopup modalEnable={branchInfoModalEnable} setmodalEnable={setbranchInfoModalEnable} branchInfo={branchInfo} />
@@ -26,7 +28,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                             // onSubmitEditing={()=>passwordInput.current.focus()}
                             returnKeyType={'next'}
                             keyboardType={'default'}
-                            value={item.requestId.toString()}
+                            value={requestDetail.requestInfo.requestId.toString()}
                             editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -43,7 +45,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                             // onSubmitEditing={()=>passwordInput.current.focus()}
                             returnKeyType={'next'}
                             keyboardType={'default'}
-                            value={item.customerName}
+                            value={requestDetail.requestInfo.customerName}
                             editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -60,7 +62,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={item.customerInsertName}
+                    value={requestDetail.requestInfo.customerInsertName}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -90,7 +92,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                     // onSubmitEditing={()=>passwordInput.current.focus()}
                     returnKeyType={'next'}
                     keyboardType={'default'}
-                    value={(item.requestDeadLine / 3600) + ' ساعت'}
+                    value={requestDetail.requestInfo.requestDeadLineTime}
                     editable={false}
                 // onChange={(text) => {
                 //     console.log('hello')
@@ -126,7 +128,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                             // onSubmitEditing={()=>passwordInput.current.focus()}
                             returnKeyType={'next'}
                             keyboardType={'default'}
-                            value={item.serviceName}
+                            value={getServiceInfo(requestDetail).serviceName} ////////////////////////////////////////////////
                             editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')
@@ -143,7 +145,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                         placeholderTextColor={colors.text}
                         returnKeyType={'next'}
                         keyboardType={'default'}
-                        value={item.branchName}
+                        value={requestDetail.requestInfo.branchName}
                         editable={false}
                     />
                     <TouchableOpacity style={styles.inputWithActionButton} onPress={() => setbranchInfoModalEnable(true)} >
@@ -161,7 +163,7 @@ const ReqInfoView = ({ toggleReqinfoEN, reqinfoEN, item, requestDetail, branchIn
                             // onSubmitEditing={()=>passwordInput.current.focus()}
                             returnKeyType={'next'}
                             keyboardType={'default'}
-                            value={item.persianInsertedDate}
+                            value={requestDetail.requestInfo.persianInsertedDate}
                             editable={false}
                         // onChange={(text) => {
                         //     console.log('hello')

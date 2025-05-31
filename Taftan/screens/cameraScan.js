@@ -78,7 +78,7 @@ const CameraScan = (props) => {
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="اسکن بارکد" leftIcon="search" rightIcon="menu" />
-            <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
+            <SearchView popupEN={searchEN} setPopupEN={setsearchEN} navigation={props.navigation}/>
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
             {hasPermission && device && (<Camera
                 style={{ flex: 1, width: '100%', marginTop: 0, zIndex: 1, }}

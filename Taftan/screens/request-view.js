@@ -154,9 +154,9 @@ const DamageReqView = (props) => {
         } else ToastAndroid.show('لیست اقدامات درخواست بارگیری نشد.', ToastAndroid.SHORT);
     }
     const sendRequest = async () => {
-        const authData = await getAuthData();
-        userToken = authData.token;
-        setuserToken(userToken);
+        // const authData = await getAuthData();
+        // userToken = authData.token;
+        // setuserToken(userToken);
 
         var result = await getRequestDetail(reqInfo.requestId, props.navigation);
         if (result.success) {
@@ -248,32 +248,32 @@ const DamageReqView = (props) => {
             <NavBar rightCallback={saveEverything} leftCallback={handleSearchPress} title="جزئیات درخواست" leftIcon="arrow-back" rightIcon="save-outline" />
 
             <ScrollView style={styles.contents} nestedScrollEnabled={false} keyboardShouldPersistTaps="handled">
-                <ReqInfoView toggleReqinfoEN={toggleReqinfoEN} reqinfoEN={reqinfoEN} item={item} requestDetail={requestDetail} branchInfo={branchInfo} />
+                <ReqInfoView toggleReqinfoEN={toggleReqinfoEN} reqinfoEN={reqinfoEN} requestDetail={requestDetail} branchInfo={branchInfo} />
                 {requestDetail && (requestDetail.requestInfo.serviceGroup == 1 || requestDetail.requestInfo.serviceGroup == 8) && (
-                    <ReqDamageView toggleDamageInfo={toggleDamageInfo} damageInfo={damageInfo} item={item} requestDetail={requestDetail} />
+                    <ReqDamageView toggleDamageInfo={toggleDamageInfo} damageInfo={damageInfo} requestDetail={requestDetail} />
                 )}
                 {requestDetail && (requestDetail.requestInfo.serviceGroup == 3) && (
-                    <ReqInstallationView toggleinstallInfo={toggleinstallInfo} installInfo={installationInfo} item={item} requestDetail={requestDetail} />
+                    <ReqInstallationView toggleinstallInfo={toggleinstallInfo} installInfo={installationInfo} requestDetail={requestDetail} />
                 )}
                 {requestDetail && (
                     requestDetail.requestInfo.serviceGroup == 6 || 
                     requestDetail.requestInfo.serviceGroup == 9 || 
                     requestDetail.requestInfo.serviceGroup == 10 || 
                     requestDetail.requestInfo.serviceGroup == 11) && (
-                    <ReqSiteView togglesiteInfo={togglesiteInfo} siteInfo={siteInfo} item={item} requestDetail={requestDetail} />
+                    <ReqSiteView togglesiteInfo={togglesiteInfo} siteInfo={siteInfo} requestDetail={requestDetail} />
                 )}
                 {requestDetail && (requestDetail.requestInfo.serviceGroup == 7) && (
-                    <ReqProjectView toggleprojectInfo={toggleprojectInfo} projectInfo={projectInfo} item={item} requestDetail={requestDetail} />
+                    <ReqProjectView toggleprojectInfo={toggleprojectInfo} projectInfo={projectInfo} requestDetail={requestDetail} />
                 )}
                 {requestDetail && (requestDetail.requestInfo.serviceGroup == 2) && (
-                    <ReqPeriodicView toggleperiodicInfo={toggleperiodicInfo} periodicInfo={periodicInfo} item={item} requestDetail={requestDetail} />
+                    <ReqPeriodicView toggleperiodicInfo={toggleperiodicInfo} periodicInfo={periodicInfo} requestDetail={requestDetail} />
                 )}
-                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} reqInfo={item} requestDetail={requestDetail} lastRequestList={lastRequestList} deviceDetail={deviceDetail} navigation={props.navigation} />
-                <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} reqInfo={item} requestDetail={requestDetail} reqHistoryList={reqHistoryList} areaDetail={areaDetail} />
-                <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} item={item} requestDetail={requestDetail} />
+                <ReqDeviceInfo toggleDeviceInfo={toggleDeviceInfo} deviceInfo={deviceInfo} requestDetail={requestDetail} lastRequestList={lastRequestList} deviceDetail={deviceDetail} navigation={props.navigation} />
+                <ReqWorkFlowInfo toggleWorkflow={toggleWorkflow} workflow={workflow} requestDetail={requestDetail} reqHistoryList={reqHistoryList} areaDetail={areaDetail} />
+                <ReqSLAInfo toggleslaInfo={toggleslaInfo} slaInfo={slaInfo} requestDetail={requestDetail} />
                 <ReqServiceStateInfo toggleserviceStateInfo={toggleserviceStateInfo} serviceStateInfo={serviceStateInfo} requestDetail={requestDetail}/>
-                <ReqActionInfo toggleactionsInfo={toggleactionsInfo} actionsInfo={actionsInfo} item={item} requestDetail={requestDetail} actionsHistory={reqActionList} setactionsHistory={setreqActionList} navigation={props.navigation} />
-                <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} item={item} requestDetail={requestDetail} reqExpertList={reqExpertList} />
+                <ReqActionInfo toggleactionsInfo={toggleactionsInfo} actionsInfo={actionsInfo} requestDetail={requestDetail} actionsHistory={reqActionList} setactionsHistory={setreqActionList} navigation={props.navigation} />
+                <ReqExpertsInfo togglesupervisorInfo={togglesupervisorInfo} supervisorInfo={supervisorInfo} requestDetail={requestDetail} reqExpertList={reqExpertList} />
             </ScrollView>
 
             <RequestActions notWorking={notWorking} item={item} userList={userList} refrenceCauseList={refrenceCauseList} workCauseList={workCauseList} setworkCauseList={setworkCauseList} actionTypeList={actionTypeList} setactionTypeList={setactionTypeList} allowdActionList={allowdActionList} updateActionList={updateActionList} setreqActionList={setreqActionList} navigation={props.navigation} reloadPage={sendRequest} requestDetail={requestDetail} reqExpertList={reqExpertList} />

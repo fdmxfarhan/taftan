@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import styles from '../styles/reqView';
 
-const ReqPeriodicView = ({ toggleperiodicInfo, periodicInfo, item, requestDetail }) => {
+const ReqPeriodicView = ({ toggleperiodicInfo, periodicInfo, requestDetail }) => {
     const openURL = async (url) => {
         const supported = await Linking.canOpenURL(url);
         if (supported) {

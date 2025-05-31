@@ -4,11 +4,11 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import styles from '../styles/reqView';
 
-const ReqInstallationView = ({ toggleinstallInfo, installInfo, item, requestDetail }) => {
+const ReqInstallationView = ({ toggleinstallInfo, installInfo, requestDetail }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.titleView} onPress={toggleinstallInfo}>
-                <Text style={styles.title}>اطلاعات سرویس نصب ({requestDetail.installInfo.sourceRequest})</Text>
+                <Text style={styles.title}>اطلاعات سرویس نصب</Text>
                 <Ionicons style={styles.chevron} name={installInfo == true ? "caret-up" : "caret-down"} size={30} color={colors.dark} />
             </TouchableOpacity>
             {installInfo && (<View style={styles.content}>

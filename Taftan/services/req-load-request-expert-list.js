@@ -114,7 +114,7 @@ export const loadRequestExpertList = async (requestId) => {
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error /RequestController/loadRequestExpertList:', error);
-        return { success: false, error: error.response.data.Message };
+        return { success: false, error: error };
     }
 };
 

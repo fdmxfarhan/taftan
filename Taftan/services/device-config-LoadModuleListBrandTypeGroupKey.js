@@ -244,12 +244,12 @@ export const LoadModuleListBrandTypeGroupKey = async (options) => {
                 authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
-                'User-Agent': 'Mobile',
+                // 'User-Agent': 'Mobile',
             }
         });
         return { success: true, data: response.data };
     } catch (error) {
         console.log('Error submitting /DeviceConfig/LoadModuleListBrandTypeGroupKey request:', error.response);
-        return { success: false, error: 'Failed to submit GetModuleGroupTitleList request' };
+        return { success: false, error: 'Failed to submit GetModuleInUserStore request' };
     }
 };

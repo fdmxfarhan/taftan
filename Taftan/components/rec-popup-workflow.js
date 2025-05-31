@@ -7,7 +7,7 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import Popup from './popup';
 import { loadDeviceConfigList } from '../services/device-load-config-list';
 
-const WorkFlowPopup = ({ modalEnable, setmodalEnable, reqInfo, reqHistoryList }) => {
+const WorkFlowPopup = ({ modalEnable, setmodalEnable, reqHistoryList }) => {
     return (
         <View>
             <Popup modalVisible={modalEnable} setModalVisible={setmodalEnable}>

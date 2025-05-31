@@ -133,7 +133,7 @@ const Home = (props) => {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <View style={styles.container}>
                 <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
-                <SearchView popupEN={searchEN} setPopupEN={setsearchEN} />
+                <SearchView popupEN={searchEN} setPopupEN={setsearchEN} navigation={props.navigation} />
                 <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
                 <PanGestureHandler
                     onGestureEvent={handleGestureEvent}

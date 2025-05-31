@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import styles from '../styles/reqView';
 
-const ReqProjectView = ({ toggleprojectInfo, projectInfo, item, requestDetail }) => {
+const ReqProjectView = ({ toggleprojectInfo, projectInfo, requestDetail }) => {
     const openURL = async (url) => {
         const supported = await Linking.canOpenURL(url);
         if (supported) {

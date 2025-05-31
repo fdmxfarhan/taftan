@@ -4,7 +4,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 import styles from '../styles/reqView';
 
-const ReqSiteView = ({ togglesiteInfo, siteInfo, item, requestDetail }) => {
+const ReqSiteView = ({ togglesiteInfo, siteInfo, requestDetail }) => {
     return (
         <View style={styles.container}>
             <TouchableOpacity style={styles.titleView} onPress={togglesiteInfo}>

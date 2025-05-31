@@ -5,7 +5,7 @@ import colors from './colors'; // Adjust the import path for colors if needed
 import LastConfPopup from './rec-popup-lastconf';
 import styles from '../styles/reqView';
 
-const ReqSLAInfo = ({ toggleslaInfo, slaInfo, item, requestDetail }) => {
+const ReqSLAInfo = ({ toggleslaInfo, slaInfo, requestDetail }) => {
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
