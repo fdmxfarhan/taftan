@@ -25,6 +25,7 @@ import DeviceListView from './screens/deviceList';
 import DeviceDetailView from './screens/deviceDetail';
 import CameraScan from './screens/cameraScan';
 
+
 const App = (props) => {
   const navigationRef = useRef();
   useEffect(() => {
