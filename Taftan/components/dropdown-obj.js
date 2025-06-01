@@ -3,7 +3,18 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, FlatLi
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors'; // Adjust the import path for colors if needed
 
-const DropDownObj = ({ list, getLabel, getValue, setValue, value, buttonStyle, buttonTextStyle, onSubmit, disabled, containerStyle, searchEN }) => {
+const DropDownObj = ({ 
+    list, 
+    getLabel, 
+    getValue, 
+    setValue, 
+    value, 
+    buttonStyle, 
+    buttonTextStyle, 
+    onSubmit, 
+    disabled, 
+    containerStyle, 
+    searchEN }) => {
     var [numOfRowsOpen, setnumOfRowsOpen] = useState(false);
     var [searchText, setSearchText] = useState('');
     var [filterItems, setFilterItems] = useState([]);

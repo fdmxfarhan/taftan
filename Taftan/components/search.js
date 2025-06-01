@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
         maxHeight: 700,
         marginTop: 70,
         flexDirection: 'row-reverse',
+        paddingVertical: 15,
     },
     title: {
         fontSize: 18,
@@ -85,7 +86,8 @@ const styles = StyleSheet.create({
     textinput: {
         fontSize: 13,
         fontFamily: 'iransans',
-        width: '90%',
+        width: '85%',
+        marginRight: 10,
         textAlign: 'right',
     },
 });
