@@ -11,6 +11,7 @@ import CheckBox from './checkbox';
 import styles from '../styles/reqView';
 import DocumentPicker from 'react-native-document-picker';
 import { uploadFile } from '../services/upload';
+import { CircularProgress } from 'react-native-circular-progress';
 
 const ReportUploadView = ({ 
     setIsValid, 
@@ -24,6 +25,10 @@ const ReportUploadView = ({
     const [selectedAttachmentImage, setSelectedAttachmentImage] = useState(null);
     const [fullScreenImage, setFullScreenImage] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [reportUploadProgress, setReportUploadProgress] = useState(0);
+    const [attachmentUploadProgress, setAttachmentUploadProgress] = useState(0);
+    const [isReportUploading, setIsReportUploading] = useState(false);
+    const [isAttachmentUploading, setIsAttachmentUploading] = useState(false);
 
     useEffect(() => {
         // Check if all required fields are filled
@@ -40,22 +45,28 @@ const ReportUploadView = ({
             });
             setSelectedReportImage(res[0].uri);
             setIsValid(true);
+            setIsReportUploading(true);
+            setReportUploadProgress(0);
+            
             // Prepare the file object for upload
             const file = {
                 uri: res[0].uri,
-                type: res[0].type || 'image/jpeg', // Default to JPEG if type is not available
+                type: res[0].type || 'image/jpeg',
                 name: res[0].name
             };
             const endpoint = '/ReportController/UploadFile';
             const onUploadProgress = (progressEvent) => {
                 const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setReportUploadProgress(percentCompleted);
                 console.log(`Upload progress: ${percentCompleted}%`);
             };
             const uploadResponse = await uploadFile(endpoint, file, onUploadProgress);
             console.log('Upload successful:', uploadResponse);
             setuploadfilename(uploadResponse);
+            setIsReportUploading(false);
             ToastAndroid.show('فایل با موفقیت آپلود شد.', ToastAndroid.SHORT);
         } catch (err) {
+            setIsReportUploading(false);
             if (DocumentPicker.isCancel(err)) {
                 console.log('User cancelled file picker');
             } else {
@@ -70,23 +81,28 @@ const ReportUploadView = ({
                 type: [DocumentPicker.types.allFiles],
             });
             setSelectedAttachmentImage(res[0].uri);
+            setIsAttachmentUploading(true);
+            setAttachmentUploadProgress(0);
 
             // Prepare the file object for upload
             const file = {
                 uri: res[0].uri,
-                type: res[0].type || 'image/jpeg', // Default to JPEG if type is not available
+                type: res[0].type || 'image/jpeg',
                 name: res[0].name
             };
             const endpoint = '/ReportController/UploadFile';
             const onUploadProgress = (progressEvent) => {
                 const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                setAttachmentUploadProgress(percentCompleted);
                 console.log(`Upload progress: ${percentCompleted}%`);
             };
             const uploadResponse = await uploadFile(endpoint, file, onUploadProgress);
             console.log('Upload successful:', uploadResponse);
             setuploadimagefilename(uploadResponse);
+            setIsAttachmentUploading(false);
             ToastAndroid.show('فایل با موفقیت آپلود شد.', ToastAndroid.SHORT);
         } catch (err) {
+            setIsAttachmentUploading(false);
             if (DocumentPicker.isCancel(err)) {
                 console.log('User cancelled file picker');
             } else {
@@ -138,14 +154,48 @@ const ReportUploadView = ({
             </View>
             <View style={styleslocal.imagesView}>
                 {selectedReportImage != null && (
-                    <TouchableOpacity onPress={() => handleImagePress(selectedReportImage)}>
-                        <Image source={{ uri: selectedReportImage }} style={styleslocal.image} />
-                    </TouchableOpacity>
+                    <View>
+                        <TouchableOpacity onPress={() => handleImagePress(selectedReportImage)}>
+                            <Image source={{ uri: selectedReportImage }} style={styleslocal.image} />
+                        </TouchableOpacity>
+                        {isReportUploading && (
+                            <View style={styleslocal.progressContainer}>
+                                <CircularProgress
+                                    size={50}
+                                    width={5}
+                                    fill={reportUploadProgress}
+                                    tintColor={colors.emerald}
+                                    backgroundColor={colors.lightGray}
+                                >
+                                    {() => (
+                                        <Text style={styleslocal.progressText}>{reportUploadProgress}%</Text>
+                                    )}
+                                </CircularProgress>
+                            </View>
+                        )}
+                    </View>
                 )}
                 {selectedAttachmentImage != null && (
-                    <TouchableOpacity onPress={() => handleImagePress(selectedAttachmentImage)}>
-                        <Image source={{ uri: selectedAttachmentImage }} style={styleslocal.image} />
-                    </TouchableOpacity>
+                    <View>
+                        <TouchableOpacity onPress={() => handleImagePress(selectedAttachmentImage)}>
+                            <Image source={{ uri: selectedAttachmentImage }} style={styleslocal.image} />
+                        </TouchableOpacity>
+                        {isAttachmentUploading && (
+                            <View style={styleslocal.progressContainer}>
+                                <CircularProgress
+                                    size={50}
+                                    width={5}
+                                    fill={attachmentUploadProgress}
+                                    tintColor={colors.emerald}
+                                    backgroundColor={colors.lightGray}
+                                >
+                                    {() => (
+                                        <Text style={styleslocal.progressText}>{attachmentUploadProgress}%</Text>
+                                    )}
+                                </CircularProgress>
+                            </View>
+                        )}
+                    </View>
                 )}
             </View>
 
@@ -269,6 +319,20 @@ const styleslocal = StyleSheet.create({
     fullScreenImage: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    progressContainer: {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: [{ translateX: -25 }, { translateY: -25 }],
+        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        borderRadius: 25,
+        padding: 5,
+    },
+    progressText: {
+        fontSize: 12,
+        fontFamily: 'iransans',
+        color: colors.black,
     },
 });
 

@@ -11,6 +11,7 @@ import { GetRecognitionExpertByDeviceTypeId } from '../services/get-recognition-
 const ReportRecognition = ({ damageReasonsList, damageReason, setdamageReason, recognitionExpertList, setrecognitionExpertList, recognitionExpert, setrecognitionExpert, description, setdescription, reportDetail, newRecognitionList, setNewRecognitionList, setIsValid }) => {
     useEffect(() => {
         setIsValid(true);
+        console.log(reportDetail.damageReportInfo.reportRecognitionList);
     }, [newRecognitionList]);
     var updateRecognitionExpertList = async (resaon) => {
         result = await GetRecognitionExpertByDeviceTypeId(reportDetail.requestReportInfo.deviceTypeKey, resaon.Id);
