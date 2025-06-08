@@ -23,7 +23,8 @@ import InsufficientStockPopup from './insufficient-stock-popup';
 import MaxModulesExceededPopup from './max-modules-exceeded-popup';
 import { GetWarrantyListByRequestId } from '../services/report-get-waranty-reasons';
 import SerialMismatchPopupWithConfig from './serial-mismatch-popup-with-config';
-const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason, setIsValid, navigation }) => {
+
+const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, officeKey, setOfficeKey, moduleGroupKey, moduleListBrand, setmoduleListBrand, selectedNewModule, setselectedNewModule, selectedPreviousModule, setselectedPreviousModule, moduleInUserStoreList, setmoduleInUserStoreList, usedComponents, setusedComponents, moduleoldSerial, setModuleoldSerial, moduleNewSerial, setModuleNewSerial, componentChangesList, setcomponentChangesList, selectedDOAReason, setselectedDOAReason, setIsValid, navigation, selectedWarranties }) => {
     var [componentAction, setcomponentAction] = useState('تعویض');
     var [DOAorGarantieConflict, setDOAorGarantieConflict] = useState('هیچکدام');
     var [noRepairNeeded, setnoRepairNeeded] = useState(false);
@@ -105,27 +106,27 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     }
     const addComponentChanges = async () => {
         // Check for old serial mismatch
-        if (componentAction == 'حذف'){
+        if (componentAction == 'حذف') {
             if (selectedPreviousModule.Title === 'انتخاب کنید') {
                 ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
                 return;
             }
-            if(selectedPreviousModule && !selectedPreviousModule.HaveSerial){
+            if (selectedPreviousModule && !selectedPreviousModule.HaveSerial) {
                 const found = deviceConfigList.find(config => config.GroupModuleId == selectedPreviousModule.ModuleGroupId);
-                
-                if(found && found.count < moduleoldSerial){
+
+                if (found && found.count < moduleoldSerial) {
                     setMaxModulesExceededPopup(true);
                     return;
                 }
             }
         }
-        else if(componentAction == 'اضافه'){
+        else if (componentAction == 'اضافه') {
             if (selectedNewModule.ModuleTitle === 'انتخاب کنید') {
                 ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
                 return;
             }
         }
-        else if(componentAction == 'تعویض'){
+        else if (componentAction == 'تعویض') {
             if (selectedPreviousModule.Title === 'انتخاب کنید' || selectedNewModule.ModuleTitle === 'انتخاب کنید') {
                 ToastAndroid.show('لطفا موارد خواسته شده را تکمیل نمایید', ToastAndroid.SHORT);
                 return;
@@ -134,11 +135,11 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         if (selectedPreviousModule && selectedPreviousModule.HaveSerial) {
             const found = deviceConfigList.some(config => config.serial == moduleoldSerial);
             if (!found) {
-                if(componentAction == 'حذف'){
+                if (componentAction == 'حذف') {
                     setSerialMismatchPopup(true);
                     return;
                 }
-                else if(componentAction == 'تعویض'){
+                else if (componentAction == 'تعویض') {
                     setSerialMismatchConfigPopup(true);
                     return;
                 }
@@ -162,8 +163,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setselectedDOAReason('انتخاب کنید');
         setModuleNewSerial('');
         setModuleoldSerial('');
-        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
-        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setselectedNewModule({ ModuleTitle: 'انتخاب کنید' });
+        setselectedPreviousModule({ Title: 'انتخاب کنید' });
         setdescription('');
         setnoRepairNeeded(false);
         setDOAorGarantieConflict('هیچکدام');
@@ -191,8 +192,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setselectedDOAReason('انتخاب کنید');
         setModuleNewSerial('');
         setModuleoldSerial('');
-        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
-        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setselectedNewModule({ ModuleTitle: 'انتخاب کنید' });
+        setselectedPreviousModule({ Title: 'انتخاب کنید' });
         setdescription('');
         setnoRepairNeeded(false);
         setDOAorGarantieConflict('هیچکدام');
@@ -233,8 +234,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setselectedDOAReason('انتخاب کنید');
         setModuleNewSerial('');
         setModuleoldSerial('');
-        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
-        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setselectedNewModule({ ModuleTitle: 'انتخاب کنید' });
+        setselectedPreviousModule({ Title: 'انتخاب کنید' });
         setdescription('');
         setnoRepairNeeded(false);
         setDOAorGarantieConflict('هیچکدام');
@@ -262,8 +263,8 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
         setselectedDOAReason('انتخاب کنید');
         setModuleNewSerial('');
         setModuleoldSerial('');
-        setselectedNewModule({ModuleTitle: 'انتخاب کنید'});
-        setselectedPreviousModule({Title: 'انتخاب کنید'});
+        setselectedNewModule({ ModuleTitle: 'انتخاب کنید' });
+        setselectedPreviousModule({ Title: 'انتخاب کنید' });
         setdescription('');
         setnoRepairNeeded(false);
         setDOAorGarantieConflict('هیچکدام');
@@ -275,7 +276,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     useEffect(() => {
         updateModuleGroupTitleList();
         setmoduleListBrandFiltered(moduleListBrand);
-        if (reportDetail.requestReportInfo.serviceGroupId == 1 || reportDetail.requestReportInfo.serviceGroupId == 8) {
+        if (reportDetail && (reportDetail.requestReportInfo.serviceGroupId == 1 || reportDetail.requestReportInfo.serviceGroupId == 8)) {
             setgarantiDOAList(['هیچکدام', 'DOA', 'نقض گارانتی']);
         } else {
             setgarantiDOAList(['هیچکدام', 'DOA']);
@@ -293,25 +294,25 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
     }, [reportDetail, moduleListBrand]);
     useEffect(() => {
         setIsValid(true);
-        GetWarrantyListByRequestId(reportDetail.requestReportInfo.requestId, navigation).then(res => {
-            setwarrantyList(res.data);
-        });
-    }, []);
+        if (DOAorGarantieConflict === 'نقض گارانتی' && reportDetail && reportDetail.requestReportInfo) {
+            setwarrantyList(selectedWarranties);
+        }
+    }, [selectedWarranties, reportDetail, DOAorGarantieConflict]);
     return (
         <ScrollView style={styleslocal.contents}>
             <ScanPopup modalEnable={scanpopupEnableNew} setmodalEnable={setscanpopupEnableNew} onCodeScanned={handleCodeScannedNew} />
             <ScanPopup modalEnable={scanpopupEnableOld} setmodalEnable={setscanpopupEnableOld} onCodeScanned={handleCodeScannedOld} />
-            <SerialMismatchPopup popupEN={serialMismatchPopup} setPopupEN={setSerialMismatchPopup} onConfirm={handleSerialMismatchConfirm}/>
+            <SerialMismatchPopup popupEN={serialMismatchPopup} setPopupEN={setSerialMismatchPopup} onConfirm={handleSerialMismatchConfirm} />
             <SerialMismatchPopupWithConfig
-                popupEN={serialMismatchConfigPopup} 
-                setPopupEN={setSerialMismatchConfigPopup} 
+                popupEN={serialMismatchConfigPopup}
+                setPopupEN={setSerialMismatchConfigPopup}
                 onConfirm={handleSerialMismatchConfigConfirm}
                 onAddToConfig={handleAddToConfig}
             />
-            <DuplicateItemPopup popupEN={duplicateItemPopup} setPopupEN={setDuplicateItemPopup}/>
-            <InsufficientStockPopup popupEN={insufficientStockPopup} setPopupEN={setInsufficientStockPopup}/>
-            <MaxModulesExceededPopup popupEN={maxModulesExceededPopup} setPopupEN={setMaxModulesExceededPopup}/>
-            
+            <DuplicateItemPopup popupEN={duplicateItemPopup} setPopupEN={setDuplicateItemPopup} />
+            <InsufficientStockPopup popupEN={insufficientStockPopup} setPopupEN={setInsufficientStockPopup} />
+            <MaxModulesExceededPopup popupEN={maxModulesExceededPopup} setPopupEN={setMaxModulesExceededPopup} />
+
             <Text style={styleslocal.sectionTitle}>اطلاعات قطعات:</Text>
             <CheckBox text={'قطعات مصرفی'} value={usedComponents} onChange={() => {
                 setusedComponents(!usedComponents);
@@ -319,7 +320,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                 updateOfficeKey();
                 updateModuleListBrandTypeGroupKey();
                 updateModuleInUserStore();
-                if(!usedComponents) setIsValid(false);
+                if (!usedComponents) setIsValid(false);
                 else setIsValid(true);
             }} checkboxstyle={styleslocal.checkboxView} enabled={true} />
             {usedComponents && (<View>
@@ -401,7 +402,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                                         returnKeyType={'next'}
                                         keyboardType={'numeric'}
                                         onChange={text => setModuleNewSerial(text.nativeEvent.text)}
-                                    />  
+                                    />
                                 </View>
                             )}
                         </View>
@@ -500,6 +501,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                         onSubmit={(val) => { }}
                     />
                 </View>)}
+
                 {DOAorGarantieConflict == 'نقض گارانتی' && (<View>
                     <Text style={styles.label}>علت نقض گارانتی: </Text>
                     <MultiSelectDropdown
@@ -514,6 +516,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                         onSubmit={(val) => { }}
                     />
                 </View>)}
+
                 <Text style={styles.label}>توضیحات: </Text>
                 <TextInput
                     style={styles.description}
@@ -536,7 +539,7 @@ const ReportcomponentsView = ({ reportDetail, moduleGroup, setModuleGroup, offic
                             {(item.componentAction == 'تعویض' || item.componentAction == 'اضافه' || item.componentAction == 'تعویض-مغایرت') && (<Text style={styles.actionHistoryTitle}>ماژول جدید: {item.NewModule.Title} ({item.moduleNewSerial})</Text>)}
                             <Text style={[styles.actionResult, { textAlign: 'right', color: colors.red2 }]}>{item.componentAction}</Text>
                         </View>
-                        <TouchableOpacity 
+                        <TouchableOpacity
                             style={styleslocal.deleteButton}
                             onPress={() => {
                                 const newList = [...componentChangesList];

@@ -28,8 +28,10 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
         if (reportDetail) {
             if (reportDetail.reportInfo.isSecondReport) sendRequest();
         }
-        if(!isSecondReport) setIsValid(true);
-
+        if (!isSecondReport) setIsValid(true);
+        else if (reportDetail){
+            setsecondReportReason({ title: reportDetail.reportInfo.SecondReportCausesTitle, id: reportDetail.reportInfo.SecondReportCausesId });
+        }
     }, [reportDetail, isLoading, isSecondReport])
     var serviceObject = (detail) => {
         if (detail.requestReportInfo.serviceGroupId == 1) return detail.damageReportInfo;

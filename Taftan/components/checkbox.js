@@ -13,8 +13,8 @@ const CheckBox = ({ onChange, value, text, checkboxstyle, enabled }) => {
     );
     else return (
         <TouchableOpacity style={[styles.checkboxView, checkboxstyle]} onPress={onChange}>
-            <Ionicons style={[styles.checkboxIcon, { color: value ? colors.emerald : colors.gray }]} name={value ? 'checkbox' : 'checkbox-outline'} />
-            <Text style={styles.checkboxText}>{text}</Text>
+            <Ionicons style={[styles.checkboxIcon, { color: value ? colors.darkGreen : colors.gray }]} name={value ? 'checkbox' : 'checkbox-outline'} />
+            <Text style={[styles.checkboxText, value && { color: colors.black }]}>{text}</Text>
         </TouchableOpacity>
     );
 }

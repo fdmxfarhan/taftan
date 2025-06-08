@@ -45,7 +45,10 @@ const MultiSelectDropdown = ({
                 size={20} 
                 color={colors.darkblue}
             />
-            <Text style={styles.itemText}>{getLabel(item)}</Text>
+            <Text style={[
+                styles.itemText,
+                selectedValues.some(selectedItem => getValue(selectedItem) === getValue(item)) && { color: colors.black }
+            ]}>{getLabel(item)}</Text>
         </TouchableOpacity>
     );
 

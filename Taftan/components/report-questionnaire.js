@@ -200,10 +200,7 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                             {question.options.map((option, index) => (
                                 <View key={index} style={styles.optionWrapper}>
                                     <TouchableOpacity
-                                        style={[
-                                            styles.optionButton,
-                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOption
-                                        ]}
+                                        style={styles.optionButton}
                                         onPress={() => {
                                             const selectedTitles = currentAnswer
                                                 .filter(ans => ans.title !== option.title)
@@ -216,12 +213,19 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                                             handleAnswerChange(question.questionnaireId, selectedTitles, question.questionType);
                                         }}
                                     >
-                                        <Text style={[
-                                            styles.optionText,
-                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOptionText
-                                        ]}>
-                                            {option.title}
-                                        </Text>
+                                        <View style={styles.optionContent}>
+                                            <Ionicons 
+                                                name={currentAnswer.some(ans => ans.title === option.title) ? "checkbox" : "square-outline"} 
+                                                size={20} 
+                                                color={currentAnswer.some(ans => ans.title === option.title) ? colors.blue : colors.darkBackground} 
+                                            />
+                                            <Text style={[
+                                                styles.optionText,
+                                                currentAnswer.some(ans => ans.title === option.title) && styles.selectedOptionText
+                                            ]}>
+                                                {option.title}
+                                            </Text>
+                                        </View>
                                     </TouchableOpacity>
                                     {renderDescriptionInput(question.questionnaireId, option)}
                                 </View>
@@ -241,18 +245,22 @@ const ReportQuestionnaire = ({ setIsValid, answers, setAnswers, descriptions, se
                             {question.options.map((option, index) => (
                                 <View key={index} style={styles.optionWrapper}>
                                     <TouchableOpacity
-                                        style={[
-                                            styles.optionButton,
-                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOption
-                                        ]}
+                                        style={styles.optionButton}
                                         onPress={() => handleAnswerChange(question.questionnaireId, option.title, question.questionType)}
                                     >
-                                        <Text style={[
-                                            styles.optionText,
-                                            currentAnswer.some(ans => ans.title === option.title) && styles.selectedOptionText
-                                        ]}>
-                                            {option.title}
-                                        </Text>
+                                        <View style={styles.optionContent}>
+                                            <Ionicons 
+                                                name={currentAnswer.some(ans => ans.title === option.title) ? "radio-button-on" : "radio-button-off"} 
+                                                size={20} 
+                                                color={currentAnswer.some(ans => ans.title === option.title) ? colors.blue : colors.darkBackground} 
+                                            />
+                                            <Text style={[
+                                                styles.optionText,
+                                                currentAnswer.some(ans => ans.title === option.title) && styles.selectedOptionText
+                                            ]}>
+                                                {option.title}
+                                            </Text>
+                                        </View>
                                     </TouchableOpacity>
                                     {renderDescriptionInput(question.questionnaireId, option)}
                                 </View>
@@ -467,6 +475,11 @@ const styles = StyleSheet.create({
         width: '100%',
         marginBottom: 5,
     },
+    optionContent: {
+        flexDirection: 'row-reverse',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
+    },
     optionButton: {
         backgroundColor: colors.lightBackground,
         paddingVertical: 8,
@@ -476,18 +489,14 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.lightgray,
     },
-    selectedOption: {
-        backgroundColor: colors.blue,
-        borderColor: colors.blue,
-    },
     optionText: {
         fontFamily: 'iransans',
         fontSize: 12,
         color: colors.darkBackground,
-        textAlign: 'center',
+        marginRight: 10,
     },
     selectedOptionText: {
-        color: colors.white,
+        color: colors.black,
     },
     descriptionContainer: {
         marginTop: 5,

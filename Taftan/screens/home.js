@@ -135,14 +135,14 @@ const Home = (props) => {
                 <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
                 <SearchView popupEN={searchEN} setPopupEN={setsearchEN} navigation={props.navigation} />
                 <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
-                <PanGestureHandler
+                {/* <PanGestureHandler
                     onGestureEvent={handleGestureEvent}
                     onHandlerStateChange={({ nativeEvent }) => {
                         if (nativeEvent.state === 5) { // END state
                             handleGestureEnd({ nativeEvent });
                         }
                     }}
-                >
+                > */}
                     <Animated.View style={[styles.tabContainer, {
                         transform: [{ translateX }]
                     }]}>
@@ -160,14 +160,14 @@ const Home = (props) => {
                                 mySiteRequestsList={mySiteRequestsList} 
                                 myProjectRequestsList={myProjectRequestsList} 
                                 myPeriodicRequestsList={myPeriodicRequestsList} 
-                                navigation={props.navigation} 
+                                navigation={props.navigation}  
                             />
                         )}
                         {tabItem == 'archives' && (
                             <MessageListView myMessageList={myMessageList} setmyMessageList={setmyMessageList} navigation={props.navigation} />
                         )}
                     </Animated.View>
-                </PanGestureHandler>
+                {/* </PanGestureHandler> */}
                 <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />
             </View>
         </GestureHandlerRootView>

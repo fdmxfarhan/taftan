@@ -457,6 +457,7 @@ const Report = (props) => {
                         setselectedDOAReason={setselectedDOAReason}
                         navigation={props.navigation}
                         setIsValid={setIsTab5Valid}
+                        selectedWarranties={selectedWarranties}
                     />
                     <View style={styles.buttonsControlView}>
                         <TouchableOpacity style={styles.nextTabButton} onPress={() => setTabItem('tab4')}>
