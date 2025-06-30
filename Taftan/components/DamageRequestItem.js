@@ -14,7 +14,7 @@ const DamageRequestItem = ({
     getSLAColor 
 }) => {
     return (
-        <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
+        <TouchableOpacity onPress={() => handleItemPress(item)} style={[styles.itemContainer, {backgroundColor: item.persianLastState == 'در حال اقدام'? colors.orange2 : colors.white}]}>
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
             <Text style={styles.damageTitle}>{item.areaName}</Text>
             <Text style={styles.damageTitle}>{item.serviceName}</Text>

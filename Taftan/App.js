@@ -24,7 +24,8 @@ import Report from './screens/report';
 import DeviceListView from './screens/deviceList';
 import DeviceDetailView from './screens/deviceDetail';
 import CameraScan from './screens/cameraScan';
-
+import LocationTask from './LocationTask';
+import LocationTest from './screens/LocationTest';
 
 const App = (props) => {
   const navigationRef = useRef();
@@ -138,10 +139,16 @@ const App = (props) => {
           component={CameraScan}
           options={({ route }) => ({ headerShown: false })}
         />
+        <Stack.Screen
+          name="LocationTest"
+          component={LocationTest}
+          options={({ route }) => ({ headerShown: false })}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   )
 };
+AppRegistry.registerHeadlessTask('LocationTask', () => LocationTask);
 
 // AppRegistry.registerComponent(appName, () => App);
 export default App

@@ -1,3 +1,4 @@
 {
-    "cursor.general.enableShadowWorkspace": false
+    "cursor.general.enableShadowWorkspace": false,
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

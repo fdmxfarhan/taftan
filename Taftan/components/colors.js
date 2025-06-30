@@ -10,6 +10,7 @@ module.exports = {
     text2: '#4B4040',
     hover: '#FF8A47',
     orange: '#FF8A47',
+    orange2: '#ffD180',
     yellow: '#EEAB34',
     green: '#1ddd3d',
     darkGreen: '#4ac91c',

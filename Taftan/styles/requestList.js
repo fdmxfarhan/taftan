@@ -10,7 +10,7 @@ module.exports = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 15,
         marginVertical: 0,
-        backgroundColor: colors.white,
+        // backgroundColor: colors.white,
         // backgroundColor: colors.lightergray,
         borderColor: colors.antiflashWhite,
         borderWidth: 1,
