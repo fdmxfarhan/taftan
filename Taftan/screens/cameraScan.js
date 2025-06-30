@@ -28,8 +28,8 @@ const CameraScan = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [searchEN, setsearchEN] = useState(false);
     const [permission, setPermission] = useState(false);
-    const device = useCameraDevice('back')
-    const { hasPermission } = useCameraPermission()
+    const device = useCameraDevice('back');
+    const { hasPermission } = useCameraPermission();
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };

@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { getAuthData } from '../services/auth';
 
-// url = "http://10.55.5.13:8020/Services/Taftan/api";
-url = "http://taftantest.adonistech.ir:8000/Services/Taftan/api"
+url = "http://10.55.5.13:8020/Services/Taftan/api";
+// url = "http://taftantest.adonistech.ir:8000/Services/Taftan/api"
 
 
 api = axios.create({
