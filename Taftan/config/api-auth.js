@@ -6,7 +6,7 @@ url = "http://taftantest.adonistech.ir:8000/Services/Authentication/api"
 
 api = axios.create({
     baseURL: url,
-    timeout: 10000,
+    timeout: 60000,
 });
 
 module.exports = api;

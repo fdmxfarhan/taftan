@@ -7,7 +7,7 @@ url = "http://taftantest.adonistech.ir:8000/Services/Serial/api"
 // const authData = getAuthData();
 api = axios.create({
     baseURL: url,
-    timeout: 10000,
+    timeout: 60000,
     // headers: {
     //     token: authData.token,
     // },

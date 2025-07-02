@@ -81,7 +81,7 @@ export const loadReportDetail = async (requestId, reportId, requestActionId, nav
         });
         return { success: true, data: response.data };
     } catch (error) {
-        console.log('Error submiting /ReportController/loadReportDetail request:', error.status);
+        console.log('Error submiting /ReportController/loadReportDetail request:', error);
         
         if (error.response) {
             if (error.response.status === 401 || error.response.status === 403) {

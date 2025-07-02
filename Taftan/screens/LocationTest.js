@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { startLocationService, stopLocationService } from '../services/locationService';
+import NavBar from '../components/navbar';
+import colors from '../components/colors';
 
-const LocationTest = () => {
+const LocationTest = (props) => {
     useEffect(() => {
-        console.log('[LocationTest] Component mounted');
+        // console.log('[LocationTest] Component mounted');
         return () => {
-            console.log('[LocationTest] Component unmounted');
+            // console.log('[LocationTest] Component unmounted');
         };
     }, []);
 
@@ -32,13 +34,16 @@ const LocationTest = () => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Location Service Test</Text>
-            <TouchableOpacity style={styles.button} onPress={handleStartService}>
-                <Text style={styles.buttonText}>Start Service</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStopService}>
-                <Text style={styles.buttonText}>Stop Service</Text>
-            </TouchableOpacity>
+            <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
+            <View style={styles.content}>
+                <Text style={styles.title}>اشتراک گذاری مکان</Text>
+                <TouchableOpacity style={styles.button} onPress={handleStartService}>
+                    <Text style={styles.buttonText}>شروع اشتراک گذاری</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStopService}>
+                    <Text style={styles.buttonText}>توقف اشتراک گذاری</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 };
@@ -46,20 +51,26 @@ const LocationTest = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        padding: 20,
+        padding: 0,
+        backgroundColor: colors.white,
+        paddingBottom: 5,
+    },
+    content: {
+        padding: 15,
     },
     title: {
         fontSize: 24,
         marginBottom: 30,
+        textAlign: 'center',
+        marginTop: 200,
     },
     button: {
         backgroundColor: '#007AFF',
         padding: 15,
         borderRadius: 8,
-        width: '80%',
+        width: '90%',
         marginBottom: 15,
+        marginHorizontal: 'auto',
     },
     stopButton: {
         backgroundColor: '#FF3B30',
