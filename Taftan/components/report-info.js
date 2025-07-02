@@ -16,7 +16,7 @@ const ReportInfoView = ({ reportDetail, isLoading, secondReportReason, setsecond
     var [areaDetailModalEN, setareaDetailModalEN] = useState(false);
     var [areaDetail, setareaDetail] = useState(null);
     var [secondReportReasons, setsecondReportReasons] = useState([]);
-    var [isSecondReport, setIsSecondReport] = useState(true);
+    var [isSecondReport, setIsSecondReport] = useState(false);
     var sendRequest = async () => {
         var result = await SecondReportTitleTitleList(reportDetail.requestReportInfo.serviceGroupId);
         if (result.success) {
