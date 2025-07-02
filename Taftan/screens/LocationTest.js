@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { startLocationService, stopLocationService } from '../services/locationService';
 import NavBar from '../components/navbar';
 import colors from '../components/colors';
 
 const LocationTest = (props) => {
+    var [isStarted, setIsStarted] = useState(false);
     useEffect(() => {
         // console.log('[LocationTest] Component mounted');
         return () => {
@@ -17,6 +18,7 @@ const LocationTest = (props) => {
         try {
             await startLocationService();
             console.log('[LocationTest] Location service started successfully');
+            setIsStarted(true);
         } catch (error) {
             console.error('[LocationTest] Failed to start location service:', error);
         }
@@ -27,6 +29,7 @@ const LocationTest = (props) => {
         try {
             await stopLocationService();
             console.log('[LocationTest] Location service stopped successfully');
+            setIsStarted(false);
         } catch (error) {
             console.error('[LocationTest] Failed to stop location service:', error);
         }
@@ -37,12 +40,15 @@ const LocationTest = (props) => {
             <NavBar rightCallback={() => { props.navigation.navigate('Home') }} leftCallback={() => props.navigation.goBack()} title="گزارش کار" leftIcon="arrow-back" rightIcon="home" />
             <View style={styles.content}>
                 <Text style={styles.title}>اشتراک گذاری مکان</Text>
-                <TouchableOpacity style={styles.button} onPress={handleStartService}>
-                    <Text style={styles.buttonText}>شروع اشتراک گذاری</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStopService}>
-                    <Text style={styles.buttonText}>توقف اشتراک گذاری</Text>
-                </TouchableOpacity>
+                {isStarted ? (
+                    <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStopService}>
+                        <Text style={styles.buttonText}>توقف اشتراک گذاری</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <TouchableOpacity style={styles.button} onPress={handleStartService}>
+                        <Text style={styles.buttonText}>شروع اشتراک گذاری</Text>
+                    </TouchableOpacity>
+                )}
             </View>
         </View>
     );
