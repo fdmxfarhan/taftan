@@ -10,6 +10,7 @@ const DamageRequestItem = ({
     openRequestReport,
     openMapDirection,
     openPhoneCall,
+    isPickedRequests,
     onPickRequest,
     setIsLoading,
     getSLAColor
@@ -47,7 +48,7 @@ const DamageRequestItem = ({
                     <Ionicons name={'call'} style={styles.callIcon} />
                 </TouchableOpacity>
 
-                {item.lastState == 'Acting' && (
+                {item.lastState == 'Acting' && isPickedRequests && (
                     <TouchableOpacity
                         style={styles.callButton}
                         onPress={() => {

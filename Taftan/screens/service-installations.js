@@ -22,6 +22,7 @@ import { loadRequestReportActionList } from '../services/report-load-action-list
 import InstallationRequestItem from '../components/InstallationRequestItem';
 import { GetDeviceDetail } from '../services/device-detail';
 import { Linking } from 'react-native';
+import CheckBox from '../components/checkbox';
 
 const ServiceInstallation = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -36,7 +37,7 @@ const ServiceInstallation = (props) => {
     var [deviceDetail, setdeviceDetail] = useState([]);
     var [branchInfo, setbranchInfo] = useState([]);
     var [reportInfo, setreportInfo] = useState(null);
-
+    var [isPickedRequests, setIsPickedRequests] = useState(false);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -44,8 +45,13 @@ const ServiceInstallation = (props) => {
         console.log('Search clicked');
     };
     const sendRequest = async (skip, take) => {
+        var optionFilters = [];
+        if (isPickedRequests) {
+            optionFilters.push({ field: "lastLable", operator: "Eq", value: 'Pick' });
+            optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
+        }
         setIsLoading(true);
-        var result = await submitInstallRequest(skip, take, props.navigation);
+        var result = await submitInstallRequest(skip, take, props.navigation, optionFilters);
         if (result.success) {
             setInstallRequests(result.data.Data);
             setIsLoading(false);
@@ -57,6 +63,12 @@ const ServiceInstallation = (props) => {
             setServiceConnected(false);
         }
     }
+    const requestPickChange = () => {
+        setIsPickedRequests(prev => !prev);
+    }
+    useEffect(() => {
+        sendRequest(skipValue, rowsValue);
+    }, [isPickedRequests]);
     useEffect(() => {
         sendRequest(skipValue, rowsValue);
     }, []);
@@ -114,6 +126,7 @@ const ServiceInstallation = (props) => {
             index={index}
             installRequests={installRequests}
             handleItemPress={handleItemPress}
+            isPickedRequests={false}
             openRequestReport={openRequestReport}
             openMapDirection={openMapDirection}
             openPhoneCall={openPhoneCall}
@@ -136,6 +149,7 @@ const ServiceInstallation = (props) => {
                     sendRequest(skip, rows);
                 }} />
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
+            <CheckBox enabled={true} value={isPickedRequests} onChange={requestPickChange} text={'درخواست های انتخاب شده توسط کاربر'} />
             <FlatList data={installRequests} renderItem={renderItem} keyExtractor={item => item.requestId} />
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <SideMenu isVisible={menuVisible} onClose={toggleMenu} navigation={props.navigation} />

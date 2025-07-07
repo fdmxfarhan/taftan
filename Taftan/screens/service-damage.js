@@ -21,6 +21,7 @@ import ReportListPopup from '../components/rec-popup-report-list';
 import { GetDeviceDetail } from '../services/device-detail';
 import { GetBranchDetail } from '../services/branch-get-detail';
 import DamageRequestItem from '../components/DamageRequestItem';
+import CheckBox from '../components/checkbox';
 
 const ServiceDamage = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -47,6 +48,7 @@ const ServiceDamage = (props) => {
     var [deviceDetail, setdeviceDetail] = useState([]);
     var [branchInfo, setbranchInfo] = useState([]);
     var [reportInfo, setreportInfo] = useState(null);
+    var [isPickedRequests, setIsPickedRequests] = useState(false);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -116,7 +118,11 @@ const ServiceDamage = (props) => {
         if (filters.currentUserName != '') optionFilters.push({ field: 'currentUserName', operator: 'contains', value: filters.currentUserName });
         if (filters.customerInsertName != '') optionFilters.push({ field: 'customerInsertName', operator: 'contains', value: filters.customerInsertName });
         if (wffilter.length > 0) optionFilters.push({ logic: "or", filters: wffilter });
-        optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
+        if (isPickedRequests) {
+            optionFilters.push({ field: "lastLable", operator: "Eq", value: 'Pick' });
+            optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
+        }
+        console.log('optionFilters:', optionFilters);
         var options = {
             skip: skipValue,
             take: rowsValue,
@@ -132,7 +138,7 @@ const ServiceDamage = (props) => {
             setDamageRequests(result.data.Data);
             setIsLoading(false);
             setServiceConnected(true);
-            setFiltersEN(!filtersEN);
+                setFiltersEN(!filtersEN);
         }
         else {
             ToastAndroid.show('عدم اتصال به سرویس.', ToastAndroid.SHORT);
@@ -215,6 +221,7 @@ const ServiceDamage = (props) => {
             item={item}
             handleItemPress={handleItemPress}
             openRequestReport={openRequestReport}
+            isPickedRequests={false}
             openMapDirection={openMapDirection}
             openPhoneCall={openPhoneCall}
             setIsLoading={setIsLoading}
@@ -226,6 +233,15 @@ const ServiceDamage = (props) => {
         for (var i = 0; i < workflowFilter.length; i++) out += workflowFilter[i].label + ' - ';
         return (out);
     }
+
+    const requestPickChange = () => {
+        setIsPickedRequests(prev => !prev);
+    }
+
+    useEffect(() => {
+        submitFilters();
+    }, [isPickedRequests]);
+
     return (
         <View style={styles.container}>
             <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="درخواست‌های خرابی" leftIcon="search" rightIcon="menu" />
@@ -374,7 +390,8 @@ const ServiceDamage = (props) => {
                 <PersianDatePicker visible={datePickerVisibleEnd} setDay={setselectedDayEnd} setMonth={setselectedMonthEnd} setYear={setselectedYearEnd} onsubmit={() => setdatePickerVisibleEnd(false)} />
                 <StateFilterPopup modalEnable={workflowPickerEN} setmodalEnable={setworkflowPickerEN} setWorkflowFilter={setWorkflowFilter} />
             </View>}
-            
+            <CheckBox enabled={true} value={isPickedRequests} onChange={requestPickChange} text={'درخواست های انتخاب شده توسط کاربر'} />
+
             <ReportListPopup popupEN={reportlistpopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={props.navigation} />
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
             <FlatList data={damageRequests} renderItem={renderItem} keyExtractor={item => item.requestId} />
