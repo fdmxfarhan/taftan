@@ -69,7 +69,7 @@ const GridView = ({ navigation }) => {
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.gridButton} onPress={() => navigation.navigate('LocationTest')}>
                     <Ionicons style={[styles.gridButtonIcon, { backgroundColor: colors.darkcyan }]} name={'location-outline'} />
-                    <Text style={styles.gridButtonText}>تست موقعیت</Text>
+                    <Text style={styles.gridButtonText}>اشتراک موقعیت</Text>
                 </TouchableOpacity>
             </View>
         </Animated.View>
