@@ -4,17 +4,18 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/requestList';
 import colors from './colors';
 
-const DamageRequestItem = ({ 
-    item, 
-    handleItemPress, 
-    openRequestReport, 
+const DamageRequestItem = ({
+    item,
+    handleItemPress,
+    openRequestReport,
     openMapDirection,
     openPhoneCall,
+    onPickRequest,
     setIsLoading,
-    getSLAColor 
+    getSLAColor
 }) => {
     return (
-        <TouchableOpacity onPress={() => handleItemPress(item)} style={[styles.itemContainer, {backgroundColor: item.persianLastState == 'در حال اقدام'? colors.orange2 : colors.white}]}>
+        <TouchableOpacity onPress={() => handleItemPress(item)} style={[styles.itemContainer, { backgroundColor: (item.lastState == 'Acting' && item.lastLable === 'Pick') ? colors.orange2 : colors.white }]}>
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
             <Text style={styles.damageTitle}>{item.areaName}</Text>
             <Text style={styles.damageTitle}>{item.serviceName}</Text>
@@ -45,6 +46,21 @@ const DamageRequestItem = ({
                 <TouchableOpacity style={styles.callButton} onPress={() => { setIsLoading(true); openPhoneCall(item); }}>
                     <Ionicons name={'call'} style={styles.callIcon} />
                 </TouchableOpacity>
+
+                {item.lastState == 'Acting' && (
+                    <TouchableOpacity
+                        style={styles.callButton}
+                        onPress={() => {
+                            setIsLoading(true);
+                            onPickRequest(item, item.lastLable === 'Pick' ? 'unPick' : 'Pick');
+                        }}>
+                        <Ionicons
+                            name={item.lastLable === 'Pick' ? 'pause-circle' : 'play-circle'}
+                            style={styles.callIcon}
+                        />
+                    </TouchableOpacity>
+                )}
+
             </View>
         </TouchableOpacity>
     );

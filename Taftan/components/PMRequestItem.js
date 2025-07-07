@@ -2,15 +2,17 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/requestList';
-
+import colors from './colors';
 const PMRequestItem = ({ 
     item, 
     handleItemPress, 
     openRequestReport, 
-    getSLAColor 
+    getSLAColor,
+    onPickRequest,
+    setIsLoading,
 }) => {
     return (
-        <TouchableOpacity onPress={() => handleItemPress(item)} style={styles.itemContainer}>
+        <TouchableOpacity onPress={() => handleItemPress(item)} style={[styles.itemContainer, { backgroundColor: (item.lastState == 'Acting' && item.lastLable === 'Pick') ? colors.orange2 : colors.white }]}>
             <Text style={styles.deviceName}>{item.deviceName} (<Text>{item.customerName}</Text>)</Text>
             <Text style={styles.damageTitle}>شعبه: {item.branchName}</Text>
             <Text style={styles.damageTitle}>عنوان: {item.pmTitle}</Text>
@@ -31,6 +33,19 @@ const PMRequestItem = ({
                 <TouchableOpacity style={styles.callButton} onPress={() => {}}>
                     <Ionicons name={'call'} style={styles.callIcon} />
                 </TouchableOpacity>
+                {item.lastState == 'Acting' && (
+                    <TouchableOpacity
+                        style={styles.callButton}
+                        onPress={() => {
+                            setIsLoading(true);
+                            onPickRequest(item, item.lastLable === 'Pick' ? 'unPick' : 'Pick');
+                        }}>
+                        <Ionicons
+                            name={item.lastLable === 'Pick' ? 'pause-circle' : 'play-circle'}
+                            style={styles.callIcon}
+                        />
+                    </TouchableOpacity>
+                )}
             </View>
         </TouchableOpacity>
     );

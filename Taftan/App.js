@@ -5,6 +5,12 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
 import colors from './components/colors';
+import enableNetworkDebug from './config/networkInterceptor';
+
+// Enable network debugging in development
+if (__DEV__) {
+  enableNetworkDebug();
+}
 
 import Home from './screens/home';
 import Login from './screens/login';

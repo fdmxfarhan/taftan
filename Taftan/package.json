@@ -24,6 +24,7 @@
     "axios": "^1.7.7",
     "crypto-js": "^4.2.0",
     "isaac": "^0.0.5",
+    "jwt-decode": "^4.0.0",
     "mapir-react-native-sdk": "^2.2.4",
     "react": "18.3.1",
     "react-native": "0.75.4",

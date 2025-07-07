@@ -34,6 +34,7 @@ const Home = (props) => {
     var [myProjectRequestsList, setmyProjectRequestsList] = useState([]);
     var [myPeriodicRequestsList, setmyPeriodicRequestsList] = useState([]);
     var [activeCase, setActiveCase] = useState(null);
+    var [reloadData, setReloadData] = useState(false);
 
     const { width } = Dimensions.get('window');
     const translateX = useRef(new Animated.Value(0)).current;
@@ -80,10 +81,12 @@ const Home = (props) => {
     const handleSearchPress = () => {
         setsearchEN(true);
     };
+    const onCallData = () => {
+        setReloadData(prev => !prev); 
+    }
     useEffect(() => {
         const sendRequest = async () => {
             const authData = await getAuthData();
-            // console.log(authData.token)
             var result = await GetUnreadMessageCount(props.navigation);
             if (result.success) {
                 setunreadMessagesCount(result.data);
@@ -97,6 +100,7 @@ const Home = (props) => {
             myRequestCount = 0;
             var result = await submitMyDamageRequest(0, 50, props.navigation);
             if (result.success) {
+                
                 setmyDamageRequestsList(result.data.Data);
                 myRequestCount += result.data.TotalCount;
                 if(result.data.Data.length > 0) setActiveCase(result.data.Data[0]);
@@ -128,7 +132,7 @@ const Home = (props) => {
             setmyRequestCount(myRequestCount);
         }
         sendRequest();
-    }, [tabItem])
+    }, [tabItem, reloadData])
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <View style={styles.container}>
@@ -157,6 +161,7 @@ const Home = (props) => {
                             <MyRequestsList 
                                 myDamageRequestsList={myDamageRequestsList} 
                                 myInstallRequestsList={myInstallRequestsList} 
+                                onReloadData={onCallData}
                                 mySiteRequestsList={mySiteRequestsList} 
                                 myProjectRequestsList={myProjectRequestsList} 
                                 myPeriodicRequestsList={myPeriodicRequestsList} 

@@ -3,18 +3,12 @@ import {
     Text,
     StyleSheet,
     View,
-    FlatList,
     TouchableOpacity,
-    Animated,
     ScrollView,
     ToastAndroid
 } from 'react-native';
 import colors from './colors';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
-import ReqGridController from './req-grid-controller';
 import LoadingView from './loading';
-import { loadMyMessageBoxList } from '../services/message-my-list';
-import { loadMyDamageRequestList } from '../services/req-my-requests';
 import getSLAColor from '../config/getSLAColor';
 import InstallationRequestItem from './InstallationRequestItem';
 import DamageRequestItem from './DamageRequestItem';
@@ -27,11 +21,15 @@ import { getRequestDetail } from '../services/req-detail';
 import ReportListPopup from './rec-popup-report-list';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
 import { readFilterPreferences, updateFilter } from '../config/userPreferences';
+import { pickRequestService } from '../services/pick-request-service'
+import { jwtDecode } from "jwt-decode";
+import { getAuthData } from '../services/auth';
 
 const MyRequestsList = ({
     navigation,
     myDamageRequestsList,
     myInstallRequestsList,
+    onReloadData,
     mySiteRequestsList,
     myProjectRequestsList,
     myPeriodicRequestsList,
@@ -68,8 +66,8 @@ const MyRequestsList = ({
     const handleFilterToggle = async (filterName, currentValue) => {
         const newValue = !currentValue;
         await updateFilter(filterName, newValue);
-        
-        switch(filterName) {
+
+        switch (filterName) {
             case 'DamageFilterEN':
                 setDamageFilterEN(newValue);
                 break;
@@ -97,7 +95,7 @@ const MyRequestsList = ({
                 deviceDetail = result.data;
                 const url = `https://www.google.com/maps/dir/?api=1&destination=${deviceDetail.strLatitude},${deviceDetail.strLongitude}`;
                 Linking.openURL(url).catch((err) => {
-                    console.log(err);
+                    // console.log(err);
                 })
             } else ToastAndroid.show('اطلاعات دستگاه بارگیری نشد.', ToastAndroid.SHORT);
         })
@@ -137,34 +135,72 @@ const MyRequestsList = ({
             }
         })
     }
+    const onPickRequest = async (item, action) => {
+        try {
+            const authData = await getAuthData();
+
+            if (!authData) {
+                console.error('خطا: اطلاعات احراز هویت خالی است');
+                setIsLoading(false)
+                return;
+            }
+
+
+            if (!authData.token) {
+                console.error('خطا: فیلد Token در اطلاعات احراز هویت وجود ندارد');
+                setIsLoading(false)
+                return;
+            }
+
+            const decodedToken = jwtDecode(authData.token);
+
+            const req = {
+                IsNegativePoint: false,
+                Lable: action === 'Pick' ? 2 : 3,
+                RequestId: item.requestId,
+                UserKey: decodedToken.UserKey
+            }
+            pickRequestService(req).then((result) => {
+                if (result.success) {
+                    setIsLoading(false)
+                    onReloadData();
+
+                }
+            });
+        } catch (error) {
+            setIsLoading(false)
+
+            console.error('خطا در پردازش توکن:', error);
+        }
+    }
     return (
         <View>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
             <ReportListPopup popupEN={reportlistPopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={navigation} />
 
             <ScrollView horizontal={true} style={styles.typeFiltersView} inverted={true}>
-                <TouchableOpacity 
-                    style={[styles.typeFiltersButton, { backgroundColor: DamageFilterEN ? colors.blue : colors.white }]} 
+                <TouchableOpacity
+                    style={[styles.typeFiltersButton, { backgroundColor: DamageFilterEN ? colors.blue : colors.white }]}
                     onPress={() => handleFilterToggle('DamageFilterEN', DamageFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: DamageFilterEN ? colors.white : colors.blue }]}>خرابی</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    style={[styles.typeFiltersButton, { backgroundColor: InstallFilterEN ? colors.blue : colors.white }]} 
+                <TouchableOpacity
+                    style={[styles.typeFiltersButton, { backgroundColor: InstallFilterEN ? colors.blue : colors.white }]}
                     onPress={() => handleFilterToggle('InstallFilterEN', InstallFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: InstallFilterEN ? colors.white : colors.blue }]}>نصب</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    style={[styles.typeFiltersButton, { backgroundColor: siteFilterEN ? colors.blue : colors.white }]} 
+                <TouchableOpacity
+                    style={[styles.typeFiltersButton, { backgroundColor: siteFilterEN ? colors.blue : colors.white }]}
                     onPress={() => handleFilterToggle('siteFilterEN', siteFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: siteFilterEN ? colors.white : colors.blue }]}>سایت سازی</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    style={[styles.typeFiltersButton, { backgroundColor: projectFilterEN ? colors.blue : colors.white }]} 
+                <TouchableOpacity
+                    style={[styles.typeFiltersButton, { backgroundColor: projectFilterEN ? colors.blue : colors.white }]}
                     onPress={() => handleFilterToggle('projectFilterEN', projectFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: projectFilterEN ? colors.white : colors.blue }]}>پروژه</Text>
                 </TouchableOpacity>
-                <TouchableOpacity 
-                    style={[styles.typeFiltersButton, { backgroundColor: periodicFilterEN ? colors.blue : colors.white }]} 
+                <TouchableOpacity
+                    style={[styles.typeFiltersButton, { backgroundColor: periodicFilterEN ? colors.blue : colors.white }]}
                     onPress={() => handleFilterToggle('periodicFilterEN', periodicFilterEN)}>
                     <Text style={[styles.typeFiltersText, { color: periodicFilterEN ? colors.white : colors.blue }]}>دوره ای</Text>
                 </TouchableOpacity>
@@ -175,11 +211,13 @@ const MyRequestsList = ({
                         <Text style={styles.sectionSplitter}>سرویس خرابی:</Text>
                     )}
                     {DamageFilterEN && myDamageRequestsList.map((item, index) => (
+
                         <DamageRequestItem
                             key={item.requestId}
                             item={item}
                             handleItemPress={handleItemPress}
                             openRequestReport={openRequestReport}
+                            onPickRequest={onPickRequest}
                             getSLAColor={getSLAColor}
                             setIsLoading={setIsLoading}
                             openMapDirection={openMapDirection}
@@ -196,6 +234,7 @@ const MyRequestsList = ({
                             index={index}
                             installRequests={myInstallRequestsList}
                             handleItemPress={handleItemPress}
+                            onPickRequest={onPickRequest}
                             openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
                             setIsLoading={setIsLoading}
@@ -212,6 +251,7 @@ const MyRequestsList = ({
                             item={item}
                             handleItemPress={handleItemPress}
                             openRequestReport={openRequestReport}
+                            onPickRequest={onPickRequest}
                             getSLAColor={getSLAColor}
                             setIsLoading={setIsLoading}
                             openMapDirection={openMapDirection}
@@ -228,6 +268,7 @@ const MyRequestsList = ({
                             handleItemPress={handleItemPress}
                             openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            onPickRequest={onPickRequest}
                             setIsLoading={setIsLoading}
                             openMapDirection={openMapDirection}
                             openPhoneCall={openPhoneCall}
@@ -243,6 +284,7 @@ const MyRequestsList = ({
                             handleItemPress={handleItemPress}
                             openRequestReport={openRequestReport}
                             getSLAColor={getSLAColor}
+                            onPickRequest={onPickRequest}
                             setIsLoading={setIsLoading}
                             openMapDirection={openMapDirection}
                             openPhoneCall={openPhoneCall}
