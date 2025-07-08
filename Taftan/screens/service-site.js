@@ -18,6 +18,7 @@ import getSLAColor from '../config/getSLAColor';
 import ReqGridController from '../components/req-grid-controller';
 import styles from '../styles/requestList';
 import SiteRequestItem from '../components/SiteRequestItem';
+import CheckBox from '../components/checkbox';
 
 const ServiceSite = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
@@ -26,7 +27,7 @@ const ServiceSite = (props) => {
     const [serviceConnected, setServiceConnected] = useState(true);
     const [skipValue, setskipValue] = useState(1);
     const [rowsValue, setrowsValue] = useState(10);
-
+    var [isPickedRequests, setIsPickedRequests] = useState(false);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -36,7 +37,12 @@ const ServiceSite = (props) => {
 
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitSiteRequest(skip, take, props.navigation);
+        var optionFilters = [];
+        if (isPickedRequests) {
+            optionFilters.push({ field: "lastLable", operator: "Eq", value: 'Pick' });
+            optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
+        }
+        var result = await submitSiteRequest(skip, take, props.navigation, optionFilters);
         if(result.success){
             setSiteRequests(result.data.Data);
             setIsLoading(false);
@@ -48,6 +54,12 @@ const ServiceSite = (props) => {
             setServiceConnected(false);
         }
     }
+    const requestPickChange = () => {
+        setIsPickedRequests(prev => !prev);
+    }
+    useEffect(() => {
+        sendRequest(skipValue, rowsValue);
+    }, [isPickedRequests]);
     useEffect(() => {
         sendRequest(skipValue, rowsValue);
     }, []);
@@ -63,6 +75,7 @@ const ServiceSite = (props) => {
             handleItemPress={handleItemPress}
             openRequestReport={() => { }}
             getSLAColor={getSLAColor}
+            isPickedRequests={false}
         />
     );
 
@@ -87,6 +100,7 @@ const ServiceSite = (props) => {
                     sendRequest(skip, rows);
                 }}/>
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
+            <CheckBox enabled={true} value={isPickedRequests} onChange={requestPickChange} text={'درخواست های انتخاب شده توسط کاربر'} />
             <FlatList
                 data={siteRequests}
                 renderItem={renderItem}

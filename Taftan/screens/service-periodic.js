@@ -20,6 +20,7 @@ import styles from '../styles/requestList';
 import { getRequestDetail } from '../services/req-detail';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
 import PMRequestItem from '../components/PMRequestItem';
+import CheckBox from '../components/checkbox';
 
 const ServicePeriodic = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
@@ -34,6 +35,8 @@ const ServicePeriodic = (props) => {
     var [deviceDetail, setdeviceDetail] = useState([]);
     var [branchInfo, setbranchInfo] = useState([]);
     var [reportInfo, setreportInfo] = useState(null);
+    var [isPickedRequests, setIsPickedRequests] = useState(false);
+
 
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
@@ -43,7 +46,12 @@ const ServicePeriodic = (props) => {
     };
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitPeriodicRequest(skip, take, props.navigation);
+        var optionFilters = [];
+        if (isPickedRequests) {
+            optionFilters.push({ field: "lastLable", operator: "Eq", value: 'Pick' });
+            optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
+        }
+        var result = await submitPeriodicRequest(skip, take, props.navigation, optionFilters);
         if (result.success) {
             setPeriodicRequests(result.data.Data);
             setIsLoading(false);
@@ -55,6 +63,12 @@ const ServicePeriodic = (props) => {
             setServiceConnected(false);
         }
     }
+    const requestPickChange = () => {
+        setIsPickedRequests(prev => !prev);
+    }
+    useEffect(() => {
+        sendRequest(skipValue, rowsValue);
+    }, [isPickedRequests]);
     useEffect(() => {
         sendRequest(skipValue, rowsValue);
     }, []);
@@ -68,6 +82,7 @@ const ServicePeriodic = (props) => {
             handleItemPress={handleItemPress}
             openRequestReport={openRequestReport}
             getSLAColor={getSLAColor}
+            isPickedRequests={false}
         />
     );
     const openRequestReport = async (item) => {
@@ -99,7 +114,9 @@ const ServicePeriodic = (props) => {
             }
         }
     }
+
     return (
+
         <View style={styles.container}>
             <NavBar
                 rightCallback={toggleMenu}
@@ -120,6 +137,8 @@ const ServicePeriodic = (props) => {
                     sendRequest(skip, rows);
                 }} />
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
+            <CheckBox enabled={true} value={isPickedRequests} onChange={requestPickChange} text={'درخواست های انتخاب شده توسط کاربر'} />
+
             <FlatList
                 data={periodicRequests}
                 renderItem={renderItem}

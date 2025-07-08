@@ -10,6 +10,7 @@ const InstallationRequestItem = ({
     installRequests, 
     handleItemPress, 
     openRequestReport, 
+    isPickedRequests,
     openMapDirection,
     openPhoneCall,
     setIsLoading,
@@ -48,7 +49,7 @@ const InstallationRequestItem = ({
                     <TouchableOpacity style={styles.callButton} onPress={() => openPhoneCall(item)}>
                         <Ionicons name={'call'} style={styles.callIcon} />
                     </TouchableOpacity>
-                    {item.lastState == 'Acting' && (
+                    {item.lastState == 'Acting' && isPickedRequests && (
                     <TouchableOpacity
                         style={styles.callButton}
                         onPress={() => {

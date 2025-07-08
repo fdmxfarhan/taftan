@@ -2,7 +2,7 @@ import api from '../config/api';
 import { use_local_data } from '../config/consts';
 import { getAuthData, logout } from './auth';
 
-export const submitInstallRequest = async (skip, take, navigation) => {
+export const submitInstallRequest = async (skip, take, navigation, optionFilters) => {
     const authData = await getAuthData();
     try {
         if (use_local_data) return {
@@ -165,11 +165,7 @@ export const submitInstallRequest = async (skip, take, navigation) => {
             }],
             "filter": {
                 "logic": "and",
-                "filters": [{
-                    "field": "IsArchived",
-                    "operator": "Eq",
-                    "value": 0
-                }]
+                "filters": optionFilters
             }
         }, {
             headers: {

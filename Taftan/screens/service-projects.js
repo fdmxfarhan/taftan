@@ -20,6 +20,7 @@ import styles from '../styles/requestList';
 import { getRequestDetail } from '../services/req-detail';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
 import ProjectRequestItem from '../components/ProjectRequestItem';
+import CheckBox from '../components/checkbox';
 
 const ServiceProjects = (props) => {    
     const [menuVisible, setMenuVisible] = useState(false);
@@ -34,7 +35,7 @@ const ServiceProjects = (props) => {
     var [deviceDetail, setdeviceDetail] = useState([]);
     var [branchInfo, setbranchInfo] = useState([]);
     var [reportInfo, setreportInfo] = useState(null);
-
+    var [isPickedRequests, setIsPickedRequests] = useState(false);
     const toggleMenu = () => {
         setMenuVisible(!menuVisible);
     };
@@ -43,7 +44,12 @@ const ServiceProjects = (props) => {
     };
     const sendRequest = async (skip, take) => {
         setIsLoading(true);
-        var result = await submitProjectRequest(skip, take, props.navigation);
+        var optionFilters = [];
+        if (isPickedRequests) {
+            optionFilters.push({ field: "lastLable", operator: "Eq", value: 'Pick' });
+            optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
+        }
+        var result = await submitProjectRequest(skip, take, props.navigation, optionFilters);
         if(result.success){
             setProjectsRequests(result.data.Data);
             setIsLoading(false);
@@ -55,9 +61,12 @@ const ServiceProjects = (props) => {
             setServiceConnected(false);
         }
     }
+    const requestPickChange = () => {
+        setIsPickedRequests(prev => !prev);
+    }
     useEffect(() => {
         sendRequest(skipValue, rowsValue);
-    },[])
+    }, [isPickedRequests]);
 
     const handleItemPress = (item) => {
         props.navigation.navigate('DamageReqView', { item });
@@ -100,8 +109,10 @@ const ServiceProjects = (props) => {
             handleItemPress={handleItemPress}
             openRequestReport={openRequestReport}
             getSLAColor={getSLAColor}
+            isPickedRequests={false}
         />
     );
+
     return (
         <View style={styles.container}>
             <NavBar
@@ -123,6 +134,7 @@ const ServiceProjects = (props) => {
                     sendRequest(skip, rows);
                 }}/>
             <NotConnected serviceConnected={serviceConnected} refresh={sendRequest} />
+            <CheckBox enabled={true} value={isPickedRequests} onChange={requestPickChange} text={'درخواست های انتخاب شده توسط کاربر'} />
             <FlatList
                 data={projectsRequests}
                 renderItem={renderItem}

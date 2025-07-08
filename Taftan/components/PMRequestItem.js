@@ -10,6 +10,7 @@ const PMRequestItem = ({
     getSLAColor,
     onPickRequest,
     setIsLoading,
+    isPickedRequests,
 }) => {
     return (
         <TouchableOpacity onPress={() => handleItemPress(item)} style={[styles.itemContainer, { backgroundColor: (item.lastState == 'Acting' && item.lastLable === 'Pick') ? colors.orange2 : colors.white }]}>
@@ -33,7 +34,7 @@ const PMRequestItem = ({
                 <TouchableOpacity style={styles.callButton} onPress={() => {}}>
                     <Ionicons name={'call'} style={styles.callIcon} />
                 </TouchableOpacity>
-                {item.lastState == 'Acting' && (
+                {item.lastState == 'Acting' && isPickedRequests && (
                     <TouchableOpacity
                         style={styles.callButton}
                         onPress={() => {
