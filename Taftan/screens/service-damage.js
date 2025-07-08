@@ -122,7 +122,7 @@ const ServiceDamage = (props) => {
             optionFilters.push({ field: "lastLable", operator: "Eq", value: 'Pick' });
             optionFilters.push({ field: "IsArchived", operator: "Eq", value: 0 })
         }
-        console.log('optionFilters:', optionFilters);
+        // console.log('optionFilters:', optionFilters);
         var options = {
             skip: skipValue,
             take: rowsValue,
