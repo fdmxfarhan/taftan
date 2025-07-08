@@ -7,6 +7,8 @@ import CryptoJS from 'crypto-js';
 import storage from '../config/storage';
 import { GetUserConstraintTitleList } from '../services/constraint-get-user-constraint-title-list';
 import { savePreferences, readPreferences } from '../config/userPreferences';
+import { LoadAllowedRequestAction } from '../services/req-allowed-actions';
+import axios from 'axios';
 
 const Login = (props) => {
     var [loginView, setLoginView] = useState('admin');
@@ -15,9 +17,95 @@ const Login = (props) => {
     var [isLoading, setIsLoading] = useState(false);
     var [userAuthData, setuserAuthData] = useState(null);
     const passwordInput = useRef(null);
-
+    const [data, setData] = useState(null); // null to distinguish from empty array
     useEffect(() => {
         // Load saved credentials when component mounts
+        // LoadAllowedRequestAction(394131, props.navigation).then(res => {
+        //     // console.log(res);
+        // });
+
+
+
+
+        // const xhr = new XMLHttpRequest();
+        // xhr.open('GET', 'http://taftantest.adonistech.ir:8000/Services/Taftan/api/RequestController/LoadAllowedRequestAction?requestId=1340621');
+        // xhr.setRequestHeader('Accessid', '65');
+        // xhr.setRequestHeader('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiI3MDk4OCIsIlVzZXJLZXkiOiJlYjUxYzE3NS02YmUyLTQ3NzQtOGY4OS03ZWNlOTY1YWI4MmUiLCJVc2VyTmFtZSI6IjIxNzEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhLmtoYW5kYW5AYWRvbmlzdGVjaC5pciIsIkZ1bGxfTmFtZSI6Iti52YTbjCDYrtmG2K_Yp9mGIiwiTG9naW5WYWxpZCI6IjFlOTEwYmU2LTU1ZGMtNGY4Yy05MWMxLTFjZjcyMTllMWVhMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDkxMTQ5ODk3MzIiLCJTdWJTeXN0ZW1MaXN0IjoiW3tcIklkXCI6MTE2NyxcIlVzZXJJZFwiOjcwOTg4LFwiU3ViU3lzdGVtSWRcIjo0fV0iLCJuYmYiOjE3NTE5NjY2ODMsImV4cCI6MTc1MTk2NzI4MywiaXNzIjoiQWRvbmlzIiwiYXVkIjoiQWRvbmlzQ28ifQ.UriT9ddaZbiDsj1Pq_lNNnB6zHWk3uwtx4rZ6ahxKio');
+        // xhr.setRequestHeader('ConstraintId', '65');
+        // xhr.setRequestHeader('Accept-Language', 'en-US,en;q=0.9,fa;q=0.8,pt;q=0.7');
+        // xhr.setRequestHeader('Access-Control-Allow-Origin', '*');
+        // xhr.setRequestHeader('Connection', 'keep-alive');
+        // xhr.setRequestHeader('Referer', 'http://taftantest.adonistech.ir:8000/Taftan/');
+        // xhr.setRequestHeader('User-Agent', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36');
+        // xhr.onload = function() {
+        //     if (xhr.status === 200) {
+        //         console.log('Response:', JSON.parse(xhr.responseText));
+        //     }
+        // };
+        // xhr.send();
+
+
+
+        // axios.get('http://taftantest.adonistech.ir:8000/Services/Taftan/api/RequestController/LoadAllowedRequestAction?requestId=1340621', {
+        //     headers: {
+        //         'Accessid': '65',
+        //         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiI3MDk4OCIsIlVzZXJLZXkiOiJlYjUxYzE3NS02YmUyLTQ3NzQtOGY4OS03ZWNlOTY1YWI4MmUiLCJVc2VyTmFtZSI6IjIxNzEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhLmtoYW5kYW5AYWRvbmlzdGVjaC5pciIsIkZ1bGxfTmFtZSI6Iti52YTbjCDYrtmG2K_Yp9mGIiwiTG9naW5WYWxpZCI6IjFlOTEwYmU2LTU1ZGMtNGY4Yy05MWMxLTFjZjcyMTllMWVhMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDkxMTQ5ODk3MzIiLCJTdWJTeXN0ZW1MaXN0IjoiW3tcIklkXCI6MTE2NyxcIlVzZXJJZFwiOjcwOTg4LFwiU3ViU3lzdGVtSWRcIjo0fV0iLCJuYmYiOjE3NTE5NjY2ODMsImV4cCI6MTc1MTk2NzI4MywiaXNzIjoiQWRvbmlzIiwiYXVkIjoiQWRvbmlzQ28ifQ.UriT9ddaZbiDsj1Pq_lNNnB6zHWk3uwtx4rZ6ahxKio',
+        //         'ConstraintId': '65',
+        //         'Accept': 'application/json',
+        //         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+        //     }
+        // })
+        // .then(response => {
+        //     console.log('Axios Response:', response.data);
+        // })
+        // .catch(error => {
+        //     console.log('Axios Error:', error);
+        // });
+
+
+        fetch('http://taftantest.adonistech.ir:8000/Services/Taftan/api/RequestController/LoadAllowedRequestAction?requestId=1340621', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiI3MDk4OCIsIlVzZXJLZXkiOiJlYjUxYzE3NS02YmUyLTQ3NzQtOGY4OS03ZWNlOTY1YWI4MmUiLCJVc2VyTmFtZSI6IjIxNzEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhLmtoYW5kYW5AYWRvbmlzdGVjaC5pciIsIkZ1bGxfTmFtZSI6Iti52YTbjCDYrtmG2K_Yp9mGIiwiTG9naW5WYWxpZCI6IjFlOTEwYmU2LTU1ZGMtNGY4Yy05MWMxLTFjZjcyMTllMWVhMCIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDkxMTQ5ODk3MzIiLCJTdWJTeXN0ZW1MaXN0IjoiW3tcIklkXCI6MTE2NyxcIlVzZXJJZFwiOjcwOTg4LFwiU3ViU3lzdGVtSWRcIjo0fV0iLCJuYmYiOjE3NTE5NjY2ODMsImV4cCI6MTc1MTk2NzI4MywiaXNzIjoiQWRvbmlzIiwiYXVkIjoiQWRvbmlzQ28ifQ.UriT9ddaZbiDsj1Pq_lNNnB6zHWk3uwtx4rZ6ahxKio',
+                'ConstraintId': '65',
+                'Accessid': '65',
+            }
+        })
+
+
+        // fetch('http://taftantest.adonistech.ir:8000/Services/Taftan/api/RequestController/LoadAllowedRequestAction?requestId=1340621', {
+        //     method: 'GET',
+        //     headers: {
+        //         "Accessid": 65,
+        //         "Authorization": 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiI3MDk4OCIsIlVzZXJLZXkiOiJlYjUxYzE3NS02YmUyLTQ3NzQtOGY4OS03ZWNlOTY1YWI4MmUiLCJVc2VyTmFtZSI6IjIxNzEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhLmtoYW5kYW5AYWRvbmlzdGVjaC5pciIsIkZ1bGxfTmFtZSI6Iti52YTbjCDYrtmG2K_Yp9mGIiwiTG9naW5WYWxpZCI6ImFiYjljNWUwLWVjMTYtNGU0YS1hMDMzLTg2NjFkMWNiZmQ1ZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDkxMTQ5ODk3MzIiLCJTdWJTeXN0ZW1MaXN0IjoiW3tcIklkXCI6MTE2NyxcIlVzZXJJZFwiOjcwOTg4LFwiU3ViU3lzdGVtSWRcIjo0fV0iLCJuYmYiOjE3NTE5NjQ5MDEsImV4cCI6MTc1MTk2NTUwMSwiaXNzIjoiQWRvbmlzIiwiYXVkIjoiQWRvbmlzQ28ifQ.Nv7nyTH1xNtA7dqojqYyIdUMhHhWRQS0ReEeYSyyg-4',
+        //         "ConstraintId": 65,
+        //         'Accept-Language': 'en-US,en;q=0.9,fa;q=0.8,pt;q=0.7',
+        //         'Access-Control-Allow-Origin': '*',
+        //         'Connection': 'keep-alive',
+        //         'Referer': 'http://taftantest.adonistech.ir:8000/Taftan/',
+        //         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36',
+        //         // 'Cookie': 'SubSystemId=4; jwtToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VySWQiOiI3MDk4OCIsIlVzZXJLZXkiOiJlYjUxYzE3NS02YmUyLTQ3NzQtOGY4OS03ZWNlOTY1YWI4MmUiLCJVc2VyTmFtZSI6IjIxNzEiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhLmtoYW5kYW5AYWRvbmlzdGVjaC5pciIsIkZ1bGxfTmFtZSI6Iti52YTbjCDYrtmG2K_Yp9mGIiwiTG9naW5WYWxpZCI6ImFiYjljNWUwLWVjMTYtNGU0YS1hMDMzLTg2NjFkMWNiZmQ1ZiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL21vYmlsZXBob25lIjoiMDkxMTQ5ODk3MzIiLCJTdWJTeXN0ZW1MaXN0IjoiW3tcIklkXCI6MTE2NyxcIlVzZXJJZFwiOjcwOTg4LFwiU3ViU3lzdGVtSWRcIjo0fV0iLCJuYmYiOjE3NTE5NjQ5MDEsImV4cCI6MTc1MTk2NTUwMSwiaXNzIjoiQWRvbmlzIiwiYXVkIjoiQWRvbmlzQ28ifQ.Nv7nyTH1xNtA7dqojqYyIdUMhHhWRQS0ReEeYSyyg-4'
+        //         // 'Accept': 'application/json',
+        //         // 'Content-Type': 'application/json',
+        //     }
+        // })
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log('Response:', data);
+        //     })
+        //     .catch(error => {
+        //         console.error('Fetch error:', error);
+        //     });
+
+
+
+
+
+
+
+
+
+
         loadSavedCredentials();
     }, []);
 
@@ -30,7 +118,7 @@ const Login = (props) => {
     };
 
     const sendRequests = async () => {
-        
+
     }
 
     const handleLogin = async () => {
@@ -39,7 +127,7 @@ const Login = (props) => {
         const result = await login(username, md5Hash);
         if (result.success) {
             var result2 = await GetUserConstraintTitleList(result.data.Token);
-            if(result2.success){
+            if (result2.success) {
                 constraintid = result2.data[0].Id;
                 await storage.save({
                     key: 'auth',
@@ -52,19 +140,19 @@ const Login = (props) => {
                         Constraintid: constraintid,
                     },
                 });
-                
+
                 // Save credentials to user preferences
                 await savePreferences({
                     username,
                     password
                 });
-                
+
                 props.navigation.navigate('Home');
             }
             else ToastAndroid.show('اطلاعات کاربر یافت نشد', ToastAndroid.SHORT);
         }
         else {
-            if(result.error.status == 400)
+            if (result.error.status == 400)
                 ToastAndroid.show('نام کاربری / کلمه عبور صحیح نمی باشد', ToastAndroid.SHORT);
             else
                 ToastAndroid.show('عدم اتصال به سرویس', ToastAndroid.SHORT);

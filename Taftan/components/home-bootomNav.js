@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import colors from './colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
+import { LoadAllowedRequestAction } from '../services/req-allowed-actions';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,7 +31,11 @@ const BottomNav = ({ navigation }) => {
                 <Ionicons name={"settings-outline"} style={styles.bottomNavIcon} />
                 <Text style={styles.bottomNavText}>تنظیمات</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomNavButton}>
+            <TouchableOpacity style={styles.bottomNavButton} onPress={() => {
+                LoadAllowedRequestAction(364040, navigation).then(res => {
+                    // console.log(res);
+                });
+            }}>
                 <Ionicons name={"time-outline"} style={styles.bottomNavIcon} />
                 <Text style={styles.bottomNavText}>تاریخچه</Text>
             </TouchableOpacity>
