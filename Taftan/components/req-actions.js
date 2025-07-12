@@ -9,6 +9,7 @@ import AssignPopup from './rec-popup-assign';
 import ReturnPopup from './rec-popup-return';
 import StatusPopup from './rec-popup-status';
 import CloseCasePopup from './rec-popup-close';
+import CancelCasePopup from './rec-popup-cancel';
 
 const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, workCauseList, setworkCauseList, actionTypeList, setactionTypeList, allowdActionList, updateActionList, setreqActionList, navigation, reloadPage, reqExpertList }) => {
     var [actionPopupEN, setActionPopupEN] = useState(false);
@@ -16,6 +17,7 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
     var [returnPopupEN, setReturnPopupEN] = useState(false);
     var [statusPopupEN, setStatusPopupEN] = useState(false);
     var [closePopupEN, setClosePopupEN] = useState(false);
+    var [cancelPopupEN, setCancelPopupEN] = useState(false);
     const notWorking = () => {
         ToastAndroid.show('این آپشن هنوز کار نمیکنه!!.', ToastAndroid.SHORT);
     };
@@ -26,6 +28,7 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
             <ReturnPopup popupEN={returnPopupEN} setPopupEN={setReturnPopupEN} refrenceCauseList={refrenceCauseList} />
             <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCauseList={workCauseList} setworkCauseList={setworkCauseList} reqInfo={item} reloadPage={reloadPage} />
             <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} requestDetail={requestDetail} reloadPage={reloadPage} />
+            <CancelCasePopup popupEN={cancelPopupEN} setPopupEN={setCancelPopupEN} requestDetail={requestDetail} reloadPage={reloadPage} />
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
                 {allowdActionList.includes('SendToExpert') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.darkcyan }]} onPress={() => setAssignPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="chatbubbles" />
@@ -55,7 +58,7 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
                     <Ionicons style={styles.buttonIcon} name="checkmark-done" />
                     <Text style={styles.buttonText}>تایید راهبر</Text>
                 </TouchableOpacity>)}
-                {allowdActionList.includes('Cancel') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.red3 }]} onPress={() => notWorking()}>
+                {allowdActionList.includes('Cancel') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.red3 }]} onPress={() => setCancelPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="close" />
                     <Text style={styles.buttonText}>کنسل کار توسط کارشناس</Text>
                 </TouchableOpacity>)}
