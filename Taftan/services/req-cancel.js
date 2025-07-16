@@ -6,11 +6,11 @@ export const CancelExpertRequest = async (options, navigation) => {
     const authData = await getAuthData();
     var response = null;
     try {
-        if (use_local_data) return {
-            success: true, data: "کنسلی کار  با موفقیت انجام شد"};
+        if (use_local_data) return {success: true, data: "کنسلی کار  با موفقیت انجام شد"};
+        console.log(options)
         response = await api.post('/RequestController/CancelExpertRequest', options, {
             headers: {
-                authorization: authData.token,
+                Authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
                 'User-Agent': 'Mobile',

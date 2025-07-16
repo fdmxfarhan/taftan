@@ -10,7 +10,7 @@ import DropDownObj from './dropdown-obj';
 import { GetCancelReasonList } from '../services/req-GetCancelReasonList';
 import { CancelExpertRequest } from '../services/req-cancel';
 
-const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => {
+const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage, navigation }) => {
     var [cancelReasonDescList, setcancelReasonDescList] = useState([]);
     var [cancelReasonDesc, setcancelReasonDesc] = useState('انتخاب کنید');
     var [cancelReasonId, setcancelReasonId] = useState(null);
@@ -30,7 +30,7 @@ const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => 
     }
     useEffect(() => {
         if(requestDetail){
-            GetCancelReasonList(requestDetail.requestId).then(data => {
+            GetCancelReasonList(requestDetail.requestInfo.requestId).then(data => {
                 setcancelReasonDescList(data.data);
             }).catch(err => {console.log(err)});
         }
@@ -66,13 +66,16 @@ const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => 
                             ToastAndroid.show('لطفا موارد خواسته شده را تکمیل کنید.', ToastAndroid.SHORT);
                             return;
                         }
+                        console.log(requestDetail)
                         CancelExpertRequest({
-                            "id": requestDetail.requestId,
+                            "id": requestDetail.requestInfo.requestId,
                             "cancelReasonId": cancelReasonId,
                             "cancelReasonDesc": cancelReasonDesc
-                        }).then(data => {
+                        }, navigation).then(data => {
+                            ToastAndroid.show(data.data, ToastAndroid.SHORT);
                             console.log(data);
                             setPopupEN(false);
+                            reloadPage();
                         }).catch(err => console.log(err))
                     }}>
                         <Text style={styles.submitButtonText}>تایید</Text>
