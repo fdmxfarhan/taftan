@@ -107,13 +107,13 @@ const Splash = (props) => {
     const checkLogin = async () => {
         const authData = await getAuthData();
         if (authData) {
-            // console.log('Login User: ', authData);
-            userAuthData = authData;
+            // userAuthData = authData;
             setuserAuthData(authData);
             // sendRequests();
             props.navigation.navigate('Home');
         }
         else {
+            console.log('4:Login User: ', authData);
             props.navigation.navigate('Login');
         }
     }
@@ -128,7 +128,7 @@ const Splash = (props) => {
         // ca7kxuyUQ0KxAYs8mxYser:APA91bG_zmUxcjDqhpRig7_0xF-wamr607GqYuAxu9i_75KnAwu8OBlDPxWa413lvqoojmNMTvIob2Juwoi2n8bzPAbJKfcY24bRzaS252rpea-ItJP2ns8
         checkLogin();
 
-    })
+    },[])
     return (
         <View style={styles.container}>
             <StatusBar backgroundColor={colors.darkBackground} />
@@ -137,6 +137,7 @@ const Splash = (props) => {
                 style={styles.logo}
             />
             <Text style={styles.title}>سامانه تفتان</Text>
+            
         </View>
     )
 }

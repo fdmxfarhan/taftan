@@ -24,7 +24,8 @@ export const login = async (username, password) => {
         }
         const response = await api.post('/Accounts/Login', { "username": username, "password": password }, {
             headers: {
-                // 'User-Agent': 'Mobile',
+                'User-Agent': 'Mobile',
+                // 'Content-Type' : 'application/json-patch+json'
             }
         });
         // console.log(response.data)
@@ -36,15 +37,33 @@ export const login = async (username, password) => {
     }
 }
 
-export const refreshToken = async () => {
+export const getRefreshToken = async () => {
     try {
-        const authData = await getAuthData();
-        if (!authData?.RefreshToken?.Token) {
-            return { success: false, error: 'No refresh token available' };
+        const data = await storage.load({ key: 'auth' });
+        console.log('1:data', 'data');
+        if (!data) return null;
+
+        const refreshToken = data.RefreshToken.Token;
+        if (refreshToken) {
+            return { success: true, data: refreshToken };
+        }
+        return { success: false, error: 'No refresh token available' };
+    }catch(error){
+        return { success: false, error };
+    }
+}
+
+
+export const refreshToken = async () => {
+
+    try {
+        const refreshToken = await getRefreshToken();
+        if (!refreshToken.success) {
+            return { success: false,   error: 'No refresh token available' };
         }
 
         const response = await api.post('/Accounts/RefreshToken', {
-            token: authData.RefreshToken.Token
+            token: refreshToken.data
         });
 
         if (response.data) {
@@ -57,21 +76,30 @@ export const refreshToken = async () => {
         return { success: false, error };
     }
 }
-
 export const getAuthData = async () => {
+    let isRefreshing = false; 
     try {
         const data = await storage.load({ key: 'auth' });
+        console.log('1:data', 'data');
         if (!data) return null;
 
-        // Check if token is expired or about to expire (within 30 seconds)
         const token = data.Token;
         if (token) {
+            console.log('2:token', 'token');
             const payload = JSON.parse(atob(token.split('.')[1]));
+            console.log('3:payload', 'payload');
             const now = Math.floor(Date.now() / 1000);
-            if (payload.exp - now < 30) {
-                // Token is expired or about to expire, try to refresh
+            console.log('4:now', now);
+
+            if (payload.exp - now < 30 && !isRefreshing) {
+                console.log('5:token is expired or about to expire, try to refresh');
+                isRefreshing = true;
                 const refreshResult = await refreshToken();
+                console.log('6:refreshResult', refreshResult);
+                isRefreshing = false;
+
                 if (refreshResult.success) {
+                    console.log('7:refreshResult.data', refreshResult.data);
                     return refreshResult.data;
                 }
             }
@@ -79,10 +107,12 @@ export const getAuthData = async () => {
         return data;
     }
     catch (error) {
-        console.log(error);
         return null;
     }
 }
+
+
+
 
 export const logout = async () => {
     try {

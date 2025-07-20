@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, StyleSheet, View, FlatList, TouchableOpacity, BackHandler, ToastAndroid, Dimensions, Animated } from 'react-native';
-import { GestureHandlerRootView, PanGestureHandler } from 'react-native-gesture-handler';
+import { Text, StyleSheet, View,  ToastAndroid, Dimensions, Animated } from 'react-native';
+import { GestureHandlerRootView} from 'react-native-gesture-handler';
 import colors from '../components/colors';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import SideMenu from '../components/SideMenu';
