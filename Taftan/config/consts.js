@@ -1,6 +1,6 @@
 module.exports = {
-    api_url: 'http://10.55.5.13:8020',
-    // api_url: 'http://taftantest.adonistech.ir:8000',
+    // api_url: 'http://10.55.5.13:8020',
+    api_url: 'http://taftantest.adonistech.ir:8000',
 
     use_local_data: false,
     // use_local_data: true,
