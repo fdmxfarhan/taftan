@@ -32,10 +32,12 @@ import DeviceDetailView from './screens/deviceDetail';
 import CameraScan from './screens/cameraScan';
 import LocationTask from './LocationTask';
 import LocationTest from './screens/LocationTest';
+import { PermissionsAndroid } from 'react-native';
 
 const App = (props) => {
   const navigationRef = useRef();
   useEffect(() => {
+
     const backAction = () => {
       const currentRoute = navigationRef.current.getCurrentRoute().name;
       if (currentRoute === 'Home') {
@@ -154,7 +156,7 @@ const App = (props) => {
     </NavigationContainer>
   )
 };
-AppRegistry.registerHeadlessTask('LocationTask', () => LocationTask);
+// AppRegistry.registerHeadlessTask('LocationTask', () => LocationTask);
 
 // AppRegistry.registerComponent(appName, () => App);
 export default App
