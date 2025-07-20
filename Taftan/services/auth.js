@@ -24,7 +24,7 @@ export const login = async (username, password) => {
         }
         const response = await api.post('/Accounts/Login', { "username": username, "password": password }, {
             headers: {
-                'User-Agent': 'Mobile',
+                'UserAgent': 'Mobile',
                 // 'Content-Type' : 'application/json-patch+json'
             }
         });

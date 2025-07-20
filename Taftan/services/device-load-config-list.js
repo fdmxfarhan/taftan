@@ -58,7 +58,7 @@ export const loadDeviceConfigList = async (deviceId) => {
                 authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
-                'User-Agent': 'Mobile',
+                'UserAgent': 'Mobile',
             }
         });
         return { success: true, data: response.data };

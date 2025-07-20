@@ -75,7 +75,7 @@ export const submitSiteRequest = async (skip, take, navigation, optionFilters) =
                 Authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
-                'User-Agent': 'Mobile',
+                'UserAgent': 'Mobile',
             }
         });
         return { success: true, data: response.data };

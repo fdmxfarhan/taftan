@@ -21,7 +21,7 @@ export const LoadAllowedRequestAction = async (requestId, navigation) => {
             Authorization: `Bearer ${authData.token}`,
             Accessid: `${authData.Constraintid}`,
             ConstraintId: `${authData.Constraintid}`,
-            // 'User-Agent': 'Mobile',
+            // 'UserAgent': 'Mobile',
         })
         // console.log('Response:', response.body);
         return { success: true, data: response.body };

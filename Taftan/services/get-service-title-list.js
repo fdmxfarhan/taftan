@@ -110,7 +110,7 @@ export const GetServiceTitleListByGrupId_DeviceType = async (devTypeId, serviceG
                 authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
-                'User-Agent': 'Mobile',
+                'UserAgent': 'Mobile',
             }
         });
         return { success: true, data: response.data };

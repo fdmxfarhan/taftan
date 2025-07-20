@@ -7,7 +7,7 @@ export const GetUserConstraintTitleList = async (userToken) => {
             method: 'GET',
             headers: {
                 "Authorization": `Bearer ${userToken}`,
-                "User-Agent": "Mobile",
+                "UserAgent": "Mobile",
             }
         });
 

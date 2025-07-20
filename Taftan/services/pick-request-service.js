@@ -15,7 +15,7 @@ export const pickRequestService = async (req, navigation) => {
                 Authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
-                'User-Agent': 'Mobile',
+                'UserAgent': 'Mobile',
             }
         });
         return { success: true, data: response };
@@ -58,7 +58,7 @@ export const SendLocation = async (req) => {
                 Authorization: authData.token,
                 Accessid: authData.Constraintid,
                 Constraintid: authData.Constraintid,
-                'User-Agent': 'Mobile',
+                'UserAgent': 'Mobile',
             }
         });
 
