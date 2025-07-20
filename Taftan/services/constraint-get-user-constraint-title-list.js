@@ -42,7 +42,7 @@ export const GetUserConstraintTitleList = async (userToken) => {
 //         const response = await api.get(`FaultReason/GetFaultReasonList`, {
 //             headers: {
 //                 "Authorization": `Bearer ${userToken}`,
-//                 "User-Agent": "Mobile",
+//                 "UserAgent": "Mobile",
 //             }
 //         });
 //         return { success: true, data: response.data };
