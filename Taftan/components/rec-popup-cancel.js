@@ -7,10 +7,12 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { DoneExpertRequest } from '../services/done-expert-request';
 import { getAuthData } from '../services/auth';
 import DropDownObj from './dropdown-obj';
+import { GetCancelReasonList } from '../services/req-GetCancelReasonList';
+import { CancelExpertRequest } from '../services/req-cancel';
 
-const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => {
+const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage, navigation }) => {
     var [cancelReasonDescList, setcancelReasonDescList] = useState([]);
-    var [cancelReasonDesc, setcancelReasonDesc] = useState(null);
+    var [cancelReasonDesc, setcancelReasonDesc] = useState('انتخاب کنید');
     var [cancelReasonId, setcancelReasonId] = useState(null);
     var [description, setdescription] = useState('')
     const notWorking = () => {
@@ -27,8 +29,12 @@ const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => 
         // else ToastAndroid.show(result.error, ToastAndroid.SHORT);
     }
     useEffect(() => {
-
-    }, [popupEN])
+        if(requestDetail){
+            GetCancelReasonList(requestDetail.requestInfo.requestId).then(data => {
+                setcancelReasonDescList(data.data);
+            }).catch(err => {console.log(err)});
+        }
+    }, [popupEN, requestDetail])
     return (
         <View>
             <Popup modalVisible={popupEN} setModalVisible={setPopupEN}>
@@ -55,7 +61,23 @@ const CancelCasePopup = ({ popupEN, setPopupEN, requestDetail, reloadPage }) => 
                     onChange={(text) => { setdescription(text.nativeEvent.text) }}
                 />
                 <View style={styles.submitButtonsView}>
-                    <TouchableOpacity style={styles.submitButton} onPress={() => doneRequest()}>
+                    <TouchableOpacity style={styles.submitButton} onPress={() => {
+                        if(cancelReasonId == null || description == ''){
+                            ToastAndroid.show('لطفا موارد خواسته شده را تکمیل کنید.', ToastAndroid.SHORT);
+                            return;
+                        }
+                        console.log(requestDetail)
+                        CancelExpertRequest({
+                            "id": requestDetail.requestInfo.requestId,
+                            "cancelReasonId": cancelReasonId,
+                            "cancelReasonDesc": cancelReasonDesc
+                        }, navigation).then(data => {
+                            ToastAndroid.show(data.data, ToastAndroid.SHORT);
+                            console.log(data);
+                            setPopupEN(false);
+                            reloadPage();
+                        }).catch(err => console.log(err))
+                    }}>
                         <Text style={styles.submitButtonText}>تایید</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.cancleButton} onPress={() => setPopupEN(false)}>

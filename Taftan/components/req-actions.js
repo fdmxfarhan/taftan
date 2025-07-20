@@ -28,7 +28,7 @@ const RequestActions = ({ item, requestDetail, userList, refrenceCauseList, work
             <ReturnPopup popupEN={returnPopupEN} setPopupEN={setReturnPopupEN} refrenceCauseList={refrenceCauseList} />
             <StatusPopup popupEN={statusPopupEN} setPopupEN={setStatusPopupEN} workCauseList={workCauseList} setworkCauseList={setworkCauseList} reqInfo={item} reloadPage={reloadPage} />
             <CloseCasePopup popupEN={closePopupEN} setPopupEN={setClosePopupEN} requestDetail={requestDetail} reloadPage={reloadPage} />
-            <CancelCasePopup popupEN={cancelPopupEN} setPopupEN={setCancelPopupEN} requestDetail={requestDetail} reloadPage={reloadPage} />
+            <CancelCasePopup popupEN={cancelPopupEN} setPopupEN={setCancelPopupEN} requestDetail={requestDetail} reloadPage={reloadPage} navigation={navigation} />
             <ScrollView horizontal={true} inverted={true} style={styles.buttonScrollView}>
                 {allowdActionList.includes('SendToExpert') && (<TouchableOpacity style={[styles.submitButton, { backgroundColor: colors.darkcyan }]} onPress={() => setAssignPopupEN(true)}>
                     <Ionicons style={styles.buttonIcon} name="chatbubbles" />
