@@ -1,51 +1,35 @@
 package com.taftan
 
-import android.app.ActivityManager
-import android.content.Context
 import android.content.Intent
-import com.facebook.react.bridge.Promise
+import android.os.Build
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.module.annotations.ReactModule
 
-class LocationServiceModule(reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
-    private val reactContext: ReactApplicationContext = reactContext
+@ReactModule(name = LocationServiceModule.NAME)
+class LocationServiceModule(private val reactContext: ReactApplicationContext) :
+    ReactContextBaseJavaModule(reactContext) {
 
-    override fun getName(): String {
-        return "LocationService"
+    companion object {
+        const val NAME = "LocationServiceModule"
     }
 
+    override fun getName() = NAME
+
     @ReactMethod
-    fun startService(promise: Promise) {
-        try {
-            val serviceIntent = Intent(reactContext, LocationService::class.java)
-            reactContext.startService(serviceIntent)
-            promise.resolve(null)
-        } catch (e: Exception) {
-            promise.reject("ERROR", e.message)
+    fun start() {
+        val intent = Intent(reactContext, LocationForegroundService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            reactContext.startForegroundService(intent)
+        } else {
+            reactContext.startService(intent)
         }
     }
 
     @ReactMethod
-    fun stopService(promise: Promise) {
-        try {
-            val serviceIntent = Intent(reactContext, LocationService::class.java)
-            reactContext.stopService(serviceIntent)
-            promise.resolve(null)
-        } catch (e: Exception) {
-            promise.reject("ERROR", e.message)
-        }
+    fun stop() {
+        val intent = Intent(reactContext, LocationForegroundService::class.java)
+        reactContext.stopService(intent)
     }
-
-    @ReactMethod
-    fun isServiceRunning(promise: Promise) {
-        val manager = reactContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (LocationService::class.java.name == service.service.className) {
-                promise.resolve(true)
-                return
-            }
-        }
-        promise.resolve(false)
-    }
-} 
+}

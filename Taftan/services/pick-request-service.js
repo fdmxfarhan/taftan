@@ -45,13 +45,13 @@ export const pickRequestService = async (req, navigation) => {
 export const SendLocation = async (req) => {
     const authData = await getAuthData();
     try {
-        console.log('[SendLocation] ارسال لوکیشن به سرور با داده‌ها:', req, 'در', new Date().toLocaleString());
+        console.log('در حال ارسال لوکیشن .......', 'در', new Date().toLocaleString());
 
         if (use_local_data) return {
             success: true, data: {}
         };
 
-        console.log('authData token:', authData.token);
+        // console.log('authData token:', authData.token);
 
         const response = await apiLocation.post('/UserLocation/insert-user-location', req, {
             headers: {
@@ -63,12 +63,12 @@ export const SendLocation = async (req) => {
         });
 
         const currentTime = new Date().toLocaleString();
-        console.log('[SendLocation] موفقیت در ارسال لوکیشن به سرور:', response.data, 'در', currentTime);
+        console.log('موفقیت در ارسال لوکیشن به سرور:', 'در', currentTime);
 
         return { success: true, data: response };
 
     } catch (error) {
-        console.log('[SendLocation] خطا در ارسال لوکیشن به سرور:', error, 'در', new Date().toLocaleString());
+        console.log('خطا در ارسال لوکیشن به سرور:', error, 'در', new Date().toLocaleString());
 
         if (error.response) {
             if (error.response.status === 401 || error.response.status === 403) {

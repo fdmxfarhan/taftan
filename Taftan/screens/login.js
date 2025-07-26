@@ -72,12 +72,12 @@ const Login = (props) => {
         const md5Hash = CryptoJS.MD5(password).toString();
 
         const result = await login(username, md5Hash);
+        console.log(result)
         if (result.success) {
-            console.log('result.data.Token',result.data.Token)
             var result2 = await GetUserConstraintTitleList(result.data.Token);
-            console.log('GetUserConstraintTitleList' , result2)
             if (result2.success) {
-                const constraintid = result2.data[0].Id;
+              console.log(result2.data)
+                const constraintid = result2.data.length > 0 ? result2.data[0].Id : 0;
                 await storage.save({
                     key: 'auth',
                     data: {

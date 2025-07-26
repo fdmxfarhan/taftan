@@ -1,102 +1,70 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Text,
-    StyleSheet,
     View,
-    TouchableOpacity,
+    Text,
     ScrollView,
+    TouchableOpacity,
     ToastAndroid,
     Linking,
+    StyleSheet,
+    DeviceEventEmitter,
     PermissionsAndroid,
     Platform,
+    NativeModules,
 } from 'react-native';
+
 import colors from './colors';
 import LoadingView from './loading';
 import getSLAColor from '../config/getSLAColor';
+
 import InstallationRequestItem from './InstallationRequestItem';
 import DamageRequestItem from './DamageRequestItem';
 import SiteRequestItem from './SiteRequestItem';
 import ProjectRequestItem from './ProjectRequestItem';
 import PMRequestItem from './PMRequestItem';
+import ReportListPopup from './rec-popup-report-list';
+
 import { GetDeviceDetail } from '../services/device-detail';
 import { getRequestDetail } from '../services/req-detail';
-import ReportListPopup from './rec-popup-report-list';
 import { loadRequestReportActionList } from '../services/report-load-action-list';
 import { readFilterPreferences, updateFilter } from '../config/userPreferences';
 import { pickRequestService, SendLocation } from '../services/pick-request-service';
-import { jwtDecode } from "jwt-decode";
 import { getAuthData } from '../services/auth';
-import BackgroundService from 'react-native-background-actions';
+
+import {jwtDecode} from 'jwt-decode';
+
+import { setPickedDevice, getPickedDevice, clearPickedDevice } from '../services/storage';
 import Geolocation from 'react-native-geolocation-service';
 
-const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+const { LocationServiceModule } = NativeModules;
+const locationEventEmitter = Platform.OS === 'android' ? DeviceEventEmitter : new NativeEventEmitter(LocationServiceModule);
 
-// درخواست دسترسی‌ها برای لوکیشن و استوریج
-const requestLocationAndStoragePermissions = async () => {
-    if (Platform.OS !== 'android') return true;
-    try {
-        const granted = await PermissionsAndroid.requestMultiple([
-            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-        ]);
-        const allGranted = Object.values(granted).every(status => status === PermissionsAndroid.RESULTS.GRANTED);
-        if (!allGranted) console.log('[Permission] Not all permissions granted:', granted);
-        return allGranted;
-    } catch (err) {
-        console.log('[Permission] Error:', err);
-        return false;
+// درخواست مجوز موقعیت (Android & iOS)
+const requestLocationPermissions = async () => {
+    if (Platform.OS === 'ios') {
+        const status = await Geolocation.requestAuthorization('whenInUse');
+        return status === 'granted' || status === 'always';
     }
-};
 
-// سرویس بکگراند برای ارسال لوکیشن
-const backgroundTask = async (taskData) => {
-    const { delay } = taskData;
-    const authData = await getAuthData();
-    if (!authData?.token) return;
-    const decoded = jwtDecode(authData.token);
-    console.log('[BackgroundTask] started loop');
-    while (BackgroundService.isRunning()) {
-        Geolocation.getCurrentPosition(
-            async (position) => {
-                console.log('[BackgroundTask] لوکیشن:', position.coords);
-                await SendLocation({
-                    userKey: decoded.UserKey,
-                    subsystemId: 4,
-                    requestId: 5,
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                });
-            },
-            (error) => {
-                console.log('[BackgroundTask] خطا در لوکیشن:', error);
-            },
-            { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
-        );
-        await sleep(delay);
+    if (Platform.OS === 'android') {
+        try {
+            const granted = await PermissionsAndroid.requestMultiple([
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+                PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+            ]);
+            return (
+                granted['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED &&
+                granted['android.permission.ACCESS_COARSE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED &&
+                (granted['android.permission.ACCESS_BACKGROUND_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED ||
+                    granted['android.permission.ACCESS_BACKGROUND_LOCATION'] === undefined) // بعضی دستگاه‌ها ممکنه این پرمیشن رو نخوان
+            );
+        } catch (error) {
+            console.warn('[Permission] Error:', error);
+            return false;
+        }
     }
-};
-
-const setupBackgroundTask = async () => {
-    console.log('[BackgroundTask] setup called');
-    const options = {
-        taskName: 'SendLocationTask',
-        taskTitle: 'تفتان - کار پیک شده است',
-        taskDesc: 'در حال ارسال موقعیت ...',
-        taskIcon: {
-            name: 'ic_launcher',
-            type: 'mipmap',
-        },
-        color: '#00aaff',
-        parameters: { delay: 60000 }, // هر ۱ دقیقه
-    };
-    try {
-        console.log('[BackgroundTask] about to start service');
-        await BackgroundService.start(backgroundTask, options);
-        console.log('[BackgroundTask] service started');
-    } catch (e) {
-        console.log('[BackgroundTask] failed to start:', e);
-    }
+    return true;
 };
 
 const MyRequestsList = ({
@@ -118,12 +86,65 @@ const MyRequestsList = ({
     const [reportInfo, setreportInfo] = useState(null);
     const [reportList, setreportList] = useState([]);
     const [reportlistPopupEN, setreportlistPopupEN] = useState(false);
+    const [activeRequestId, setActiveRequestId] = useState(null);
 
     useEffect(() => {
-        loadFilterPreferences();
-        requestLocationAndStoragePermissions(); // در شروع دسترسی‌ها
-        return () => { BackgroundService.stop(); };
-    }, []);
+        const init = async () => {
+            await loadFilterPreferences();
+            await requestLocationPermissions();
+
+            // مقدار اولیه activeRequestId رو از picked_device_id بگیر
+            const savedPickedDeviceId = await getPickedDevice();
+            if (savedPickedDeviceId) {
+                setActiveRequestId(Number(savedPickedDeviceId));
+            } else {
+                await findPickedRequestId();
+            }
+        };
+        init();
+
+        const subscription = locationEventEmitter.addListener('LocationUpdate', async ({ latitude, longitude }) => {
+            if (!activeRequestId) return; // اگر آی‌دی نال هست، ارسال نکن
+
+            const auth = await getAuthData();
+            const decoded = jwtDecode(auth.token);
+            const payload = {
+                lat: latitude.toString(),
+                lng: longitude.toString(),
+                requestId: activeRequestId,
+                userKey: decoded.UserKey,
+                subsystemId: 4
+            };
+            try {
+                await SendLocation(payload);
+            } catch (error) {
+                console.error('Error sending location to server:', error);
+            }
+        });
+
+        return () => {
+            subscription.remove();
+        };
+    }, [activeRequestId]);
+
+    const findPickedRequestId = async () => {
+        const allRequests = [
+            ...myDamageRequestsList,
+            ...myInstallRequestsList,
+            ...mySiteRequestsList,
+            ...myProjectRequestsList,
+            ...myPeriodicRequestsList,
+        ];
+
+        const pickedItem = allRequests.find(item => item.lastLable === 'Pick');
+        if (pickedItem) {
+            setActiveRequestId(pickedItem.requestId);
+            await setPickedDevice(pickedItem.requestId);
+        } else {
+            setActiveRequestId(null);
+            await clearPickedDevice();
+        }
+    };
 
     const loadFilterPreferences = async () => {
         const savedFilters = await readFilterPreferences();
@@ -197,45 +218,78 @@ const MyRequestsList = ({
 
     const onPickRequest = async (item, action) => {
         setIsLoading(true);
+
+        const permissionGranted = await requestLocationPermissions();
+        if (!permissionGranted) {
+            ToastAndroid.show('دسترسی موقعیت داده نشده است.', ToastAndroid.SHORT);
+            setIsLoading(false);
+            return;
+        }
+
         try {
-            const hasPermissions = await requestLocationAndStoragePermissions();
-            if (!hasPermissions) {
-                ToastAndroid.show('دسترسی لازم داده نشد!', ToastAndroid.SHORT);
-                setIsLoading(false);
-                return;
-            }
-            const authData = await getAuthData();
-            if (!authData?.token) return;
-            const decoded = jwtDecode(authData.token);
+            const auth = await getAuthData();
+            const decoded = jwtDecode(auth.token);
             const req = {
                 IsNegativePoint: false,
                 Lable: action === 'Pick' ? 2 : 3,
                 RequestId: item.requestId,
-                UserKey: decoded.UserKey
+                UserKey: decoded.UserKey,
             };
-            const result = await pickRequestService(req);
-            if (result.success) {
-                onReloadData();
-                Geolocation.getCurrentPosition(
-                    async (position) => {
-                        console.log('اولین لوکیشن ارسال شد');
-                        await SendLocation({ userKey: decoded.UserKey,requestId: 4, subsystemId: 4, lat: position.coords.latitude, lng: position.coords.longitude });
-                    },
-                    (error) => console.log('خطا در دریافت لوکیشن:', error),
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 10000 }
-                );
-                await setupBackgroundTask();
-            }
-        } catch (e) {
-            console.error('خطا در pick:', e);
-        }
-        setIsLoading(false);
-    };
 
+            const res = await pickRequestService(req);
+
+            if (res.success) {
+                onReloadData();
+
+                if (action === 'Pick') {
+                    setActiveRequestId(item.requestId);
+                    await setPickedDevice(item.requestId);
+
+                    Geolocation.getCurrentPosition(
+                        async (position) => {
+                            const { latitude, longitude } = position.coords;
+                            const payload = {
+                                lat: latitude.toString(),
+                                lng: longitude.toString(),
+                                requestId: item.requestId,
+                                userKey: decoded.UserKey,
+                                subsystemId: 4
+                            };
+                            await SendLocation(payload);
+                        },
+                        (error) => {
+                            console.error('Location error:', error);
+                        },
+                        { enableHighAccuracy: true, timeout: 10000, maximumAge: 1000 }
+                    );
+
+                    LocationServiceModule.start();
+                } else {
+                    setActiveRequestId(null);
+                    await clearPickedDevice();
+                    LocationServiceModule.stop();
+                }
+            } else {
+                ToastAndroid.show('عملیات موفقیت‌آمیز نبود.', ToastAndroid.SHORT);
+            }
+        } catch (error) {
+            console.error('onPickRequest error:', error);
+            ToastAndroid.show('خطا در انجام عملیات.', ToastAndroid.SHORT);
+        } finally {
+            setIsLoading(false);
+        }
+    };
     return (
         <View>
             <LoadingView isLoading={isLoading} text={'در حال بارگیری...'} />
-            <ReportListPopup popupEN={reportlistPopupEN} setPopupEN={setreportlistPopupEN} reportList={reportList} requestDetail={requestDetail} navigation={navigation} />
+            <ReportListPopup
+                popupEN={reportlistPopupEN}
+                setPopupEN={setreportlistPopupEN}
+                reportList={reportList}
+                requestDetail={requestDetail}
+                navigation={navigation}
+            />
+
             <ScrollView horizontal style={styles.typeFiltersView} inverted>
                 {[
                     { name: 'خرابی', value: DamageFilterEN, key: 'DamageFilterEN' },
@@ -243,37 +297,120 @@ const MyRequestsList = ({
                     { name: 'سایت سازی', value: siteFilterEN, key: 'siteFilterEN' },
                     { name: 'پروژه', value: projectFilterEN, key: 'projectFilterEN' },
                     { name: 'دوره ای', value: periodicFilterEN, key: 'periodicFilterEN' },
-                ].map(filter => (
+                ].map((filter) => (
                     <TouchableOpacity
                         key={filter.key}
-                        style={[styles.typeFiltersButton, { backgroundColor: filter.value ? colors.blue : colors.white }]}
-                        onPress={() => handleFilterToggle(filter.key, filter.value)}>
-                        <Text style={[styles.typeFiltersText, { color: filter.value ? colors.white : colors.blue }]}>{filter.name}</Text>
+                        style={[
+                            styles.typeFiltersButton,
+                            { backgroundColor: filter.value ? colors.blue : colors.white },
+                        ]}
+                        onPress={() => handleFilterToggle(filter.key, filter.value)}
+                    >
+                        <Text
+                            style={[
+                                styles.typeFiltersText,
+                                { color: filter.value ? colors.white : colors.blue },
+                            ]}
+                        >
+                            {filter.name}
+                        </Text>
                     </TouchableOpacity>
                 ))}
             </ScrollView>
+
             <ScrollView style={styles.scrollviwe}>
                 <View style={styles.container}>
-                    {DamageFilterEN && myDamageRequestsList.length > 0 && <Text style={styles.sectionSplitter}>سرویس خرابی:</Text>}
-                    {DamageFilterEN && myDamageRequestsList.map((item) => (
-                        <DamageRequestItem key={item.requestId} item={item} handleItemPress={handleItemPress} openRequestReport={openRequestReport} onPickRequest={onPickRequest} isPickedRequests getSLAColor={getSLAColor} setIsLoading={setIsLoading} openMapDirection={openMapDirection} />
-                    ))}
-                    {InstallFilterEN && myInstallRequestsList.length > 0 && <Text style={styles.sectionSplitter}>سرویس نصب:</Text>}
-                    {InstallFilterEN && myInstallRequestsList.map((item, index) => (
-                        <InstallationRequestItem key={item.requestId} item={item} index={index} installRequests={myInstallRequestsList} handleItemPress={handleItemPress} onPickRequest={onPickRequest} isPickedRequests openRequestReport={openRequestReport} getSLAColor={getSLAColor} setIsLoading={setIsLoading} openMapDirection={openMapDirection} />
-                    ))}
-                    {siteFilterEN && mySiteRequestsList.length > 0 && <Text style={styles.sectionSplitter}>سرویس سایت سازی:</Text>}
-                    {siteFilterEN && mySiteRequestsList.map((item) => (
-                        <SiteRequestItem key={item.requestId} item={item} handleItemPress={handleItemPress} openRequestReport={openRequestReport} onPickRequest={onPickRequest} isPickedRequests getSLAColor={getSLAColor} setIsLoading={setIsLoading} openMapDirection={openMapDirection} />
-                    ))}
-                    {projectFilterEN && myProjectRequestsList.length > 0 && <Text style={styles.sectionSplitter}>سرویس پروژه:</Text>}
-                    {projectFilterEN && myProjectRequestsList.map((item) => (
-                        <ProjectRequestItem key={item.requestId} item={item} handleItemPress={handleItemPress} openRequestReport={openRequestReport} onPickRequest={onPickRequest} isPickedRequests getSLAColor={getSLAColor} setIsLoading={setIsLoading} openMapDirection={openMapDirection} />
-                    ))}
-                    {periodicFilterEN && myPeriodicRequestsList.length > 0 && <Text style={styles.sectionSplitter}>سرویس دوره ای:</Text>}
-                    {periodicFilterEN && myPeriodicRequestsList.map((item) => (
-                        <PMRequestItem key={item.requestId} item={item} handleItemPress={handleItemPress} openRequestReport={openRequestReport} onPickRequest={onPickRequest} isPickedRequests getSLAColor={getSLAColor} setIsLoading={setIsLoading} openMapDirection={openMapDirection} />
-                    ))}
+                    {DamageFilterEN && myDamageRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس خرابی:</Text>
+                    )}
+                    {DamageFilterEN &&
+                        myDamageRequestsList.map((item) => (
+                            <DamageRequestItem
+                                key={item.requestId}
+                                item={item}
+                                handleItemPress={handleItemPress}
+                                openRequestReport={openRequestReport}
+                                onPickRequest={onPickRequest}
+                                isPickedRequests
+                                getSLAColor={getSLAColor}
+                                setIsLoading={setIsLoading}
+                                openMapDirection={openMapDirection}
+                            />
+                        ))}
+
+                    {InstallFilterEN && myInstallRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس نصب:</Text>
+                    )}
+                    {InstallFilterEN &&
+                        myInstallRequestsList.map((item, index) => (
+                            <InstallationRequestItem
+                                key={item.requestId}
+                                item={item}
+                                index={index}
+                                installRequests={myInstallRequestsList}
+                                handleItemPress={handleItemPress}
+                                onPickRequest={onPickRequest}
+                                isPickedRequests
+                                openRequestReport={openRequestReport}
+                                getSLAColor={getSLAColor}
+                                setIsLoading={setIsLoading}
+                                openMapDirection={openMapDirection}
+                            />
+                        ))}
+
+                    {siteFilterEN && mySiteRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس سایت سازی:</Text>
+                    )}
+                    {siteFilterEN &&
+                        mySiteRequestsList.map((item) => (
+                            <SiteRequestItem
+                                key={item.requestId}
+                                item={item}
+                                handleItemPress={handleItemPress}
+                                openRequestReport={openRequestReport}
+                                onPickRequest={onPickRequest}
+                                isPickedRequests
+                                getSLAColor={getSLAColor}
+                                setIsLoading={setIsLoading}
+                                openMapDirection={openMapDirection}
+                            />
+                        ))}
+
+                    {projectFilterEN && myProjectRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس پروژه:</Text>
+                    )}
+                    {projectFilterEN &&
+                        myProjectRequestsList.map((item) => (
+                            <ProjectRequestItem
+                                key={item.requestId}
+                                item={item}
+                                handleItemPress={handleItemPress}
+                                openRequestReport={openRequestReport}
+                                onPickRequest={onPickRequest}
+                                isPickedRequests
+                                getSLAColor={getSLAColor}
+                                setIsLoading={setIsLoading}
+                                openMapDirection={openMapDirection}
+                            />
+                        ))}
+
+                    {periodicFilterEN && myPeriodicRequestsList.length > 0 && (
+                        <Text style={styles.sectionSplitter}>سرویس دوره ای:</Text>
+                    )}
+                    {periodicFilterEN &&
+                        myPeriodicRequestsList.map((item) => (
+                            <PMRequestItem
+                                key={item.requestId}
+                                item={item}
+                                handleItemPress={handleItemPress}
+                                openRequestReport={openRequestReport}
+                                onPickRequest={onPickRequest}
+                                isPickedRequests
+                                getSLAColor={getSLAColor}
+                                setIsLoading={setIsLoading}
+                                openMapDirection={openMapDirection}
+                            />
+                        ))}
                 </View>
             </ScrollView>
         </View>
@@ -283,9 +420,22 @@ const MyRequestsList = ({
 const styles = StyleSheet.create({
     container: { direction: 'rtl', textAlign: 'right', paddingBottom: 300, flex: 1 },
     typeFiltersView: { marginVertical: 10, flexDirection: 'row-reverse' },
-    typeFiltersButton: { paddingHorizontal: 15, paddingVertical: 7, borderRadius: 7, borderColor: colors.blue, borderWidth: 1, marginHorizontal: 5 },
+    typeFiltersButton: {
+        paddingHorizontal: 15,
+        paddingVertical: 7,
+        borderRadius: 7,
+        borderColor: colors.blue,
+        borderWidth: 1,
+        marginHorizontal: 5,
+    },
     typeFiltersText: { fontFamily: 'iransansbold', fontSize: 12 },
-    sectionSplitter: { fontFamily: 'iransansbold', fontSize: 13, color: colors.darkblue, marginVertical: 5, marginHorizontal: 10 }
+    sectionSplitter: {
+        fontFamily: 'iransansbold',
+        fontSize: 13,
+        color: colors.darkblue,
+        marginVertical: 5,
+        marginHorizontal: 10,
+    },
 });
 
 export default MyRequestsList;

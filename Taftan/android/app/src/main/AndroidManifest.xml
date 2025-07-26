@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <!-- دسترسی‌ها -->
   <uses-permission android:name="android.permission.INTERNET" />
   <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
   <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -8,8 +9,6 @@
   <uses-permission android:name="android.permission.CALL_PHONE" />
   <uses-permission android:name="android.permission.RECORD_AUDIO" />
   <uses-permission android:name="android.permission.USE_EXACT_ALARM" />
-  
-  <!-- پرمیشن‌های مورد نیاز برای Android 14 -->
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
   <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
@@ -25,15 +24,36 @@
     android:networkSecurityConfig="@xml/network_security_config"
     android:forceDarkAllowed="false">
 
+    <!-- سرویس اصلی background actions -->
+
+    <receiver android:name=".LocationBroadcastReceiver" android:exported="true" />
     <service
-      android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask"
+      android:name=".LocationTaskService"
+      android:enabled="true"
+      android:exported="true"
+      android:permission="android.permission.BIND_JOB_SERVICE" />
+
+
+    <service
+      android:name=".HeadlessLocationService"
+      android:enabled="true"
+      android:exported="true"
+      android:permission="android.permission.BIND_JOB_SERVICE" />
+      <service
+      android:name=".LocationForegroundService"
       android:exported="false"
+      android:foregroundServiceType="location" />
+    <!-- <service
+      android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask"
+      android:exported="true"
       android:foregroundServiceType="location" />
 
     <service
-      android:name=".LocationService"
-      android:enabled="true"
-      android:exported="true" />
+      android:name="com.taftan.LocationTaskService"
+      android:exported="false" /> -->
+
+    <receiver android:name=".LocationReceiver" android:exported="true" />
+    <!-- تنظیمات Activity اصلی -->
     <activity
       android:name=".MainActivity"
       android:screenOrientation="portrait"
@@ -42,10 +62,14 @@
       android:launchMode="singleTask"
       android:windowSoftInputMode="adjustResize"
       android:exported="true">
+
+      <!-- لانچر -->
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
+
+      <!-- پشتیبانی از لینک تماس -->
       <intent-filter>
         <action android:name="android.intent.action.VIEW" />
         <category android:name="android.intent.category.DEFAULT" />
@@ -53,5 +77,6 @@
         <data android:scheme="tel" />
       </intent-filter>
     </activity>
+
   </application>
 </manifest>

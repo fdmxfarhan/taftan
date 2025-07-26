@@ -147,16 +147,12 @@ const App = (props) => {
           component={CameraScan}
           options={({ route }) => ({ headerShown: false })}
         />
-        <Stack.Screen
-          name="LocationTest"
-          component={LocationTest}
-          options={({ route }) => ({ headerShown: false })}
-        />
+
       </Stack.Navigator>
     </NavigationContainer>
   )
 };
-// AppRegistry.registerHeadlessTask('LocationTask', () => LocationTask);
+AppRegistry.registerHeadlessTask('LocationTask', () => LocationTask);
 
 // AppRegistry.registerComponent(appName, () => App);
 export default App
