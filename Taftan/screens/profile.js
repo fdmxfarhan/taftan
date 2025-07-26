@@ -7,25 +7,47 @@ import {
     View,
 } from 'react-native';
 import colors, { white } from '../components/colors';
-import NavBar from '../components/navbar';
 import SideMenu from '../components/SideMenu';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import ConfirmPopup from '../components/confirm';
 import { logout } from '../services/auth';
+import { getAuthData } from '../services/auth';
+import { getUserData } from '../services/ser-profile';
 
 const Profile = (props) => {
     const [menuVisible, setMenuVisible] = useState(false);
     const [logoutModalVisible, setLogoutModalVisible] = useState(false);
     const [userIconScale] = useState(new Animated.Value(0)); // Scale animation
+    const [userData, setUserData] = useState()
+    const [userInfo, setUserInfo] = useState()
 
     useEffect(() => {
+        getUser()
+        getUserInfo()
+
         Animated.spring(userIconScale, {
             toValue: 1,
             friction: 5,
             useNativeDriver: true,
         }).start();
-    });
+    },[]);
+    const getUser = async () => {
+        const authData = await getAuthData();
+        try {
+            setUserData(authData);
+        } catch (error) {
+            setUserData(null)
+            console.log('error', error)
+        }
+    };
 
+    const getUserInfo = async () => {
+        const res = await getUserData();
+        if (res.success) {
+            setUserInfo(res.data)
+            console.log('USER DATA:::::::::::::::::::', res)
+        }
+    }
     return (
         <View style={styles.container}>
             <View style={styles.topView}>
@@ -34,7 +56,7 @@ const Profile = (props) => {
                         <Ionicons name={"menu"} style={styles.navIcon} />
                     </TouchableOpacity>
                     <Text style={styles.pageTitle}>پروفایل</Text>
-                    <TouchableOpacity style={styles.logoutButton} onPress={() => {setLogoutModalVisible(true)}}>
+                    <TouchableOpacity style={styles.logoutButton} onPress={() => { setLogoutModalVisible(true) }}>
                         <Ionicons name={"exit"} style={styles.navIcon} />
                     </TouchableOpacity>
                 </View>
@@ -51,21 +73,33 @@ const Profile = (props) => {
             </View>
 
             <View style={styles.userInfo}>
+            <View style={styles.userInfoItem}>
+                    <Text style={styles.userInfoTitle}>نام کاربری :</Text>
+                    <Text style={styles.userInfoValue}>{userData?.username ? userData.username : 'نامشخص'}</Text>
+                </View>
                 <View style={styles.userInfoItem}>
-                    <Text style={styles.userInfoTitle}>نام:</Text>
-                    <Text style={styles.userInfoValue}>فرحان</Text>
+                    <Text style={styles.userInfoTitle}>نام :</Text>
+                    <Text style={styles.userInfoValue}>{userInfo?.Fname ? userInfo.Fname : 'نامشخص'}</Text>
                 </View>
                 <View style={styles.userInfoItem}>
                     <Text style={styles.userInfoTitle}>نام خانوادگی:</Text>
-                    <Text style={styles.userInfoValue}>دائمی مژدهی</Text>
+                    <Text style={styles.userInfoValue}>{userInfo?.Lname ? userInfo.Lname : 'نامشخص'}</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                    <Text style={styles.userInfoTitle}>ایمیل:</Text>
+                    <Text style={styles.userInfoValue}>{userInfo?.Email ? userInfo.Email : 'نامشخص'}</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                    <Text style={styles.userInfoTitle}>دفتر:</Text>
+                    <Text style={styles.userInfoValue}>{userInfo?.WorkedName ? userInfo.WorkedName : 'نامشخص'}</Text>
                 </View>
                 <View style={styles.userInfoItem}>
                     <Text style={styles.userInfoTitle}>نقش کاربر:</Text>
                     <Text style={styles.userInfoValue}>کارشناس</Text>
                 </View>
             </View>
-            
-            <ConfirmPopup 
+
+            <ConfirmPopup
                 modalVisible={logoutModalVisible}
                 setModalVisible={setLogoutModalVisible}
                 question={'آیا میخواهید خارج شوید؟'}
@@ -73,7 +107,7 @@ const Profile = (props) => {
                     logout();
                     props.navigation.navigate('Login');
                 }}
-                />
+            />
             <SideMenu
                 isVisible={menuVisible}
                 onClose={() => { setMenuVisible(!menuVisible); }}
