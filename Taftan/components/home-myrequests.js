@@ -11,6 +11,7 @@ import {
     PermissionsAndroid,
     Platform,
     NativeModules,
+    Alert,
 } from 'react-native';
 
 import colors from './colors';
@@ -31,7 +32,7 @@ import { readFilterPreferences, updateFilter } from '../config/userPreferences';
 import { pickRequestService, SendLocation } from '../services/pick-request-service';
 import { getAuthData } from '../services/auth';
 
-import {jwtDecode} from 'jwt-decode';
+import jwtDecode from 'jwt-decode';
 
 import { setPickedDevice, getPickedDevice, clearPickedDevice } from '../services/storage';
 import Geolocation from 'react-native-geolocation-service';
@@ -39,31 +40,110 @@ import Geolocation from 'react-native-geolocation-service';
 const { LocationServiceModule } = NativeModules;
 const locationEventEmitter = Platform.OS === 'android' ? DeviceEventEmitter : new NativeEventEmitter(LocationServiceModule);
 
-// درخواست مجوز موقعیت (Android & iOS)
-const requestLocationPermissions = async () => {
+const checkAndRequestLocationPermission = async () => {
     if (Platform.OS === 'ios') {
         const status = await Geolocation.requestAuthorization('whenInUse');
-        return status === 'granted' || status === 'always';
+        if (status === 'granted' || status === 'always') return true;
+
+        Alert.alert(
+            'دسترسی موقعیت',
+            'برای استفاده از این ویژگی، باید دسترسی موقعیت را فعال کنید.',
+            [
+                { text: 'لغو', style: 'cancel' },
+                { text: 'باز کردن تنظیمات', onPress: () => Linking.openSettings() },
+            ]
+        );
+        return false;
     }
 
     if (Platform.OS === 'android') {
         try {
-            const granted = await PermissionsAndroid.requestMultiple([
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-                PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-            ]);
-            return (
-                granted['android.permission.ACCESS_FINE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED &&
-                granted['android.permission.ACCESS_COARSE_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED &&
-                (granted['android.permission.ACCESS_BACKGROUND_LOCATION'] === PermissionsAndroid.RESULTS.GRANTED ||
-                    granted['android.permission.ACCESS_BACKGROUND_LOCATION'] === undefined) // بعضی دستگاه‌ها ممکنه این پرمیشن رو نخوان
+            const fineLocationGranted = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
             );
+            if (fineLocationGranted) return true;
+
+            const result = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            );
+
+            if (result === PermissionsAndroid.RESULTS.GRANTED) {
+                return true;
+            } else if (result === PermissionsAndroid.RESULTS.DENIED) {
+                Alert.alert(
+                    'دسترسی موقعیت',
+                    'برای استفاده از این ویژگی باید دسترسی موقعیت را فعال کنید.',
+                    [
+                        { text: 'لغو', style: 'cancel' },
+                        { text: 'باز کردن تنظیمات', onPress: () => Linking.openSettings() },
+                    ]
+                );
+                return false;
+            } else if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                Alert.alert(
+                    'دسترسی موقعیت',
+                    'دسترسی موقعیت به صورت دائمی رد شده است. لطفاً از طریق تنظیمات دسترسی را فعال کنید.',
+                    [
+                        { text: 'لغو', style: 'cancel' },
+                        { text: 'باز کردن تنظیمات', onPress: () => Linking.openSettings() },
+                    ]
+                );
+                return false;
+            }
         } catch (error) {
-            console.warn('[Permission] Error:', error);
+            console.warn('Permission error:', error);
             return false;
         }
     }
+
+    return true;
+};
+
+const checkAndRequestNotificationPermission = async () => {
+    if (Platform.OS === 'ios') {
+        return true;
+    }
+
+    if (Platform.OS === 'android') {
+        try {
+            const granted = await PermissionsAndroid.check(
+                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+            );
+            if (granted) return true;
+
+            const result = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+            );
+
+            if (result === PermissionsAndroid.RESULTS.GRANTED) {
+                return true;
+            } else if (result === PermissionsAndroid.RESULTS.DENIED) {
+                Alert.alert(
+                    'دسترسی نوتیفیکیشن',
+                    'برای دریافت اطلاع‌رسانی‌ها باید دسترسی نوتیفیکیشن را فعال کنید.',
+                    [
+                        { text: 'لغو', style: 'cancel' },
+                        { text: 'باز کردن تنظیمات', onPress: () => Linking.openSettings() },
+                    ]
+                );
+                return false;
+            } else if (result === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+                Alert.alert(
+                    'دسترسی نوتیفیکیشن',
+                    'دسترسی نوتیفیکیشن به صورت دائمی رد شده است. لطفاً از طریق تنظیمات دسترسی را فعال کنید.',
+                    [
+                        { text: 'لغو', style: 'cancel' },
+                        { text: 'باز کردن تنظیمات', onPress: () => Linking.openSettings() },
+                    ]
+                );
+                return false;
+            }
+        } catch (error) {
+            console.warn('Notification permission error:', error);
+            return false;
+        }
+    }
+
     return true;
 };
 
@@ -90,8 +170,20 @@ const MyRequestsList = ({
 
     useEffect(() => {
         const init = async () => {
+            const locationGranted = await checkAndRequestLocationPermission();
+            if (!locationGranted) {
+                // اگر دسترسی موقعیت داده نشده، می‌توان تصمیم گرفت که صفحه را ترک کند یا پیام بدهد
+                ToastAndroid.show('برای استفاده کامل از برنامه دسترسی موقعیت لازم است.', ToastAndroid.LONG);
+                return;
+            }
+
+            const notificationGranted = await checkAndRequestNotificationPermission();
+            if (!notificationGranted) {
+                ToastAndroid.show('برای دریافت اطلاع‌رسانی‌ها دسترسی نوتیفیکیشن لازم است.', ToastAndroid.LONG);
+                return;
+            }
+
             await loadFilterPreferences();
-            await requestLocationPermissions();
 
             // مقدار اولیه activeRequestId رو از picked_device_id بگیر
             const savedPickedDeviceId = await getPickedDevice();
@@ -219,8 +311,8 @@ const MyRequestsList = ({
     const onPickRequest = async (item, action) => {
         setIsLoading(true);
 
-        const permissionGranted = await requestLocationPermissions();
-        if (!permissionGranted) {
+        const locationGranted = await checkAndRequestLocationPermission();
+        if (!locationGranted) {
             ToastAndroid.show('دسترسی موقعیت داده نشده است.', ToastAndroid.SHORT);
             setIsLoading(false);
             return;
