@@ -191,6 +191,15 @@ module.exports = StyleSheet.create({
         color: colors.pacificcyan,
         fontSize: 25
     },
+
+    redIcon: {
+        color: colors.red,
+        fontSize: 25
+    },
+    greenIcon: {
+        color: colors.green,
+        fontSize: 25
+    },
     sectionSplitter: {
         textAlign: 'center',
         fontFamily: 'iransansbold',

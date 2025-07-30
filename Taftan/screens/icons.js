@@ -292,6 +292,8 @@ const Icons = (props) => {
         "partly-sunny",
         "pause-circle",
         "pause-circle-sharp",
+        "hand-stop-o",
+        "hand-grab-o",
         "paw",
         "pencil",
         "people-circle",

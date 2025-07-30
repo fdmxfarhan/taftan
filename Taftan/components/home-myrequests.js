@@ -32,7 +32,7 @@ import { readFilterPreferences, updateFilter } from '../config/userPreferences';
 import { pickRequestService, SendLocation } from '../services/pick-request-service';
 import { getAuthData } from '../services/auth';
 
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { setPickedDevice, getPickedDevice, clearPickedDevice } from '../services/storage';
 import Geolocation from 'react-native-geolocation-service';
@@ -307,6 +307,29 @@ const MyRequestsList = ({
             }
         });
     };
+    const onChangeStatusClicked = async (item, action) => {
+        setIsLoading(true);
+        try {
+            const auth = await getAuthData();
+            const decoded = jwtDecode(auth.token);
+            const req = {
+                IsNegativePoint: false,
+                Lable: action === 'Start' ? 5 : 6,
+                RequestId: item.requestId,
+                UserKey: decoded.UserKey,
+            };
+            const res = await pickRequestService(req);
+            if (res.success) {
+                onReloadData();
+            } else {
+                ToastAndroid.show('عملیات موفقیت‌آمیز نبود.', ToastAndroid.SHORT);
+            }
+        } catch (error) {
+            ToastAndroid.show('خطا در انجام عملیات.', ToastAndroid.SHORT);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     const onPickRequest = async (item, action) => {
         setIsLoading(true);
@@ -423,6 +446,7 @@ const MyRequestsList = ({
                                 handleItemPress={handleItemPress}
                                 openRequestReport={openRequestReport}
                                 onPickRequest={onPickRequest}
+                                onChangeStatusClicked={onChangeStatusClicked}
                                 isPickedRequests
                                 getSLAColor={getSLAColor}
                                 setIsLoading={setIsLoading}
@@ -442,6 +466,7 @@ const MyRequestsList = ({
                                 installRequests={myInstallRequestsList}
                                 handleItemPress={handleItemPress}
                                 onPickRequest={onPickRequest}
+                                onChangeStatusClicked={onChangeStatusClicked}
                                 isPickedRequests
                                 openRequestReport={openRequestReport}
                                 getSLAColor={getSLAColor}
@@ -461,6 +486,7 @@ const MyRequestsList = ({
                                 handleItemPress={handleItemPress}
                                 openRequestReport={openRequestReport}
                                 onPickRequest={onPickRequest}
+                                onChangeStatusClicked={onChangeStatusClicked}
                                 isPickedRequests
                                 getSLAColor={getSLAColor}
                                 setIsLoading={setIsLoading}
@@ -478,6 +504,7 @@ const MyRequestsList = ({
                                 item={item}
                                 handleItemPress={handleItemPress}
                                 openRequestReport={openRequestReport}
+                                onChangeStatusClicked={onChangeStatusClicked}
                                 onPickRequest={onPickRequest}
                                 isPickedRequests
                                 getSLAColor={getSLAColor}
@@ -497,6 +524,7 @@ const MyRequestsList = ({
                                 handleItemPress={handleItemPress}
                                 openRequestReport={openRequestReport}
                                 onPickRequest={onPickRequest}
+                                onChangeStatusClicked={onChangeStatusClicked}
                                 isPickedRequests
                                 getSLAColor={getSLAColor}
                                 setIsLoading={setIsLoading}

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 import colors from './colors';
-
+import handleLogout from '../services/authHelper'
 const { width } = Dimensions.get('window');
 
 const SideMenu = (props) => {
@@ -43,42 +43,44 @@ const SideMenu = (props) => {
         <View style={styles.menu}>
           <Text style={styles.menuTitle}>تفتان</Text>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceDamage'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('ServiceDamage'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'construct-outline'} />
             <Text style={styles.menuText}>سرویس خرابی</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceInstallation'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('ServiceInstallation'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'hammer-outline'} />
             <Text style={styles.menuText}>سرویس نصب</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceSite'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('ServiceSite'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'storefront-outline'} />
             <Text style={styles.menuText}>سرویس سایت سازی</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServiceProjects'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('ServiceProjects'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'clipboard-outline'} />
             <Text style={styles.menuText}>سرویس پروژه</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('ServicePeriodic'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('ServicePeriodic'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'repeat-outline'} />
             <Text style={styles.menuText}>سرویس دوره ای</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('MapPage'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('MapPage'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'map-outline'} />
             <Text style={styles.menuText}>نقشه</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('Profile'); onClose();}}>
+          <TouchableOpacity style={styles.menuItem} onPress={() => { props.navigation.navigate('Profile'); onClose(); }}>
             <Ionicons style={styles.sideButtonIcon} name={'person'} />
             <Text style={styles.menuText}>پروفایل</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuItem} onPress={() => {props.navigation.navigate('Login'); onClose();}}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => handleLogout(navigation, onClose)}>
             <Ionicons style={styles.sideButtonIcon} name={'log-out-outline'} />
             <Text style={styles.menuText}>خروج</Text>
           </TouchableOpacity>

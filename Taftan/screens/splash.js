@@ -1,166 +1,109 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
-    Image,
-    PermissionsAndroid,
-    Platform,
-    StatusBar,
-    StyleSheet,
-    Text,
-    TouchableOpacity,
-    View,
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  StatusBar,
+  Animated,
+  Platform,
 } from 'react-native';
-import colors from '../components/colors';
-import { request, PERMISSIONS } from 'react-native-permissions';
-import { getAuthData } from '../services/auth';
 import messaging from '@react-native-firebase/messaging';
-import { GetUserConstraintTitleList } from '../services/constraint-get-user-constraint-title-list';
-import storage from '../config/storage';
+import { getAuthData } from '../services/auth';
+import { requestPermissions } from '../src/utils/permissions';
+import colors from '../components/colors';
 
-const requestReadStoragePermission = async () => {
-    try {
-        const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            // console.log("You can use the camera");
-        } else {
-            console.log("Read_Storage permission denied");
-        }
-    } catch (err) {
-        console.warn(err);
-    }
+const Splash = ({ navigation }) => {
+  const logoScale = useRef(new Animated.Value(0.5)).current;
+  const logoOpacity = useRef(new Animated.Value(0)).current;
+  const textOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const animateLogo = () => {
+      Animated.parallel([
+        Animated.timing(logoScale, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(logoOpacity, {
+          toValue: 1,
+          duration: 1000,
+          useNativeDriver: true,
+        }),
+        Animated.timing(textOpacity, {
+          toValue: 1,
+          duration: 1500,
+          delay: 500,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    };
+
+    const initialize = async () => {
+      await requestPermissions();
+      animateLogo();
+      setupForegroundMessageListener();
+      checkLogin();
+    };
+
+    initialize();
+  }, []);
+
+  const checkLogin = async () => {
+    const authData = await getAuthData();
+    setTimeout(() => {
+      navigation.replace(authData ? 'Home' : 'Login');
+    }, 2000);
+  };
+
+  const setupForegroundMessageListener = () => {
+    return messaging().onMessage(async (remoteMessage) => {
+      console.log('Foreground message received!', remoteMessage);
+    });
+  };
+
+  return (
+    <View style={styles.container}>
+      <StatusBar backgroundColor={colors.darkBackground} barStyle="light-content" />
+      <Animated.Image
+        source={require('../assets/logo.png')}
+        style={[
+          styles.logo,
+          {
+            opacity: logoOpacity,
+            transform: [{ scale: logoScale }],
+          },
+        ]}
+      />
+      <Animated.Text style={[styles.title, { opacity: textOpacity }]}>
+        سامانه تفتان
+      </Animated.Text>
+    </View>
+  );
 };
-const requestWriteStoragePermission = async () => {
-    try {
-        const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
-        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-            // console.log("You can use the camera");
-        } else {
-            console.log("Write_Storage permission denied");
-        }
-    } catch (err) {
-        console.warn(err);
-    }
-};
-const requestLocationPermission = async () => {
-    if (Platform.OS === 'android') {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    title: 'Location Permission',
-                    message: 'App needs access to your location',
-                    buttonNeutral: 'Ask Me Later',
-                    buttonNegative: 'Cancel',
-                    buttonPositive: 'OK',
-                },
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                // console.log('You can use the location');
-            } else {
-                console.log('Location permission denied');
-            }
-        } catch (err) {
-            console.warn(err);
-        }
-    }
-};
-async function requestUserPermission() {
-    const authStatus = await messaging().requestPermission();
-    const enabled =
-        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-    if (enabled) {
-        // console.log('Authorization status:', authStatus);
-    }
-}
-messaging().onMessage(async (remoteMessage) => {
-    console.log('Foreground message received!', remoteMessage);
-    // Display a custom notification or alert here.
-});
-const Splash = (props) => {
-    var [location, setLocation] = useState(null);
-    var [userAuthData, setuserAuthData] = useState(null);
-
-    const getToken = async () => {
-        const token = await messaging().getToken();
-        console.log(token);
-    }
-    const sendRequests = async () => {
-        var result = await GetUserConstraintTitleList(userAuthData.token);
-        if(result.success){
-            constraintid = result.data[0].Id;
-            await storage.save({
-                key: 'auth',
-                data: {
-                    token: userAuthData.token,
-                    username: userAuthData.username,
-                    password: userAuthData.password,
-                    hash: userAuthData.hash,
-                    RefreshToken: userAuthData.RefreshToken,
-                    Constraintid: constraintid,
-                },
-            });
-        }
-    }
-
-    const checkLogin = async () => {
-        const authData = await getAuthData();
-        if (authData) {
-            // userAuthData = authData;
-            setuserAuthData(authData);
-            // sendRequests();
-            props.navigation.navigate('Home');
-        }
-        else {
-            console.log('4:Login User: ', authData);
-            props.navigation.navigate('Login');
-        }
-    }
-    useEffect(() => {
-        requestReadStoragePermission();
-        requestWriteStoragePermission();
-        requestLocationPermission();
-        requestUserPermission();
-        PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
-        // getToken();
-
-        // ca7kxuyUQ0KxAYs8mxYser:APA91bG_zmUxcjDqhpRig7_0xF-wamr607GqYuAxu9i_75KnAwu8OBlDPxWa413lvqoojmNMTvIob2Juwoi2n8bzPAbJKfcY24bRzaS252rpea-ItJP2ns8
-        checkLogin();
-
-    },[])
-    return (
-        <View style={styles.container}>
-            <StatusBar backgroundColor={colors.darkBackground} />
-            <Image
-                source={require('../assets/logo.png')}
-                style={styles.logo}
-            />
-            <Text style={styles.title}>سامانه تفتان</Text>
-            
-        </View>
-    )
-}
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: colors.darkBackground,
-        alignContent: 'center',
-        alignItems: 'center',
-    },
-    logo: {
-        width: 150,
-        height: 150,
-        marginTop: 300,
-    },
-    title: {
-        fontFamily: 'iransans',
-        fontSize: 22,
-        color: colors.lightBackground,
-        marginTop: 20,
-        fontWeight: 'bold',
-
-    },
+  container: {
+    flex: 1,
+    backgroundColor: colors.darkBackground,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logo: {
+    width: 150,
+    height: 150,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginTop: 20,
+    color: colors.lightBackground,
+    fontFamily: Platform.select({
+      ios: 'IRANSans',
+      android: 'iransans',
+    }),
+  },
 });
 
 export default Splash;

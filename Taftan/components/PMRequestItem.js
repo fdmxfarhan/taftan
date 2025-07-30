@@ -3,12 +3,15 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/requestList';
 import colors from './colors';
-const PMRequestItem = ({ 
-    item, 
-    handleItemPress, 
-    openRequestReport, 
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
+const PMRequestItem = ({
+    item,
+    handleItemPress,
+    openRequestReport,
     getSLAColor,
     onPickRequest,
+    onChangeStatusClicked,
     setIsLoading,
     isPickedRequests,
 }) => {
@@ -28,10 +31,10 @@ const PMRequestItem = ({
                 <TouchableOpacity style={styles.callButton} onPress={() => openRequestReport(item)}>
                     <Ionicons name={'document'} style={styles.callIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.callButton} onPress={() => {}}>
+                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
                     <Ionicons name={'location'} style={styles.callIcon} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.callButton} onPress={() => {}}>
+                <TouchableOpacity style={styles.callButton} onPress={() => { }}>
                     <Ionicons name={'call'} style={styles.callIcon} />
                 </TouchableOpacity>
                 {item.lastState == 'Acting' && isPickedRequests && (
@@ -41,8 +44,21 @@ const PMRequestItem = ({
                             setIsLoading(true);
                             onPickRequest(item, item.lastLable === 'Pick' ? 'unPick' : 'Pick');
                         }}>
+                        <MaterialCommunityIcons
+                            name={item.lastLable === 'Pick' ? 'playlist-remove' : 'playlist-plus'}
+                            style={item.lastLable === 'Pick' ? styles.redIcon : styles.greenIcon}
+                        />
+                    </TouchableOpacity>
+                )}
+                {item.lastState == 'Acting' && isPickedRequests && (
+                    <TouchableOpacity
+                        style={styles.callButton}
+                        onPress={() => {
+                            setIsLoading(true);
+                            onChangeStatusClicked(item, item.lastLable === 'Start' ? 'Finish' : 'Start');
+                        }}>
                         <Ionicons
-                            name={item.lastLable === 'Pick' ? 'pause-circle' : 'play-circle'}
+                            name={item.lastLable === 'Start' ? 'pause-circle' : 'play-circle'}
                             style={styles.callIcon}
                         />
                     </TouchableOpacity>

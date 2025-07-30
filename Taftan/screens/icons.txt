@@ -917,6 +917,8 @@
 "pause-circle",
 "pause-circle-outline",
 "pause-circle-sharp",
+"hand-stop-o",
+"hand-grab-o",
 "pause-outline",
 "pause-sharp",
 "paw",

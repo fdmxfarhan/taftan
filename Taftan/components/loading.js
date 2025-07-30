@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import colors from './colors'; // Adjust the import path for colors if needed
 
 const LoadingView = ({ isLoading, text }) => {
@@ -21,13 +20,13 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         left: 0,
-        width: '100%',
-        height: '100%',
+        right: 0,
+        bottom: 0,
         backgroundColor: colors.modal,
         zIndex: 100,
         alignItems: 'center',
-        alignContent: 'center',
-    },
+        justifyContent: 'center',
+      },
     loadingView: {
         marginTop: 350,
     },

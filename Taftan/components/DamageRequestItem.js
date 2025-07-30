@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import styles from '../styles/requestList';
 import colors from './colors';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const DamageRequestItem = ({
     item,
@@ -12,6 +14,7 @@ const DamageRequestItem = ({
     openPhoneCall,
     isPickedRequests,
     onPickRequest,
+    onChangeStatusClicked,
     setIsLoading,
     getSLAColor
 }) => {
@@ -55,16 +58,28 @@ const DamageRequestItem = ({
                             setIsLoading(true);
                             onPickRequest(item, item.lastLable === 'Pick' ? 'unPick' : 'Pick');
                         }}>
+                        <MaterialCommunityIcons
+                            name={item.lastLable === 'Pick' ? 'playlist-remove' : 'playlist-plus'}
+                            style={item.lastLable === 'Pick' ? styles.redIcon : styles.greenIcon}
+                        />
+                    </TouchableOpacity>
+                )}
+                {item.lastState == 'Acting' && isPickedRequests && (
+                    <TouchableOpacity
+                        style={styles.callButton}
+                        onPress={() => {
+                            setIsLoading(true);
+                            onChangeStatusClicked(item, item.lastLable === 'Start' ? 'Finish' : 'Start');
+                        }}>
                         <Ionicons
-                            name={item.lastLable === 'Pick' ? 'pause-circle' : 'play-circle'}
+                            name={item.lastLable === 'Start' ? 'pause-circle' : 'play-circle'}
                             style={styles.callIcon}
                         />
                     </TouchableOpacity>
                 )}
-
             </View>
         </TouchableOpacity>
     );
 };
 
-export default DamageRequestItem; 
+export default DamageRequestItem;
