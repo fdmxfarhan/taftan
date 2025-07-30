@@ -20,6 +20,7 @@ import { submitMyInstallationRequest } from '../services/ser-my-installation';
 import { submitMySiteRequest } from '../services/ser-my-site';
 import { submitMyProjectRequest } from '../services/ser-my-project';
 import { submitMyPMRequest } from '../services/ser-my-pm';
+import { ImageBackground } from 'react-native';
 
 const Home = (props) => {
     var [menuVisible, setMenuVisible] = useState(false);
@@ -41,7 +42,13 @@ const Home = (props) => {
     const [currentTabIndex, setCurrentTabIndex] = useState(0);
 
     const tabOrder = ['Home', 'requests', 'archives'];
-
+    const setTab = (tabName) => {
+        setTabItem(tabName);
+        const index = tabOrder.indexOf(tabName);
+        if (index !== -1) {
+            setCurrentTabIndex(index);
+        }
+    };
     const handleGestureEvent = Animated.event(
         [{ nativeEvent: { translationX: translateX } }],
         { 
@@ -138,7 +145,9 @@ const Home = (props) => {
             <View style={styles.container}>
                 <NavBar rightCallback={toggleMenu} leftCallback={handleSearchPress} title="سامانه تفتان" leftIcon="search" rightIcon="menu" />
                 <SearchView popupEN={searchEN} setPopupEN={setsearchEN} navigation={props.navigation} />
-                <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
+                <BottomNav tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} />
+
+                {/* <TabLink tabItemVar={tabItem} setTabItemCallback={setTabItem} unreadMessagesCount={unreadMessagesCount} myRequestCount={myRequestCount} /> */}
                 {/* <PanGestureHandler
                     onGestureEvent={handleGestureEvent}
                     onHandlerStateChange={({ nativeEvent }) => {
@@ -154,7 +163,6 @@ const Home = (props) => {
                             <View style={styles.tabContainer}>
                                 <HomeNotif navigation={props.navigation} activeCase={activeCase} />
                                 <GridView navigation={props.navigation} />
-                                <BottomNav navigation={props.navigation} />
                             </View>
                         )}
                         {tabItem == 'requests' && (

@@ -4,8 +4,9 @@ import { name as appName } from './app.json';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 const Stack = createNativeStackNavigator();
-import colors from './components/colors';
+import colors from './components/colors'
 import enableNetworkDebug from './config/networkInterceptor';
+import { StatusBar } from 'react-native';
 
 // Enable network debugging in development
 if (__DEV__) {
@@ -55,7 +56,10 @@ const App = (props) => {
     // <View>
     //     <Text>Hello World</Text>
     // </View>
+    
     <NavigationContainer ref={navigationRef}>
+            <StatusBar backgroundColor="#023054" barStyle="light-content" />
+
       <Stack.Navigator>
         <Stack.Screen
           name="Splash"

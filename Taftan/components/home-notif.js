@@ -3,106 +3,131 @@ import {
     Text,
     StyleSheet,
     View,
-    FlatList,
-    TouchableOpacity,
-    Animated
+    Animated,
+    TouchableWithoutFeedback,
 } from 'react-native';
 import colors from './colors';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
 
 const HomeNotif = ({ navigation, activeCase }) => {
-    const [notifScale] = useState(new Animated.Value(0.9)); // Scale animation
-    
+    const [notifScale] = useState(new Animated.Value(0.95));
+
     const handleItemPress = (item) => {
         navigation.navigate('DamageReqView', { item });
     };
+
     useEffect(() => {
-        // console.log(activeCase);
         Animated.spring(notifScale, {
             toValue: 1,
             friction: 5,
             useNativeDriver: true,
         }).start();
     }, []);
-    if(activeCase == null) return null;
+
+    if (!activeCase) return null;
+
     return (
-        <Animated.View
-            style={[
-                styles.notifView,
-                { transform: [{ scale: notifScale }] },
-            ]}
-        >
-            <Text style={styles.notifStat}>{activeCase.currentUserName}</Text>
-            <Text style={styles.notifTitle}>درخواست خرابی: {activeCase.requestId}</Text>
-            <Text style={styles.notifInfoTitle}>{activeCase.areaName} / {activeCase.customerName} / {activeCase.deviceName}</Text>
-            <Text style={styles.notifInfoTitle}>عنوان: {activeCase.serviceName}</Text>
-            <Text style={styles.notifDate}>{activeCase.persianInsertedDate}</Text>
-            <TouchableOpacity style={styles.notifButton} onPress={() => handleItemPress(activeCase)}>
-                <Text style={styles.notifButtonText}>مشاهده جزئیات</Text>
-            </TouchableOpacity>
-        </Animated.View>
+        <TouchableWithoutFeedback onPress={() => handleItemPress(activeCase)}>
+            <Animated.View
+                style={[
+                    styles.notifView,
+                    { transform: [{ scale: notifScale }] },
+                ]}
+            >
+                <View style={styles.headerRow}>
+                    <Text style={styles.notifDate}>{activeCase.persianInsertedDate}</Text>
+                    <Text style={styles.notifStat}>{activeCase.currentUserName}</Text>
+                </View>
+
+                <View style={styles.row}>
+                    <Text style={styles.valueBlue}>{activeCase.requestId}</Text>
+                    <Text style={styles.label}>شماره درخواست:</Text>
+                </View>
+
+                <View style={styles.row}>
+                    <Text style={styles.value}>{activeCase.areaName} / {activeCase.customerName} / {activeCase.deviceName}</Text>
+                    <Text style={styles.label}>نقش:</Text>
+                </View>
+
+
+                <View style={styles.row}>
+                    <Text style={styles.value}>{activeCase.serviceName}</Text>
+                    <Text style={styles.label}>عنوان:</Text>
+                </View>
+            </Animated.View>
+        </TouchableWithoutFeedback>
     );
-}
+};
 
 const styles = StyleSheet.create({
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 3,
+    },
+
+    label: {
+        fontSize: 13,
+        color: '#434343',
+        fontFamily: 'iransansbold',
+        textAlign: 'right',
+    },
+
+    value: {
+        fontFamily: 'irans',
+        fontSize: 14,
+        color: '#626262',
+        textAlign: 'left',
+    },
+    valueBlue: {
+        fontFamily: 'iransansbold',
+        fontSize: 14,
+        color:colors.blue,
+        textAlign: 'left',
+    },
+
     notifView: {
         width: '90%',
-        marginHorizontal: 'auto',
-        marginTop: 20,
-        borderRadius: 15,
-        borderColor: colors.uranianBlue,
+        alignSelf: 'center',
+        marginTop: 12,
+        borderRadius: 12,
+        borderColor: '#D0E8FF',
         borderWidth: 1,
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        position: 'relative',
-        height: 120,
-        backgroundColor: colors.lightBackground,
-        elevation: 5,
-        // backgroundColor: colors.white,
+        padding: 10,
+        backgroundColor: '#F9FCFF',
+        elevation: 2,
+    },
+    headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 4,
     },
     notifStat: {
-        position: 'absolute',
-        left: 20,
-        top: 10,
-        color: colors.gray,
-        fontFamily: 'iransans',
-        fontSize: 14,
-        color: colors.emerald,
-    },
-    notifTitle: {
-        fontFamily: 'iransansbold',
-        color: colors.blue,
-        paddingBottom: 5,
-    },
-    notifInfoTitle: {
-        color: colors.gray,
         fontFamily: 'iransans',
         fontSize: 13,
+        color: '#555',
     },
     notifDate: {
-        color: colors.gray,
         fontFamily: 'iransans',
         fontSize: 11,
-        textAlign: 'right',
-        position: 'absolute',
-        right: 10,
-        bottom: 10,
+        color: '#555',
     },
-    notifButton: {
-        position: 'absolute',
-        left: 10,
-        bottom: 10,
-        borderColor: colors.blue,
-        borderWidth: 2,
-        borderRadius: 15,
-        paddingVertical: 4,
-        paddingHorizontal: 20,
+    notifTitle: {
+        fontFamily: 'iransans',
+        fontSize: 13,
+        color: '#555',
+        marginBottom: 3,
     },
-    notifButtonText: {
+    requestId: {
         fontFamily: 'iransansbold',
         fontSize: 14,
-        color: colors.blue,
-
+        color: '#007BFF',
+    },
+    notifInfoTitle: {
+        fontFamily: 'iransans',
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 2,
     },
 });
 

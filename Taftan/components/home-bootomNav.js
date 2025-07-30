@@ -1,81 +1,141 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
     Text,
     StyleSheet,
-    View,
-    FlatList,
     TouchableOpacity,
     Animated,
-    Dimensions
+    Dimensions,
 } from 'react-native';
 import colors from './colors';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
-import { LoadAllowedRequestAction } from '../services/req-allowed-actions';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const { width, height } = Dimensions.get('window');
+const { height } = Dimensions.get('window');
 
-const BottomNav = ({ navigation }) => {    
-    const [slideAnim] = useState(new Animated.Value(height * 0.7)); // Initial position off screen
+const tabs = [
+    { key: 'Home', icon: 'home', iconOutline: 'home-outline', label: 'خانه' },
+    { key: 'requests', icon: 'git-pull-request', iconOutline: 'git-pull-request-outline', label: 'درخواست‌های من' },
+    { key: 'archives', icon: 'chatbubbles', iconOutline: 'chatbubbles-outline', label: 'پیام‌ها' },
+];
+
+const BottomNav = ({ tabItemVar, setTabItemCallback, unreadMessagesCount, myRequestCount }) => {
+    const slideAnim = useRef(new Animated.Value(height * 0.8)).current;
+    const tabAnimations = useRef({});
 
     useEffect(() => {
         Animated.timing(slideAnim, {
-            toValue: 0, // 70% of screen width
+            toValue: 0,
             duration: 300,
             useNativeDriver: true,
         }).start();
-    });
+    }, []);
+
+    useEffect(() => {
+        tabs.forEach(tab => {
+            if (!tabAnimations.current[tab.key]) {
+                tabAnimations.current[tab.key] = new Animated.Value(tabItemVar === tab.key ? -16 : 0);
+            } else {
+                Animated.timing(tabAnimations.current[tab.key], {
+                    toValue: tabItemVar === tab.key ? -4 : 0,
+                    duration: 200,
+                    useNativeDriver: true,
+                }).start();
+            }
+        });
+    }, [tabItemVar]);
+
+    const renderTabItem = (tab) => {
+        const isActive = tabItemVar === tab.key;
+        const iconName = isActive ? tab.icon : tab.iconOutline;
+        const notifCount = tab.key === 'archives' ? unreadMessagesCount : (tab.key === 'requests' ? myRequestCount : 0);
+
+        return (
+            <TouchableOpacity key={tab.key} onPress={() => setTabItemCallback(tab.key)} activeOpacity={0.8}>
+                <Animated.View style={[
+                    styles.tabButton,
+                    tab.key === 'requests' && styles.centerTab,
+                    isActive && styles.activeItem,
+                    { transform: [{ translateY: tabAnimations.current[tab.key] || new Animated.Value(0) }] }
+                ]}>
+                    <Ionicons name={iconName} style={[styles.icon, isActive && styles.activeIcon]} />
+                    <Text style={[styles.label, isActive && styles.activeText]}>
+                        {tab.label}
+                    </Text>
+                    {notifCount > 0 && (
+                        <Text style={styles.badge}>{notifCount}</Text>
+                    )}
+                </Animated.View>
+            </TouchableOpacity>
+        );
+    };
 
     return (
-        <Animated.View style={[styles.bottomNav, { transform: [{ translateY: slideAnim }] }]}>
-            <TouchableOpacity style={styles.bottomNavButton}>
-                <Ionicons name={"settings-outline"} style={styles.bottomNavIcon} />
-                <Text style={styles.bottomNavText}>تنظیمات</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomNavButton} onPress={() => {
-                LoadAllowedRequestAction(364040, navigation).then(res => {
-                    // console.log(res);
-                });
-            }}>
-                <Ionicons name={"time-outline"} style={styles.bottomNavIcon} />
-                <Text style={styles.bottomNavText}>تاریخچه</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.bottomNavButton} onPress={() => navigation.navigate('Profile')}>
-                <Ionicons name={"person-outline"} style={styles.bottomNavIcon} />
-                <Text style={styles.bottomNavText}>حساب کاربری</Text>
-            </TouchableOpacity>
+        <Animated.View style={[styles.container, { transform: [{ translateY: slideAnim }] }]}>
+            {tabs.map(renderTabItem)}
         </Animated.View>
     );
-}
+};
 
 const styles = StyleSheet.create({
-    bottomNav: {
-        width: '90%',
-        margin: 'auto',
-        borderRadius: 10,
+    container: {
         position: 'absolute',
-        bottom: 30,
-        right: '5%',
-        backgroundColor: colors.white,
-        elevation: 5,
+        bottom: 0,
+        width: '100%',
         flexDirection: 'row-reverse',
+        justifyContent: 'space-around',
+        backgroundColor: colors.white,
+        borderTopLeftRadius: 12,
+        borderTopRightRadius: 12,
+        paddingVertical: 6,
+        elevation: 8,
+        zIndex: 999,
     },
-    bottomNavButton: {
-        width: '30%',
-        marginHorizontal: '1.56666%',
-        marginVertical: 15,
-        textAlign: 'center',
-        alignContent: 'center',
+    tabButton: {
+        width: 80,
+        height: 60,
         alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        paddingHorizontal: 4,
     },
-    bottomNavIcon: {
-        fontSize: 23,
-        color: colors.gray,
+    centerTab: {
+        width: 100, 
     },
-    bottomNavText: {
+    activeItem: {
+        backgroundColor: '#e4e4e4',
+        borderRadius: 10,
+    },
+    icon: {
+        fontSize: 22,
+        color: colors.lightDark,
+    },
+    activeIcon: {
+        fontSize: 24,
+        color: colors.darkBackground,
+    },
+    label: {
         fontFamily: 'iransans',
-        fontSize: 12,
-        paddingTop: 3,
-        color: colors.gray,
+        fontSize: 11,
+        paddingTop: 2,
+        color: colors.lightDark,
+        width: '100%',
+        textAlign: 'center',
+    },
+    activeText: {
+        fontFamily: 'iransansbold',
+        color: colors.darkBackground,
+    },
+    badge: {
+        position: 'absolute',
+        top: 4,
+        left: 24,
+        backgroundColor: colors.red,
+        color: colors.white,
+        fontSize: 10,
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 10,
+        fontFamily: 'iransansbold',
+        overflow: 'hidden',
     },
 });
 
