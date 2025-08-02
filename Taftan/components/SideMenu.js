@@ -1,5 +1,4 @@
-// components/SideMenu.js
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   View,
@@ -11,138 +10,125 @@ import {
   Modal,
   ScrollView,
   SafeAreaView,
+  InteractionManager,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from './colors';
 import handleLogout from '../services/authHelper';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
-const SideMenu = (props) => {
-  const [slideAnim] = useState(new Animated.Value(width * 0.65));
-  var { isVisible, onClose, navigation } = props;
+const SideMenu = ({ isVisible, onClose, navigation }) => {
+  const [slideAnim] = useState(new Animated.Value(width));
+  const [visible, setVisible] = useState(false);
 
-  const toggleMenu = () => {
-    Animated.timing(slideAnim, {
-      toValue: isVisible ? 0 : width * 0.65,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  React.useEffect(() => {
-    toggleMenu();
+  useEffect(() => {
+    if (isVisible) {
+      setVisible(true);
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: width,
+        duration: 250,
+        useNativeDriver: true,
+      }).start(() => {
+        InteractionManager.runAfterInteractions(() => {
+          setVisible(false);
+        });
+      });
+    }
   }, [isVisible]);
 
-  const menuItems = [
-    {
-      title: 'سرویس خرابی',
-      icon: 'construct-outline',
-      screen: 'ServiceDamage',
-    },
-    {
-      title: 'سرویس نصب',
-      icon: 'hammer-outline',
-      screen: 'ServiceInstallation',
-    },
-    {
-      title: 'سرویس سایت سازی',
-      icon: 'storefront-outline',
-      screen: 'ServiceSite',
-    },
-    {
-      title: 'سرویس پروژه',
-      icon: 'clipboard-outline',
-      screen: 'ServiceProjects',
-    },
-    {
-      title: 'سرویس دوره ای',
-      icon: 'repeat-outline',
-      screen: 'ServicePeriodic',
-    },
-    {
-      title: 'نقشه',
-      icon: 'map-outline',
-      screen: 'MapPage',
-    },
-    {
-      title: 'پروفایل',
-      icon: 'person-outline',
-      screen: 'Profile',
-    },
+  // اگر نه visible است و نه isVisible، چیزی نمایش نده
+  if (!isVisible && !visible) return null;
+
+  const menuItemsMain = [
+    { title: 'سرویس خرابی', icon: 'construct-outline', screen: 'ServiceDamage' },
+    { title: 'سرویس نصب', icon: 'hammer-outline', screen: 'ServiceInstallation' },
+    { title: 'سرویس سایت سازی', icon: 'storefront-outline', screen: 'ServiceSite' },
+    { title: 'سرویس پروژه', icon: 'clipboard-outline', screen: 'ServiceProjects' },
+    { title: 'سرویس دوره ای', icon: 'repeat-outline', screen: 'ServicePeriodic' },
   ];
 
-  return (
-    <Modal visible={isVisible} transparent animationType="none">
-      {/* Overlay */}
-      <TouchableOpacity 
-        style={styles.overlay} 
-        activeOpacity={1} 
-        onPress={onClose}
-      >
-        <View />
-      </TouchableOpacity>
+  const menuItemsSecondary = [
+    { title: 'نقشه', icon: 'map-outline', screen: 'MapPage' },
+    { title: 'پروفایل', icon: 'person-outline', screen: 'Profile' },
+  ];
 
-      {/* Sliding Menu */}
-      <Animated.View 
-        style={[
-          styles.menuContainer, 
-          { transform: [{ translateX: slideAnim }] }
-        ]}
-      >
-        <SafeAreaView style={styles.safeArea}>
-          {/* Header with Logo */}
-          <View style={styles.header}>
-            <View style={styles.logoContainer}>
-              <Image source={require('../assets/logo.png')} style={styles.toplogo} />
-            </View>
-          </View>
-
-          {/* Menu Items */}
-          <ScrollView style={styles.menuContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.menuItemsContainer}>
-              {menuItems.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.menuItem}
-                  onPress={() => {
-                    navigation.navigate(item.screen);
-                    onClose();
-                  }}
-                  activeOpacity={0.7}
-                >
-                  <View style={styles.menuItemContent}>
-                    <View style={styles.iconContainer}>
-                      <Ionicons 
-                        name={item.icon} 
-                        size={20} 
-                        color={colors.darkBackground || '#333'} 
-                      />
-                    </View>
-                    <Text style={styles.menuText}>{item.title}</Text>
-                  </View>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </ScrollView>
-
-          {/* Fixed Logout Button */}
-          <View style={styles.logoutContainer}>
-            <TouchableOpacity
-              style={styles.logoutButton}
-              onPress={() => handleLogout(navigation, onClose)}
-              activeOpacity={0.8}
-            >
-              <View style={styles.logoutContent}>
-                <Text style={styles.logoutText}>خروج</Text>
-                <View style={styles.logoutIconContainer}>
-                  <Ionicons name="log-out-outline" size={20} color="#fff" />
-                </View>
+  const renderMenuGroup = (items) => (
+    <View style={styles.menuItemsContainer}>
+      {items.map((item, index) => (
+        <View key={index}>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => {
+              navigation.navigate(item.screen);
+              onClose();
+            }}
+            activeOpacity={0.7}
+          >
+            <View style={styles.menuItemContent}>
+              <View style={styles.iconContainer}>
+                <Ionicons name={item.icon} size={20} color={colors.darkBackground || '#333'} />
               </View>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </Animated.View>
+              <Text style={styles.menuText}>{item.title}</Text>
+              <Ionicons name="chevron-back-outline" size={18} color="#999" />
+            </View>
+          </TouchableOpacity>
+          {index !== items.length - 1 && <View style={styles.divider} />}
+        </View>
+      ))}
+    </View>
+  );
+
+  return (
+    <Modal visible transparent animationType="none" statusBarTranslucent>
+      <>
+        <TouchableOpacity
+          style={styles.overlay}
+          activeOpacity={1}
+          onPress={onClose} >
+          <View />
+        </TouchableOpacity>
+
+        <Animated.View style={[styles.menuWrapper, { transform: [{ translateX: slideAnim }] }]}>
+          <SafeAreaView style={styles.safeArea}>
+
+            <View style={styles.closeButtonContainer}>
+              <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+                <Ionicons name="close" size={28} color="#fff" />
+              </TouchableOpacity>
+            </View>
+
+
+
+            <ScrollView style={styles.menuContent} showsVerticalScrollIndicator={false}>
+              {renderMenuGroup(menuItemsMain)}
+              {renderMenuGroup(menuItemsSecondary)}
+            </ScrollView>
+
+            <View style={styles.logoutContainer}>
+              <TouchableOpacity
+                style={styles.logoutButton}
+                onPress={() => handleLogout(navigation, onClose)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.logoutContent}>
+                  <View style={styles.logoutIconContainer}>
+                    <Ionicons name="log-out-outline" size={20} color={colors.red} />
+                  </View>
+                  <Text style={styles.logoutText}>خروج</Text>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+          </SafeAreaView>
+        </Animated.View>
+      </>
     </Modal>
   );
 };
@@ -152,31 +138,29 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
-  menuContainer: {
+  menuWrapper: {
     position: 'absolute',
     right: 0,
     top: 0,
     bottom: 0,
-    width: width * 0.65,
-    backgroundColor: '#fff',
+    width: width,
+    backgroundColor: 'white',
     elevation: 10,
     shadowColor: '#000',
-    shadowOffset: {
-      width: -2,
-      height: 0,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowOffset: { width: -4, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
   },
   safeArea: {
     flex: 1,
   },
-  header: {
+  closeButtonContainer: {
+    alignItems: 'flex-start',
+    paddingTop: 30,
     backgroundColor: colors.darkBackground,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  closeButton: {
+    padding: 12,
   },
   logoContainer: {
     width: '100%',
@@ -185,73 +169,66 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   toplogo: {
-    width: 54,
-    height: 54,
+    width: 60,
+    height: 60,
     resizeMode: 'contain',
   },
   menuContent: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#ececec',
+    padding: 5,
   },
   menuItemsContainer: {
-    paddingTop: 10,
+    borderRadius: 10,
+    margin: 5,
+    marginBottom: 10,
+    elevation: 2,
+    backgroundColor: '#fff',
+    paddingVertical: 4,
   },
   menuItem: {
-    marginHorizontal: 10,
-    marginVertical: 2,
-    borderRadius: 12,
-    backgroundColor: '#fff',
-    elevation: 1,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderRadius: 8,
   },
   menuItemContent: {
     flexDirection: 'row-reverse',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-
+    paddingVertical: 8,
+    paddingHorizontal: 12,
   },
   menuText: {
-    fontSize: 16,
+    fontSize: 13,
     fontFamily: 'iransans',
     color: '#333',
     flex: 1,
     textAlign: 'right',
   },
   iconContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: '#f8f9fa',
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    backgroundColor: '#f1f1f1',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 12,
+    marginLeft: 14,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: '#E6E6E6',
+    marginRight: 60,
+    marginLeft: 18,
+    alignSelf: 'stretch',
   },
   logoutContainer: {
-    paddingHorizontal: 15,
-    paddingVertical: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 3,
     borderTopWidth: 1,
     borderTopColor: '#eee',
     backgroundColor: '#f8f9fa',
   },
   logoutButton: {
-    backgroundColor: colors.red, 
-    borderRadius: 12,
-    elevation: 3,
-    shadowColor: '#f44336',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 16,
   },
   logoutContent: {
     flexDirection: 'row-reverse',
@@ -263,9 +240,9 @@ const styles = StyleSheet.create({
   logoutText: {
     fontSize: 16,
     fontFamily: 'iransans',
-    color: '#fff',
+    color: colors.red,
     fontWeight: 'bold',
-    marginLeft: 8,
+    marginLeft: 2,
   },
   logoutIconContainer: {
     width: 24,

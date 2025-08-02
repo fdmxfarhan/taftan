@@ -40,7 +40,7 @@ const HomeNotif = ({ navigation, activeCase }) => {
 
                 <View style={styles.row}>
                     <Text style={styles.valueBlue}>{activeCase.requestId}</Text>
-                    <Text style={styles.label}>شماره درخواست:</Text>
+                    <Text style={styles.label}>شماره کار:</Text>
                 </View>
 
                 <View style={styles.row}>

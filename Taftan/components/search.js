@@ -1,95 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput, Modal, ToastAndroid } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons'; // Import icons
-import colors from './colors'; // Adjust the import path for colors if needed
-import Popup from './popup';
-import DropDownPicker from 'react-native-dropdown-picker';
-import PersianDatePicker from './persian-date-picker';
-import TimePicker from './time-picker';
-import TwoChoice from './twochoice';
-import { getUserList } from '../services/req-load-user-list';
-import UserDropDown from './dropdown-user';
+import React, { useState } from 'react';
+import { View, TextInput, Modal, ToastAndroid, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { GetRequest } from '../services/search-GetRequest';
 
 const SearchView = ({ popupEN, setPopupEN, navigation }) => {
-    var [searchText, setSearchText] = useState('');
-    var searchRequestId = (requestId) => {
-        GetRequest(requestId, navigation).then((res) => {
-            if(res.success){
-                if(res.data == true){
-                    navigation.navigate('DamageReqView', { item: {requestId: requestId} });
-                }else{
-                    ToastAndroid.show('شماره کار یافت نشد', ToastAndroid.SHORT);
-                }
-            }else{
+  const [searchText, setSearchText] = useState('');
 
-            }
-        });
-    }
-    return (
-        <Modal transparent visible={popupEN} animationType="fade" onRequestClose={() => setPopupEN(false)}>
-            <TouchableOpacity style={styles.overlay} activeOpacity={1} onPress={() => {setPopupEN(false)}}>
-                <View style={styles.modalBox}>
-                    <Ionicons style={styles.searchIcon} name={'search'} />
-                    <TextInput
-                        style={styles.textinput}
-                        placeholder="جستجو شماره کار ..."
-                        keyboardType={'numeric'}
-                        onChange={(text) => { setSearchText(text.nativeEvent.text) }}
-                        autoFocus={true}
-                        onSubmitEditing={() => {
-                            searchRequestId(searchText);
-                        }}
-                    />
-                </View>
-            </TouchableOpacity>
-        </Modal>
-    );
+  const searchRequestId = (requestId) => {
+    GetRequest(requestId, navigation).then((res) => {
+      if (res.success) {
+        if (res.data === true) {
+          navigation.navigate('DamageReqView', { item: { requestId } });
+        } else {
+          ToastAndroid.show('شماره کار یافت نشد', ToastAndroid.SHORT);
+        }
+      }
+    });
+  };
+
+  return (
+    <Modal transparent visible={popupEN} animationType="fade" onRequestClose={() => setPopupEN(false)}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        style={styles.overlay}
+      >
+        <TouchableOpacity style={styles.background} activeOpacity={1} onPress={() => setPopupEN(false)} />
+
+        <View style={styles.modalBox}>
+          <TextInput
+            style={styles.textinput}
+            placeholder="جستجو شماره کار ..."
+            placeholderTextColor="#999"
+            keyboardType="numeric"
+            onChangeText={text => setSearchText(text)}
+            autoFocus={true}
+            returnKeyType="search"
+            onSubmitEditing={() => searchRequestId(searchText)}
+          />
+          <TouchableOpacity onPress={() => searchRequestId(searchText)} style={styles.iconWrapper}>
+            <Ionicons name="search" size={24} color="#0288D1" />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingView>
+    </Modal>
+  );
 };
 
 const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        // justifyContent: 'center',
-        alignItems: 'center',
-        // zIndex: 100,
-    },
-    modalBox: {
-        width: '100%',
-        backgroundColor: 'white',
-        alignItems: 'center',
-        maxHeight: 700,
-        marginTop: 70,
-        flexDirection: 'row-reverse',
-        paddingVertical: 15,
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    closeButton: {
-        marginTop: 20,
-        backgroundColor: '#007bff',
-        padding: 10,
-        borderRadius: 5,
-    },
-    closeButtonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
-    searchIcon: {
-        fontSize: 20,
-        width: '10%',
-    },
-    textinput: {
-        fontSize: 13,
-        fontFamily: 'iransans',
-        width: '85%',
-        marginRight: 10,
-        textAlign: 'right',
-    },
+  overlay: {
+    flex: 1,
+    justifyContent: 'center', 
+    alignItems: 'center',     
+  },
+  background: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+  modalBox: {
+    width: '90%',
+    maxWidth: 400,
+    flexDirection: 'row-reverse',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 15,
+    zIndex: 10, 
+  },
+  textinput: {
+    flex: 1,
+    fontSize: 16,
+    fontFamily: 'iransans',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 30,
+    backgroundColor: '#f2f6fa',
+    textAlign: 'right',
+    color: '#333',
+  },
+  iconWrapper: {
+    marginRight: 15,
+    backgroundColor: '#e1f0ff',
+    padding: 10,
+    borderRadius: 25,
+  },
 });
 
 export default SearchView;

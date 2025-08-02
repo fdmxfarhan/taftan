@@ -32,7 +32,7 @@ const BottomNav = ({ tabItemVar, setTabItemCallback, unreadMessagesCount, myRequ
     useEffect(() => {
         tabs.forEach(tab => {
             if (!tabAnimations.current[tab.key]) {
-                tabAnimations.current[tab.key] = new Animated.Value(tabItemVar === tab.key ? -16 : 0);
+                tabAnimations.current[tab.key] = new Animated.Value(tabItemVar === tab.key ? -4 : 0);
             } else {
                 Animated.timing(tabAnimations.current[tab.key], {
                     toValue: tabItemVar === tab.key ? -4 : 0,
