@@ -7,6 +7,7 @@ const Stack = createNativeStackNavigator();
 import colors from './components/colors'
 import enableNetworkDebug from './config/networkInterceptor';
 import { StatusBar } from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 
 // Enable network debugging in development
 if (__DEV__) {
@@ -32,10 +33,35 @@ import DeviceListView from './screens/deviceList';
 import DeviceDetailView from './screens/deviceDetail';
 import CameraScan from './screens/cameraScan';
 import LocationTask from './LocationTask';
-import LocationTest from './screens/LocationTest';
-import { PermissionsAndroid } from 'react-native';
+
 
 const App = (props) => {
+
+  useEffect(() => {
+    const requestPermission = async () => {
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+        authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+        authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+      if (enabled) {
+        console.log('Authorization status:', authStatus);
+        getFcmToken();
+      }
+    };
+    const getFcmToken = async () => {
+      const token = await messaging().getToken();
+      console.log('FCM Token:', token);
+    };
+
+    const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
+      Alert.alert('نوتیفیکیشن دریافت شد!', JSON.stringify(remoteMessage.notification));
+    });
+
+    requestPermission();
+
+    return unsubscribeForeground;
+  }, []);
   const navigationRef = useRef();
   useEffect(() => {
 
@@ -56,9 +82,9 @@ const App = (props) => {
     // <View>
     //     <Text>Hello World</Text>
     // </View>
-    
+
     <NavigationContainer ref={navigationRef}>
-            <StatusBar backgroundColor="#023054" barStyle="light-content" />
+      <StatusBar backgroundColor="#023054" barStyle="light-content" />
 
       <Stack.Navigator>
         <Stack.Screen
