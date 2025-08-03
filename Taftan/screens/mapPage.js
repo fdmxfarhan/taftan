@@ -45,12 +45,12 @@ const MapPage = (props) => {
         message: 'App needs location permission to find your position.',
       }
     )
-      // .then((granted) => {
-      //   console.log('you have location permission');
-      // })
-      // .catch((err) => {
-      //   console.log(err);
-      // });
+    // .then((granted) => {
+    //   console.log('you have location permission');
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
   };
   const getCurrentLocation = async () => {
     await Geolocation.getCurrentPosition(
@@ -118,6 +118,7 @@ const MapPage = (props) => {
         rightCallback={() => { setMenuVisible(!menuVisible); }}
         leftCallback={() => { props.navigation.goBack(); }}
         title="نقشه"
+        style={styles.navbar}
         leftIcon="arrow-back"
         rightIcon="menu"
       />
@@ -169,6 +170,7 @@ const MapPage = (props) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
     backgroundColor: colors.lightBackground,
     alignContent: 'center',
     alignItems: 'center',
@@ -199,6 +201,9 @@ const styles = StyleSheet.create({
   webviewmap: {
     width: width,
     height: height * 0.5,
+  },
+  navbar: {
+    width: '100%'
   },
 });
 

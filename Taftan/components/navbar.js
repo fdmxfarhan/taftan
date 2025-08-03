@@ -11,10 +11,12 @@ const NavBar = ({ rightCallback, leftCallback, title, leftIcon, rightIcon }) => 
             <TouchableOpacity style={styles.menuButton} onPress={rightCallback}>
                 <Ionicons name={rightIcon} size={24} color="white" />
             </TouchableOpacity>
+
             <View style={styles.logoContainer}>
                 <Text style={styles.brand}>تفتان</Text>
                 <Image source={require('../assets/logo.png')} style={styles.toplogo} />
             </View>
+
             <TouchableOpacity style={styles.searchButton} onPress={leftCallback}>
                 <Ionicons name={leftIcon} size={24} color="white" />
             </TouchableOpacity>
@@ -23,6 +25,20 @@ const NavBar = ({ rightCallback, leftCallback, title, leftIcon, rightIcon }) => 
 };
 
 const styles = StyleSheet.create({
+    topBar: {
+        width: '100%',
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: colors.darkBackground,
+        height: 50,
+        position: 'relative',
+    },
+    logoContainer: {
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     brand: {
         color: '#fff',
         fontSize: 16,
@@ -33,28 +49,9 @@ const styles = StyleSheet.create({
         height: 24,
         resizeMode: 'contain',
     },
-    logoContainer: {
-        width: 120, 
-        height: 40,
-        alignContent: 'center',
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    topBar: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        alignItems: 'center',
-        paddingHorizontal: 15,
-        marginBottom: 0,
-        backgroundColor: colors.darkBackground,
-        height: 50,
-    },
     menuButton: {
         position: 'absolute',
         right: 0,
-        color: colors.white,
         paddingVertical: 4,
         paddingHorizontal: 17,
         zIndex: 10,
@@ -62,19 +59,11 @@ const styles = StyleSheet.create({
     searchButton: {
         position: 'absolute',
         left: 0,
-        color: colors.white,
         paddingVertical: 4,
         paddingHorizontal: 17,
         zIndex: 10,
     },
-    pageTitle: {
-        color: colors.white,
-        fontFamily: 'iransans',
-        textAlign: 'center',
-        width: '100%',
-        paddingTop: 5,
-        fontSize: 16,
-    },
 });
+
 
 export default NavBar;
