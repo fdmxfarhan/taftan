@@ -33,11 +33,12 @@ import DeviceListView from './screens/deviceList';
 import DeviceDetailView from './screens/deviceDetail';
 import CameraScan from './screens/cameraScan';
 import LocationTask from './LocationTask';
-
+import { Alert } from 'react-native';
 
 const App = (props) => {
 
   useEffect(() => {
+
     const requestPermission = async () => {
       const authStatus = await messaging().requestPermission();
       const enabled =
@@ -47,6 +48,8 @@ const App = (props) => {
       if (enabled) {
         console.log('Authorization status:', authStatus);
         getFcmToken();
+      }else {
+        console.log('Permission not granted');
       }
     };
     const getFcmToken = async () => {
@@ -55,6 +58,7 @@ const App = (props) => {
     };
 
     const unsubscribeForeground = messaging().onMessage(async remoteMessage => {
+      console.log('remoteMessage', remoteMessage);
       Alert.alert('نوتیفیکیشن دریافت شد!', JSON.stringify(remoteMessage.notification));
     });
 
